@@ -67,18 +67,18 @@ final class PageTable extends PowerGridComponent
             Column::make('Id', 'id')
                 ->sortable()
                 ->searchable()
-        ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
+                ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
 
             Column::make('Name', 'name')
                 ->sortable()
                 ->searchable()
-        ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
+                ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
 
 
             Column::make('Created at', 'created_at')
                 ->sortable()
                 ->searchable()
-        ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
+                ->headerAttribute('text-center', 'background-color:#A16A38; color:white;text-align:center;'),
 
                 
             Column::make('Aktif', 'is_activated')
