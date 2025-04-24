@@ -12,7 +12,7 @@
  File Encoding         : 65001
 
  Date: 22/04/2025 16:56:28
-*/
+*/:title="$title"
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
