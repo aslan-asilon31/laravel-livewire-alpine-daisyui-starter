@@ -2,6 +2,7 @@
 
     <x-index-menu :title="$title" :url="$url" :id="$id" shadow  class="" />
 
+    
     <x-form wire:submit="{{ $id ? 'update' : 'store' }}" >
 
           <div id="pertanyaan">
@@ -13,28 +14,30 @@
                     id="masterForm.name" 
                     name="masterForm.name" 
                     placeholder="Name" 
-                    :readonly="$readonly"
+                    {{-- :readonly="$readonly" --}}
 
                 />
             </div>
 
-            <x-file wire:model="masterForm.image_url" label="Image" accept="image/*" crop-after-change :disabled="$isDisabled">
+            <x-file wire:model="masterForm.image_url" label="Image" accept="image/*" crop-after-change 
+                {{-- :disabled="$isDisabled" --}}
+                >
                 <img
                   src="{{ $masterForm->image_url ?? 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930' }}"
                   class="h-48 rounded-lg" />
             </x-file>
 
-            <div class="mb-3">
-                <x-input 
-                    label="Availability" 
-                    wire:model="masterForm.availability" 
-                    id="masterForm.availability" 
-                    name="masterForm.availability" 
-                    placeholder="availability" 
-                    :readonly="$readonly"
-
-                />
-            </div>
+                <div class="mb-3">
+                    <x-input 
+                        label="Availability" 
+                        wire:model="masterForm.availability" 
+                        id="masterForm.availability" 
+                        name="masterForm.availability" 
+                        placeholder="availability" 
+                        {{-- :readonly="$readonly" --}}
+    
+                    />
+                </div>
 
             <div class="mb-3">
                 <x-input 
@@ -43,7 +46,7 @@
                     id="masterForm.selling_price" 
                     name="masterForm.selling_price" 
                     placeholder="selling price" 
-                    :readonly="$readonly"
+                    {{-- :readonly="$readonly" --}}
 
                 />
             </div>
@@ -54,7 +57,7 @@
                     id="masterForm.discount_persentage" 
                     name="masterForm.discount_persentage" 
                     placeholder="Discount Persentage" 
-                    :readonly="$readonly"
+                    {{-- :readonly="$readonly" --}}
 
                 />
             </div>
@@ -65,7 +68,7 @@
                     id="masterForm.discount_value" 
                     name="masterForm.discount_value" 
                     placeholder="Discount Value" 
-                    :readonly="$readonly"
+                    {{-- :readonly="$readonly" --}}
 
                 />
             </div>
@@ -86,11 +89,11 @@
                     wire:model="masterForm.weight" 
                     id="masterForm.weight" 
                     name="masterForm.weight" 
-                    placeholder="Weight" 
-                    :readonly="$readonly"
-
+                    placeholder="Weight"
+                    {{-- :readonly="$readonly" --}}
                 />
             </div>
+
             <div class="mb-3">
                 <x-input 
                     label="Rating" 
@@ -98,10 +101,10 @@
                     id="masterForm.rating" 
                     name="masterForm.rating" 
                     placeholder="Rating" 
-                    :readonly="$readonly"
-
+                    {{-- :readonly="$readonly" --}}
                 />
             </div>
+
 
               <div class="text-center mt-3">
                 <x-errors class="text-white mb-3" />
@@ -115,6 +118,31 @@
 
     @script
         <script>
+
+            document.addEventListener('livewire:load', function () {
+                const select = document.getElementById('status');
+
+                select.value = @this.get('is_active') ?? '';
+
+                select.addEventListener('change', function () {
+                    @this.set('is_active', this.value);
+                });
+
+                Livewire.on('refreshStatus', value => {
+                    select.value = value;
+                });
+
+
+                flatpickr("#id-for-date-picker-library", {
+                    dateFormat: "Y-m-d",
+                    onChange: function(selectedDates, dateStr) {
+                        // Kirim tanggal yang dipilih ke Livewire
+                        @this.set('selectedDate', dateStr);
+                    }
+                });
+
+            });
+
 
             let $wire = {
                 $watch(name, callback) { ... },

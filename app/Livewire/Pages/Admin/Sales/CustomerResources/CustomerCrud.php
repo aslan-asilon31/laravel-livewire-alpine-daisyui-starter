@@ -122,7 +122,6 @@ class CustomerCrud extends Component
 
   public function edit()
   {
-    $this->permission($this->basePageName.'-update');
 
     $masterData = $this->masterModel::findOrFail($this->id);
     $this->masterForm->fill($masterData);

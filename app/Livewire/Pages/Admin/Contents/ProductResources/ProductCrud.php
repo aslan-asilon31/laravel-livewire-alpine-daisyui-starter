@@ -153,6 +153,7 @@ class ProductCrud extends Component
 
   public function update()
   {
+    dd($this->masterForm);
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],

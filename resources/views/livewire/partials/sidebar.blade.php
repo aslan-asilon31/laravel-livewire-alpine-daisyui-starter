@@ -1,5 +1,5 @@
 <div>
-    <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100 lg:bg-inherit">
+    <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100 lg:bg-inherit ">
 
         {{-- BRAND --}}
         <x-app-brand class="px-5 pt-4" />
@@ -7,7 +7,7 @@
 
 
         {{-- MENU --}}
-        <x-menu activate-by-route class="md:pt-8">
+        <x-menu activate-by-route class="md:pt-8 ">
 
             @if($user = auth()->user())
                 <x-menu-separator />
@@ -24,7 +24,7 @@
                 <x-menu-separator title="Management" icon="o-sparkles" />
                 <x-menu-item title="Product" icon="o-user-group" link="/products" :class="request()->is('products') ? 'active' : ''" />
                 <x-menu-item title="Customers" icon="o-user-group" link="/customers" :class="request()->is('customers') ? 'active' : ''" />
-                <x-menu-item title="Sales Order" icon="o-user-group" link="/orders" :class="request()->is('orders') ? 'active' : ''" />
+                <x-menu-item title="Sales Order" icon="o-user-group" link="/sales-orders" :class="request()->is('orders') ? 'active' : ''" />
 
             <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                 <x-menu-item title="Setting" icon-right="o-arrow-long-right" link="####" />

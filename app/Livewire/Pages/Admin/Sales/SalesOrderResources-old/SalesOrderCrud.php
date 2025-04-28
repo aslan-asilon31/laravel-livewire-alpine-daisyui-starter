@@ -216,8 +216,9 @@ class SalesOrderCrud extends Component
       if(empty($validatedForm['created_by'])){
         $validatedForm['created_by'] = auth()->user()->username;
       }
-
       $validatedForm['updated_by'] = auth()->user()->username;
+      // @if($validatedForm['is_processed'] == 'settlement'){
+      // }
 
       $masterData->update($validatedForm);
 

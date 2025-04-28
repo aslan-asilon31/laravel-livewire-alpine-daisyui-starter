@@ -154,13 +154,17 @@ final class SalesOrderTable extends PowerGridComponent
             
             Column::make('Id', 'id')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
                 
             Column::make('Status', 'status')
                 ->sortable()
                 // ->editOnClick(hasPermission: true)
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
                 
             // Column::make('Is Proccessed', 'is_processed')
@@ -207,30 +211,40 @@ final class SalesOrderTable extends PowerGridComponent
 
             Column::make('Customer Last Name', 'last_name')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
             Column::make('Date', 'date')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
             Column::make('Number', 'number')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
 
             Column::make('Total Amount', 'total_amount')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
+
 
 
             Column::make('Created at', 'created_at')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->headerAttribute('text-center', ' color:white;text-align:center;'),
                 
 
             // Column::make('is activated', 'is_activated')
             // ->sortable()
-            // ->searchable(),
+            // ->searchable()
+
 
 
             Column::add()
