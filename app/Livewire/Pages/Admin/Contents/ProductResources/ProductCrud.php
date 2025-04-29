@@ -26,8 +26,8 @@ class ProductCrud extends Component
 
   public  $brands = [];
 
-  public $selectedBrandId =''; 
-  public $selectedProductCategoryFirstId =''; 
+  public $selectedBrandId = '';
+  public $selectedProductCategoryFirstId = '';
   public  $productCategoryFirsts = [];
   public  $productCategories = [];
 
@@ -77,13 +77,7 @@ class ProductCrud extends Component
   }
 
 
-  
-
-
-  public function initialize()  
-  {  
-  }
-
+  public function initialize() {}
 
   public function create()
   {
@@ -100,13 +94,12 @@ class ProductCrud extends Component
     )['masterForm'];
 
 
-
     \Illuminate\Support\Facades\DB::beginTransaction();
     try {
 
       $validatedForm['created_by'] = auth()->user()->username ?? null;
       $validatedForm['updated_by'] = auth()->user()->username ?? null;
-      $validatedForm['product_brand_id'] = $this->selectedBrandId; 
+      $validatedForm['product_brand_id'] = $this->selectedBrandId;
 
       // image_url
       $folderName = $this->baseFolderName;
@@ -128,7 +121,7 @@ class ProductCrud extends Component
       $this->success('Data has been stored');
     } catch (\Throwable $th) {
       \Illuminate\Support\Facades\DB::rollBack();
-      \Log::error('Data product failed to store: ' . $th->getMessage());  
+      \Log::error('Data product failed to store: ' . $th->getMessage());
 
       $this->error('Data failed to store');
     }
@@ -148,12 +141,10 @@ class ProductCrud extends Component
     $this->isDisabled = false;
     $masterData = $this->masterModel::findOrFail($this->id);
     $this->masterForm->fill($masterData);
-
   }
 
   public function update()
   {
-    dd($this->masterForm);
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -188,7 +179,7 @@ class ProductCrud extends Component
 
       $this->success('Data has been updated');
     } catch (\Throwable $e) {
-      \Log::error('Data failed : ' . $e->getMessage());  
+      \Log::error('Data failed : ' . $e->getMessage());
 
       \Illuminate\Support\Facades\DB::rollBack();
       $this->error('Data failed to update');

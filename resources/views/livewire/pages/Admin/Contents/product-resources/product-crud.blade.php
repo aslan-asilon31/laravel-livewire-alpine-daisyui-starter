@@ -1,162 +1,66 @@
 <div>
 
-    <x-index-menu :title="$title" :url="$url" :id="$id" shadow  class="" />
-
-    
-    <x-form wire:submit="{{ $id ? 'update' : 'store' }}" >
-
-          <div id="pertanyaan">
-
-            <div class="mb-3">
-                <x-input 
-                    label="Name" 
-                    wire:model="masterForm.name" 
-                    id="masterForm.name" 
-                    name="masterForm.name" 
-                    placeholder="Name" 
-                    {{-- :readonly="$readonly" --}}
-
-                />
-            </div>
-
-            <x-file wire:model="masterForm.image_url" label="Image" accept="image/*" crop-after-change 
-                {{-- :disabled="$isDisabled" --}}
-                >
-                <img
-                  src="{{ $masterForm->image_url ?? 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930' }}"
-                  class="h-48 rounded-lg" />
-            </x-file>
-
-                <div class="mb-3">
-                    <x-input 
-                        label="Availability" 
-                        wire:model="masterForm.availability" 
-                        id="masterForm.availability" 
-                        name="masterForm.availability" 
-                        placeholder="availability" 
-                        {{-- :readonly="$readonly" --}}
-    
-                    />
-                </div>
-
-            <div class="mb-3">
-                <x-input 
-                    label="Selling Price" 
-                    wire:model="masterForm.selling_price" 
-                    id="masterForm.selling_price" 
-                    name="masterForm.selling_price" 
-                    placeholder="selling price" 
-                    {{-- :readonly="$readonly" --}}
-
-                />
-            </div>
-            <div class="mb-3">
-                <x-input 
-                    label="Discount Persentage" 
-                    wire:model="masterForm.discount_persentage" 
-                    id="masterForm.discount_persentage" 
-                    name="masterForm.discount_persentage" 
-                    placeholder="Discount Persentage" 
-                    {{-- :readonly="$readonly" --}}
-
-                />
-            </div>
-            <div class="mb-3">
-                <x-input 
-                    label="Discount Value" 
-                    wire:model="masterForm.discount_value" 
-                    id="masterForm.discount_value" 
-                    name="masterForm.discount_value" 
-                    placeholder="Discount Value" 
-                    {{-- :readonly="$readonly" --}}
-
-                />
-            </div>
-            <div class="mb-3">
-                <x-input 
-                    label="Nett Price" 
-                    wire:model="masterForm.nett_price" 
-                    id="masterForm.nett_price" 
-                    name="masterForm.nett_price" 
-                    placeholder="Nett Price" 
-                    :readonly="$readonly"
-
-                />
-            </div>
-            <div class="mb-3">
-                <x-input 
-                    label="Weight" 
-                    wire:model="masterForm.weight" 
-                    id="masterForm.weight" 
-                    name="masterForm.weight" 
-                    placeholder="Weight"
-                    {{-- :readonly="$readonly" --}}
-                />
-            </div>
-
-            <div class="mb-3">
-                <x-input 
-                    label="Rating" 
-                    wire:model="masterForm.rating" 
-                    id="masterForm.rating" 
-                    name="masterForm.rating" 
-                    placeholder="Rating" 
-                    {{-- :readonly="$readonly" --}}
-                />
-            </div>
+  <x-index-menu :title="$title" :url="$url" :id="$id" shadow class="" />
 
 
-              <div class="text-center mt-3">
-                <x-errors class="text-white mb-3" />
-                <x-button type="submit" :label="$id ? 'update' : 'store'" class="btn-success btn-sm text-white" />
-              </div>
+  <x-form wire:submit="{{ $id ? 'update' : 'store' }}">
 
-          </div>
-      </x-form>
+    <div id="pertanyaan">
+      <div class="mb-3">
+        <x-input label="Name" wire:model="masterForm.name" id="masterForm.name" name="masterForm.name" placeholder="Name"
+          :readonly="$isReadonly" />
+      </div>
 
-    <x-button label="Cancel" class="text-xs md:text-sm" wire.click="closeModal" />
+      <x-file wire:model="masterForm.image_url" label="Image" accept="image/*" crop-after-change {{-- :disabled="$isDisabled" --}}>
+        <img
+          src="{{ $masterForm->image_url ?? 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930' }}"
+          class="h-48 rounded-lg" />
+      </x-file>
 
-    @script
-        <script>
+      <div class="mb-3">
+        <x-input label="Availability" wire:model="masterForm.availability" id="masterForm.availability"
+          name="masterForm.availability" placeholder="availability" :readonly="$isReadonly" />
+      </div>
 
-            document.addEventListener('livewire:load', function () {
-                const select = document.getElementById('status');
+      <div class="mb-3">
+        <x-input label="Selling Price" wire:model="masterForm.selling_price" id="masterForm.selling_price"
+          name="masterForm.selling_price" placeholder="selling price" :readonly="$isReadonly" />
+      </div>
+      <div class="mb-3">
+        <x-input label="Discount Persentage" wire:model="masterForm.discount_persentage"
+          id="masterForm.discount_persentage" name="masterForm.discount_persentage" placeholder="Discount Persentage"
+          :readonly="$isReadonly" />
+      </div>
+      <div class="mb-3">
+        <x-input label="Discount Value" wire:model="masterForm.discount_value" id="masterForm.discount_value"
+          name="masterForm.discount_value" placeholder="Discount Value" :readonly="$isReadonly" />
+      </div>
+      <div class="mb-3">
+        <x-input label="Nett Price" wire:model="masterForm.nett_price" id="masterForm.nett_price"
+          name="masterForm.nett_price" placeholder="Nett Price" :readonly="$isReadonly" />
+      </div>
+      <div class="mb-3">
+        <x-input label="Weight" wire:model="masterForm.weight" id="masterForm.weight" name="masterForm.weight"
+          placeholder="Weight" :readonly="$isReadonly" />
+      </div>
 
-                select.value = @this.get('is_active') ?? '';
-
-                select.addEventListener('change', function () {
-                    @this.set('is_active', this.value);
-                });
-
-                Livewire.on('refreshStatus', value => {
-                    select.value = value;
-                });
+      <div class="mb-3">
+        <x-input label="Rating" wire:model="masterForm.rating" id="masterForm.rating" name="masterForm.rating"
+          placeholder="Rating" :readonly="$isReadonly" />
+      </div>
 
 
-                flatpickr("#id-for-date-picker-library", {
-                    dateFormat: "Y-m-d",
-                    onChange: function(selectedDates, dateStr) {
-                        // Kirim tanggal yang dipilih ke Livewire
-                        @this.set('selectedDate', dateStr);
-                    }
-                });
+      <div class="text-center mt-3">
+        <x-errors class="text-white mb-3" />
+        <x-button type="submit" :label="$id ? 'update' : 'store'" class="btn-success btn-sm text-white" />
+      </div>
 
-            });
+    </div>
+  </x-form>
 
-
-            let $wire = {
-                $watch(name, callback) { ... },
-            }
-
-            $wire.$set(name, value, live = true) { 
-                
-            },
-
-            
-            $wire.on('product-created', () => {
-                console.log('product-created');
-            });
-        </script>
-    @endscript
+  <x-button label="Cancel" class="text-xs md:text-sm" wire.click="closeModal" />
 
 </div>
+
+@script
+@endscript

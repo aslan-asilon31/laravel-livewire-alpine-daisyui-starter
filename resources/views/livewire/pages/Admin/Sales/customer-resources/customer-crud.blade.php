@@ -22,27 +22,20 @@
 
   <x-form wire:submit="{{ $id ? 'update' : 'store' }}" wire:confirm="Are you sure?">
 
-    
     <div class="mb-3">
-      <x-input wire:model="masterForm.id" id="masterForm.id" name="masterForm.id" placeholder="Id" hidden />
-    </div>
-    
-    <div class="mb-3">
-      <x-input label="Name" wire:model.blur="masterForm.name" id="masterForm.name" name="masterForm.name" placeholder="Name" />
+      <x-input label="Name" wire:model.blur="masterForm.name" id="masterForm.name" name="masterForm.name"
+        placeholder="Name" />
     </div>
 
-
     <div class="mb-3">
-      <x-choices-offline wire:model="masterForm.is_activated" label="Is Activated" :options="[['id' => 0, 'name' => 'Inactive'], ['id' => 1, 'name' => 'Active']]" single searchable
-        :readonly="$isReadonly" />
+      <x-choices-offline wire:model="masterForm.is_activated" label="Is Activated" :options="[['id' => 0, 'name' => 'Inactive'], ['id' => 1, 'name' => 'Active']]" single
+        searchable />
     </div>
 
-    @if (!$isReadonly)
-      <div class="text-center mt-3">
-        <x-errors class="text-white mb-3" />
-        <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
-      </div>
-    @endif
+    <div class="text-center mt-3">
+      <x-errors class="text-white mb-3" />
+      <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
+    </div>
   </x-form>
 
 

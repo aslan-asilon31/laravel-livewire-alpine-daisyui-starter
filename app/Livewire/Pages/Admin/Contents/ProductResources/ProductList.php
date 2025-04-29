@@ -5,139 +5,143 @@ namespace App\Livewire\Pages\Admin\Contents\ProductResources;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use App\Models\Product;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Mary\Traits\Toast;
 use App\Livewire\Pages\Admin\Contents\ProductResources\Forms\ProductForm;
-
+use Mary\Traits\Toast;
 
 class ProductList extends Component
 {
 
-  public $title = "Products";
-  public $url = "/products";
+  public string $title = "Products";
+  public string $url = "/products";
 
-  public ProductForm $masterForm;
+  #[\Livewire\Attributes\Locked]
+  public $id;
 
-
-  public $text1 = "Text1";
-
+  use Toast;
   use WithPagination;
 
-  public $productPaginators;
-
-  public Collection $productsSearchable;
-  public Collection $productsMultiSearchable;
-
-  public  $product_searchable_id;
-  public  $products_multi_searchable_ids;
-
-  public $name = '';
-
-  #[Locked]
-  public $productId;
-
-  #[Url]
+  #[Url(except: '')]
   public ?string $search = '';
 
-  public $cell_decoration;
-  public $ProductsFilter;
+  public bool $filterDrawer;
 
-  public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+  public array $sortBy = ['column' => 'name', 'direction' => 'desc'];
 
-  public $image_url = '';
-  public $selling_price = null;
-  public $price_max = null;
-  public $is_activated = null;
-
-  public function mount()
-  {
-    $this->validate(
-      $this->masterForm->rules(),
-      [],
-      $this->masterForm->attributes()
-    )['masterForm'];
-
-    $this->cell_decoration = [];
-
-    $this->search();
-  }
+  #[Url(except: '')]
+  public array $filters = [];
+  public array $filterForm = [
+    'name' => '',
+    'selling_price' => '',
+    'image_url' => '',
+    'is_activated' => '',
+    'created_at' => '',
+  ];
 
 
-  #[Computed]
-  public function products(): LengthAwarePaginator
-  {
-    return Product::where('name', 'LIKE', "%{$this->search}%")->paginate(5);
-  }
+  public function mount() {}
 
   #[Computed]
   public function headers(): array
   {
     return [
-      ['key' => 'action', 'label' => 'Action', 'class' => 'border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'id', 'label' => 'ID', 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'name', 'label' => 'Name', 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'image_url', 'label' => 'Image Url', 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'selling_price', 'label' => 'Selling Price', 'format' => ['currency', '2,.', 'Rp '], 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'is_activated', 'label' => 'Activate', 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'availability', 'label' => 'Availability', 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'created_at', 'label' => 'Date', 'format' => ['date', 'd/m/Y'], 'sortable' => true, 'class' => ' border-r-1 border-l-1 border-gray-300 dark:border-gray-600 text-center']
+      ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
+      ['key' => 'no_urut', 'label' => '#', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'id', 'label' => 'ID', 'sortBy' => 'id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
+      ['key' => 'name', 'label' => 'Name', 'sortBy' => 'name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
+      ['key' => 'image_url', 'label' => 'Image Url', 'sortBy' => 'image_url',  'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
+      ['key' => 'selling_price', 'label' => 'Selling Price', 'sortBy' => 'selling_price', 'format' => ['currency', '2.,', ''], 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'is_activated', 'label' => 'Activate', 'sortBy' => 'is_activated', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
+      ['key' => 'availability', 'label' => 'Availability', 'sortBy' => 'availability', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
+      ['key' => 'created_at', 'label' => 'Created At', 'format' => ['date', 'Y-m-d H:i:s'], 'sortBy' => 'created_at', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center']
     ];
   }
 
-
-  public function search(string $value = '')
-  {
-    $selectedOption = Product::where('id', $this->product_searchable_id)->get();
-
-    $this->productsSearchable = Product::query()
-      ->where('name', 'like', "%$value%")
-      ->take(5)
-      ->orderBy('name')
-      ->get()
-      ->merge($selectedOption);
-
-    $this->productsMultiSearchable = Product::query()
-      ->where('name', 'like', "%$value%")
-      ->take(5)
-      ->orderBy('name')
-      ->get()
-      ->merge($selectedOption);
-  }
-
-  public function advancedSearch()
+  #[Computed]
+  public function rows(): LengthAwarePaginator
   {
 
     $query = Product::query();
 
-    if ($this->name) {
-      $query->where('name', 'like', "%{$this->name}%");
-    }
+    $query->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+      ->when(($this->filters['name'] ?? ''), fn($q) => $q->where('name', 'like', "%{$this->filters['name']}%"))
+      ->when(($this->filters['image_url'] ?? ''), fn($q) => $q->where('image_url', "%{$this->filters['image_url']}%"))
+      ->when(($this->filters['selling_price'] ?? ''), fn($q) => $q->where('selling_price', $this->filters['selling_price']))
+      ->when((($this->filters['is_activated']  ?? '') != ''), fn($q) => $q->where('is_activated', $this->filters['is_activated']))
+      ->when(($this->filters['created_at'] ?? ''), function ($q) {
+        $dateTime = $this->filters['created_at'];
+        $dateOnly = substr($dateTime, 0, 10);
+        $q->whereDate('created_at', $dateOnly);
+      });
 
-    if ($this->image_url) {
-      $query->where('image_url', $this->image_url);
-    }
+    $paginator = $query
+      ->orderBy(...array_values($this->sortBy))
+      ->paginate(20);
 
-    if ($this->selling_price !== null) {
-      $query->where('selling_price', '>=', $this->selling_price);
-    }
+    $start = ($paginator->currentPage() - 1) * $paginator->perPage();
 
-    if ($this->is_activated !== null) {
-      $query->where('is_activated', '<=', $this->is_activated);
-    }
+    $paginator->getCollection()->transform(function ($item, $key) use ($start) {
+      $item->no_urut = $start + $key + 1;
+      return $item;
+    });
 
-    return $query->paginate(5);
+    return $paginator;
   }
 
+  public function filter()
+  {
+    $validatedFilters = $this->validate(
+      [
+        'filterForm.name' => 'nullable|string',
+        'filterForm.image_url' => 'nullable|string',
+        'filterForm.selling_price' => 'nullable|integer',
+        'filterForm.is_activated' => 'nullable|integer',
+        'filterForm.created_at' => 'nullable|string',
+      ],
+      [],
+      [
+        'filterForm.name' => 'Name',
+        'filterForm.image_url' => 'Image URL',
+        'filterForm.selling_price' => 'Selling Price',
+        'filterForm.is_activated' => 'Is Activated',
+        'filterForm.created_at' => 'Created At',
+      ]
+    )['filterForm'];
+
+
+
+    $this->filters = collect($validatedFilters)->reject(fn($value) => $value === '')->toArray();
+    $this->success('Filter Result');
+    $this->filterDrawer = false;
+  }
 
   public function clear(): void
   {
-    $this->reset();
-    $this->success('Filters cleared.', position: 'toast-bottom');
+    $this->reset('filters');
+    $this->reset('filterForm');
+    $this->success('filter cleared');
+  }
+
+  public function delete()
+  {
+    $masterData = Product::findOrFail($this->id);
+
+    \Illuminate\Support\Facades\DB::beginTransaction();
+    try {
+
+      $this->deleteImage($masterData['image_url']);
+
+      $masterData->delete();
+      \Illuminate\Support\Facades\DB::commit();
+
+      $this->success('Data has been deleted');
+      $this->redirect($this->url, true);
+    } catch (\Throwable $th) {
+      \Illuminate\Support\Facades\DB::rollBack();
+      $this->error('Data failed to delete');
+    }
   }
 
   public function render()
