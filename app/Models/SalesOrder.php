@@ -11,6 +11,11 @@ class SalesOrder extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
-  
-    protected $guarded = [ ];
+
+    protected $guarded = [];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

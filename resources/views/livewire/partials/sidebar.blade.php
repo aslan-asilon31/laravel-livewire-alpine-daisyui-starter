@@ -23,7 +23,7 @@
       <x-menu-item title="Dashboard" icon="o-home" link="/" :class="request()->is('dashboard') ? 'active' : ''" />
       <x-menu-separator title="Management" icon="o-sparkles" />
       <x-menu-item title="Product" icon="o-user-group" link="/products" :class="request()->is('products') ? 'active' : ''" />
-      <x-menu-item title="Customers" icon="o-user-group" link="/customers/list" :class="request()->is('customers/list') ? 'active' : ''" />
+      <x-menu-item title="Customers" icon="o-user-group" link="/customers/" :class="request()->is('customers/') ? 'active' : ''" />
       <x-menu-item title="Sales Order" icon="o-user-group" link="/sales-orders" :class="request()->is('orders') ? 'active' : ''" />
 
       <x-menu-sub title="Settings" icon="o-cog-6-tooth">

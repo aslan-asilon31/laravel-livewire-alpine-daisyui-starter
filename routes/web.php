@@ -6,12 +6,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', Welcome::class);
 
 
-Route::get('/customers/list', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerList::class)->name('customer.list');
+Route::get('/customers/', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerList::class)->name('customer.list');
 Route::get('/customers/create', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerCreate::class)->name('customer.create');
-Route::get('/customers/edit/{id}', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerCrud::class)->name('customer.edit');
-Route::get('/customers/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerCrud::class)->where('readonly', 'readonly')->name('customer.show');
+Route::get('/customers/edit/{id}', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerEdit::class)->name('customer.edit');
+Route::get('/customers/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerShow::class)->where('readonly', 'readonly')->name('customer.show');
 
-
+Route::get('/sales-orders', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderList::class)->name('sales-orders.list');
+Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCreate::class)->name('sales-orders.create');
+Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderEdit::class)->name('sales-orders.edit');
+Route::get('/sales-orders/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderShow::class)->name('sales-orders.show');
 
 // Route::group(['middleware' => 'auth'], function () {
 
@@ -104,19 +107,18 @@ Route::get('/permissions/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Genera
 
 // Sales 
 
-Route::get('/sales-orders', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderList::class);
-Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class);
+// Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class);
 // Route::get('/sales-orders/update/{slug}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
 // Route::get('/sales-orders/update/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
 // Route::get('/sales-orders/update/{id}/{slug}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
-Route::get('/sales-orders/update/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
+// Route::get('/sales-orders/update/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
 
-Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
+// Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
 
-Route::get('/sales-orders/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->where('readonly', 'readonly')->name('sales-order.show');
-Route::get('/sales-orders/activate/{id}/{value}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)
-    ->where('readonly', 'readonly')
-    ->name('sales-order.show');
+// Route::get('/sales-orders/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->where('readonly', 'readonly')->name('sales-order.show');
+// Route::get('/sales-orders/activate/{id}/{value}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)
+//     ->where('readonly', 'readonly')
+//     ->name('sales-order.show');
 
 Route::get('/category-recommendations', \App\Livewire\Pages\Admin\Contents\CategoryRecommendationResources\CategoryRecommendationList::class)->name('category_recommendations.list');
 Route::get('/category-recommendations/create', \App\Livewire\Pages\Admin\Contents\CategoryRecommendationResources\CategoryRecommendationCrud::class)->name('category_recommendations.create');

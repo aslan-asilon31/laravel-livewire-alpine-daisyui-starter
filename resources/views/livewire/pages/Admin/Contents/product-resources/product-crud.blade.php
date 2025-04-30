@@ -1,6 +1,6 @@
 <div>
 
-  <x-index-menu :title="$title" :url="$url" :id="$id" shadow class="" />
+  <x-list-menu :title="$title" :url="$url" :id="$id" shadow class="" />
 
 
   <x-form wire:submit="{{ $id ? 'update' : 'store' }}">

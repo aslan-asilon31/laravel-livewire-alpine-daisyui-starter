@@ -3,7 +3,7 @@
   <x-list-menu :title="$title" :url="$url" :id="$id" shadow class="" />
 
 
-  <x-form wire:submit="{{ $id ? 'update' : 'store' }}" wire:confirm="Are you sure?">
+  <x-form wire:submit="update" wire:confirm="Are you sure?">
 
     <div class="mb-3">
       <x-input label="First Name" wire:model.blur="masterForm.first_name" id="masterForm.first_name"
@@ -35,6 +35,5 @@
       <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
     </div>
   </x-form>
-
 
 </div>

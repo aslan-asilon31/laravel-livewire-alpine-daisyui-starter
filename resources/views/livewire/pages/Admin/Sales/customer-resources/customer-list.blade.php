@@ -43,9 +43,8 @@
 
       @scope('cell_action', $row)
         <x-dropdown>
-          <x-menu-item title="Edit" icon="o-pencil-square" link="customers/edit/{{ $row->id }}" />
-          <x-menu-item title="Show" icon="o-eye" link="customers/show/{{ $row->id }}/readonly" />
-          <x-menu-item title="Delete" wire:click="delete" wire:confirm="Yakin hapus data?" icon="o-trash" />
+          <x-menu-item title="Edit" icon="o-pencil-square" link="/customers/edit/{{ $row->id }}" />
+          <x-menu-item title="Show" icon="o-eye" link="/customers/show/{{ $row->id }}/readonly" />
         </x-dropdown>
       @endscope
 

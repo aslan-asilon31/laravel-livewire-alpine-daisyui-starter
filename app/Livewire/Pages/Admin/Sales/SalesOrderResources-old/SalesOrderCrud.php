@@ -19,7 +19,7 @@ class SalesOrderCrud extends Component
   use \App\Helpers\ImageUpload\Traits\WithImageUpload;
   use \App\Helpers\Permission\Traits\WithPermission;
   use \Mary\Traits\Toast;
-  
+
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'sales-order';
 
@@ -47,10 +47,10 @@ class SalesOrderCrud extends Component
 
   #[\Livewire\Attributes\Locked]
   public array $options = [];
-  
+
   #[\Livewire\Attributes\Locked]
   protected $masterModel = \App\Models\SalesOrder::class;
-  
+
   public array $statuses = [];
   public array $processed = [];
 
@@ -81,19 +81,18 @@ class SalesOrderCrud extends Component
     ])
       ->findOrFail($this->id)
       ->toArray();
-
   }
 
   public function create()
   {
-    $this->permission($this->basePageName.'-create');
+    $this->permission($this->basePageName . '-create');
 
     $this->masterForm->reset();
   }
 
   public function store()
   {
-    $this->permission($this->basePageName.'-create');
+    $this->permission($this->basePageName . '-create');
 
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
@@ -128,7 +127,7 @@ class SalesOrderCrud extends Component
 
   public function show()
   {
-    $this->permission($this->basePageName.'-show');
+    $this->permission($this->basePageName . '-show');
 
     $this->isReadonly = true;
     $this->isDisabled = true;
@@ -139,45 +138,44 @@ class SalesOrderCrud extends Component
   public function edit()
   {
     $this->statuses = [
-        ['id' => 0, 'name' => 'pending'],
-        ['id' => 1, 'name' => 'settlement'],
-        ['id' => 2, 'name' => 'expired']
+      ['id' => 0, 'name' => 'pending'],
+      ['id' => 1, 'name' => 'settlement'],
+      ['id' => 2, 'name' => 'expired']
     ];
 
 
-  
-    $this->permission($this->basePageName.'-update');
+
+    $this->permission($this->basePageName . '-update');
 
     $masterData = $this->masterModel::query()
-    ->join('customers', 'sales_orders.customer_id', 'customers.id')
-    ->join('employees', 'sales_orders.employee_id', 'employees.id')
-    ->select([
-      'customers.id as employee_id',
-      'employees.id as customer_id',
-      'sales_orders.id',
-      'customers.first_name',
-      'customers.last_name',
-      'employees.name AS employee_name',
-      'sales_orders.date',
-      'sales_orders.number',
-      'sales_orders.total_amount',
-      'sales_orders.status',
-      'sales_orders.is_processed',
-      'sales_orders.fraud_status',
-      'sales_orders.updated_by',
-      'sales_orders.created_at',
-      'sales_orders.updated_at',
-      'sales_orders.is_activated',
-    ])->findOrFail($this->id);
+      ->join('customers', 'sales_orders.customer_id', 'customers.id')
+      ->join('employees', 'sales_orders.employee_id', 'employees.id')
+      ->select([
+        'customers.id as employee_id',
+        'employees.id as customer_id',
+        'sales_orders.id',
+        'customers.first_name',
+        'customers.last_name',
+        'employees.name AS employee_name',
+        'sales_orders.date',
+        'sales_orders.number',
+        'sales_orders.status',
+        'sales_orders.is_processed',
+        'sales_orders.fraud_status',
+        'sales_orders.updated_by',
+        'sales_orders.created_at',
+        'sales_orders.updated_at',
+        'sales_orders.is_activated',
+      ])->findOrFail($this->id);
 
     if ($masterData) {
-        $this->masterForm->fill($masterData->toArray());
+      $this->masterForm->fill($masterData->toArray());
     } else {
-        $this->error('Data tidak ditemukan');
+      $this->error('Data tidak ditemukan');
     }
 
 
-    
+
 
     // $masterData = $this->masterModel::with([
     //   'customer',
@@ -193,7 +191,7 @@ class SalesOrderCrud extends Component
 
   public function update()
   {
-    $this->permission($this->basePageName.'-update');
+    $this->permission($this->basePageName . '-update');
 
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
@@ -213,7 +211,7 @@ class SalesOrderCrud extends Component
     \Illuminate\Support\Facades\DB::beginTransaction();
     try {
 
-      if(empty($validatedForm['created_by'])){
+      if (empty($validatedForm['created_by'])) {
         $validatedForm['created_by'] = auth()->user()->username;
       }
       $validatedForm['updated_by'] = auth()->user()->username;
@@ -229,13 +227,12 @@ class SalesOrderCrud extends Component
       \Illuminate\Support\Facades\DB::rollBack();
       $this->error('Data failed to update');
       \Log::error('Store data failed: ' . $th->getMessage());
-
     }
   }
 
   public function delete()
   {
-    $this->permission($this->basePageName.'-delete');
+    $this->permission($this->basePageName . '-delete');
 
     $masterData = $this->masterModel::findOrFail($this->id);
 
@@ -252,6 +249,4 @@ class SalesOrderCrud extends Component
       $this->error('Data failed to delete');
     }
   }
-
-
 }

@@ -24,7 +24,7 @@ use Illuminate\Support\Number;
 final class SalesOrderTable extends PowerGridComponent
 {
 
-  use \Mary\Traits\Toast;
+    use \Mary\Traits\Toast;
 
     public string $tableName = 'sales-order-table';
     public string $sortField = 'updated_at';
@@ -69,28 +69,28 @@ final class SalesOrderTable extends PowerGridComponent
                 ->params(['name' => 'Luan']),
 
 
-            
+
         ];
     }
 
     public function datasource(): Builder
     {
         return \App\Models\SalesOrder::query()
-        ->join('customers', 'sales_orders.customer_id', 'customers.id')
-        ->select([
-          'sales_orders.id',
-          'customers.first_name',
-          'customers.last_name',
-          'sales_orders.date',
-          'sales_orders.number',
-          'sales_orders.total_amount',
-          'sales_orders.status',
-          'sales_orders.is_processed',
-          'sales_orders.updated_by',
-          'sales_orders.created_at',
-          'sales_orders.updated_at',
-          'sales_orders.is_activated',
-        ]);
+            ->join('customers', 'sales_orders.customer_id', 'customers.id')
+            ->select([
+                'sales_orders.id',
+                'customers.first_name',
+                'customers.last_name',
+                'sales_orders.date',
+                'sales_orders.number',
+                'sales_orders.total_amount',
+                'sales_orders.status',
+                'sales_orders.is_processed',
+                'sales_orders.updated_by',
+                'sales_orders.created_at',
+                'sales_orders.updated_at',
+                'sales_orders.is_activated',
+            ]);
 
         // return SalesOrder::query();
 
@@ -139,26 +139,25 @@ final class SalesOrderTable extends PowerGridComponent
             ->add('is_processed', fn($record) => $record->is_processed  ? 'yes' : 'no')
             ->add('created_at')
             ->add('is_activated', fn($record) => $record->is_processed  ? 'yes' : 'no');
-
     }
 
 
     public function columns(): array
     {
         return [
-                    
+
             // Column::make('Action', 'action')
             //     ->bodyAttribute('text-center'),
 
             Column::action('Action'),
-            
+
             Column::make('Id', 'id')
                 ->sortable()
                 ->searchable()
                 ->headerAttribute('text-center', ' color:white;text-align:center;'),
 
 
-                
+
             Column::make('Status', 'status')
                 ->sortable()
                 // ->editOnClick(hasPermission: true)
@@ -166,13 +165,13 @@ final class SalesOrderTable extends PowerGridComponent
                 ->headerAttribute('text-center', ' color:white;text-align:center;'),
 
 
-                
+
             // Column::make('Is Proccessed', 'is_processed')
             //     ->sortable()
             //     ->searchable()
             //     ->editOnClick(),
 
-                
+
             // Column::make('Is Proccessed', 'is_processed')
             //     ->searchable()
             //     ->sortable()
@@ -239,7 +238,7 @@ final class SalesOrderTable extends PowerGridComponent
                 ->sortable()
                 ->searchable()
                 ->headerAttribute('text-center', ' color:white;text-align:center;'),
-                
+
 
             // Column::make('is activated', 'is_activated')
             // ->sortable()
@@ -252,12 +251,12 @@ final class SalesOrderTable extends PowerGridComponent
                 ->field('is_processed')
                 ->toggleable(hasPermission: true, trueLabel: 'yes', falseLabel: 'no')
                 ->contentClasses([
-                        true    => 'bg-green-600',
-                        false => 'bg-red-600'
-                   ])
+                    true    => 'bg-green-600',
+                    false => 'bg-red-600'
+                ])
                 ->sortable(),
-            
-                
+
+
 
             // Column::add()
             //     ->title('is activated')
@@ -266,7 +265,7 @@ final class SalesOrderTable extends PowerGridComponent
             //             hasPermission: auth()->check(),
             //             trueLabel: 'Yes',
             //             falseLabel: 'No',
-                    
+
             //     ),
 
         ];
@@ -275,14 +274,18 @@ final class SalesOrderTable extends PowerGridComponent
     protected function rules()
     {
         return [
-            
+
             'first_name.*' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
             ],
-            
-            
+
+
             'last_name.*' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
             ],
 
             'date.*' => [
@@ -298,7 +301,7 @@ final class SalesOrderTable extends PowerGridComponent
             ],
 
             'status.*' => [
-               'nullable',
+                'nullable',
             ],
 
             // 'status.*' => [
@@ -368,18 +371,18 @@ final class SalesOrderTable extends PowerGridComponent
             // Filter::inputText('status', 'status')->placeholder('Status'),
             Filter::select('status', 'status')
                 ->dataSource(
+                    [
                         [
-                            [
-                                'status'       => 'settlement',
-                            ],
-                            [
-                                'status'       => 'expired',
-                            ],
-                            [
-                                'status'       => 'pending',
-                            ],
-                        ]
-                    )
+                            'status'       => 'settlement',
+                        ],
+                        [
+                            'status'       => 'expired',
+                        ],
+                        [
+                            'status'       => 'pending',
+                        ],
+                    ]
+                )
                 ->optionLabel('status')
                 ->optionValue('status'),
             Filter::inputText('first_name', 'first_name')->placeholder('Customer First Name'),
@@ -390,7 +393,7 @@ final class SalesOrderTable extends PowerGridComponent
             Filter::datepicker('updated_at', 'sales_orders.updated_at'),
             // Filter::boolean('is_processed', 'sales_orders.is_processed')->label('Yes', 'No'),
             Filter::boolean('is_processed', 'is_processed')
-            ->label('yes', 'no'),
+                ->label('yes', 'no'),
             Filter::boolean('is_activated', 'sales_orders.is_activated')->label('Yes', 'No'),
         ];
     }
@@ -406,7 +409,7 @@ final class SalesOrderTable extends PowerGridComponent
         })->validate();
 
 
-        if($field=="first_name"){
+        if ($field == "first_name") {
             SalesOrder::query()->find($id)->customer()->update([
                 'first_name' => e($value),
             ]);
@@ -415,23 +418,23 @@ final class SalesOrderTable extends PowerGridComponent
             $this->dispatch('pg:eventRefresh-default')->to(SalesOrderTable::class);
         }
 
-        
-        if($field=="is_processed"){
+
+        if ($field == "is_processed") {
             SalesOrder::query()->find($id)->update([
                 'is_processed' => e($value),
             ]);
         }
 
-      $this->success('Data has been updated');
+        $this->success('Data has been updated');
 
-      $this->dispatch('showAlert', ['message' => 'Sales order updated successfully!']);
+        $this->dispatch('showAlert', ['message' => 'Sales order updated successfully!']);
     }
 
 
     public function onUpdatedToggleable(string|int $id, string $field, string $value): void
     {
-        
-        if($field=="is_activated"){
+
+        if ($field == "is_activated") {
             SalesOrder::query()->find($id)->customer()->update([
                 'is_activated' => e($value),
             ]);
@@ -450,17 +453,17 @@ final class SalesOrderTable extends PowerGridComponent
             $order->status = trim($order->status); // Trim the status
             return $order;
         });
-    
+
         $uniqueStatuses = $salesOrders->unique('status');
-    
+
         // $result = collect($data)->mapWithKeys(function ($item, $key) {
         $result = collect($uniqueStatuses)->mapWithKeys(function ($item, $key) {
             // Menghapus spasi di awal dan akhir
             $trimmedItem = trim($item);
-            
+
             // Memisahkan string berdasarkan spasi dan mengambil kata pertama
             $firstWord = explode(' ', $trimmedItem)[0];
-        
+
             return [
                 $key => $firstWord,
             ];
@@ -485,7 +488,7 @@ final class SalesOrderTable extends PowerGridComponent
         dd("category Id: {$statusId} for Dish id: {$statId}");
     }
 
-    
+
 
     public function actions($row): array
     {
@@ -496,10 +499,4 @@ final class SalesOrderTable extends PowerGridComponent
                 ->toggleDetail($row->id),
         ];
     }
-
-
-
-
-
-
 }

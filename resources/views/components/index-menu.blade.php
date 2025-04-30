@@ -10,7 +10,7 @@
       <x-button icon-right="o-list-bullet" label="List Product" link="/{{ $url }}"
         class=" btn-ghost btn-outline" />
       <x-button icon-right="o-trash" wire:click="delete" wire:confirm="Yakin hapus data?" label="Delete"
-        class=" btn-ghost btn-outline" />
+        class=" btn-error btn-outline" />
     @endif
 
     <x-button label="Filters" @click="$wire.filterDrawer = true" responsive icon="o-funnel" class="btn-primary" />
