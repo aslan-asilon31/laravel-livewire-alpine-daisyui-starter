@@ -16,6 +16,11 @@ Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderRes
 Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderEdit::class)->name('sales-orders.edit');
 Route::get('/sales-orders/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderShow::class)->name('sales-orders.show');
 
+Route::get('/sales-order-details', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailList::class)->name('sales-orders.list');
+Route::get('/sales-order-details/create', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailCreate::class)->name('sales-orders.create');
+Route::get('/sales-order-details/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailEdit::class)->name('sales-orders.edit');
+Route::get('/sales-order-details/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailShow::class)->name('sales-orders.show');
+
 // Route::group(['middleware' => 'auth'], function () {
 
 // Contents
@@ -105,7 +110,7 @@ Route::get('/permissions', \App\Livewire\Pages\Admin\Generals\PermissionResource
 Route::get('/permissions/edit/{id}', \App\Livewire\Pages\Admin\Generals\PermissionResources\PermissionCrud::class)->name('pages.edit');
 Route::get('/permissions/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Generals\PermissionResources\PermissionCrud::class)->where('readonly', 'readonly')->name('pages.show');
 
-// Sales 
+// Sales
 
 // Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class);
 // Route::get('/sales-orders/update/{slug}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-order.edit');
