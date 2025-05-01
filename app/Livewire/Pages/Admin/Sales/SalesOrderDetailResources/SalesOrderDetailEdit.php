@@ -6,18 +6,18 @@ use App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\Forms\SalesOrderDet
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
-class SalesOrderDetailDetailEdit extends Component
+class SalesOrderDetailEdit extends Component
 {
   public function render()
   {
-    return view('livewire.pages.admin.sales.sales-order-resources.sales-order-edit')
+    return view('livewire.pages.admin.sales.sales-order-detail-resources.sales-order-detail-edit')
       ->title($this->title);
   }
 
   use \Mary\Traits\Toast;
 
   #[\Livewire\Attributes\Locked]
-  private string $basePageName = 'sales-order-detail';
+  private string $basePageName = 'sales-order-details';
 
   #[\Livewire\Attributes\Locked]
   public string $title = 'Sales Order Detail';

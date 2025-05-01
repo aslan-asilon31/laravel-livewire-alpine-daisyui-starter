@@ -9,7 +9,7 @@ class SalesOrderDetailShow extends Component
 {
   public function render()
   {
-    return view('livewire.pages.admin.sales.sales-order-resources.sales-order-detail-show')
+    return view('livewire.pages.admin.sales.sales-order-detail-resources.sales-order-detail-show')
       ->title($this->title);
   }
 

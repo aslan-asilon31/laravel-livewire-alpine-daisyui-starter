@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use App\Models\SalesOrder;
+use App\Models\SalesOrderDetail;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -27,15 +28,12 @@ class SalesOrderDetailList extends Component
 
   public bool $filterDrawer;
 
-  public array $sortBy = ['column' => 'first_name', 'direction' => 'desc'];
+  public array $sortBy = ['column' => 'name', 'direction' => 'desc'];
 
   #[Url(except: '')]
   public array $filters = [];
   public array $filterForm = [
-    'first_name' => '',
-    'last_name' => '',
-    'date' => '',
-    'number' => '',
+    'name' => '',
     'status' => '',
     'created_by' => '',
     'updated_by' => '',
@@ -53,11 +51,9 @@ class SalesOrderDetailList extends Component
       ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'no_urut', 'label' => '#', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'id', 'label' => 'ID', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'first_name', 'sortBy' => 'first_name',  'label' => 'First Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'last_name', 'sortBy' => 'last_name',  'label' => 'Last Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'date', 'sortBy' => 'date',  'label' => 'Date', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'number', 'sortBy' => 'number',  'label' => 'Number', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'status', 'sortBy' => 'status',  'label' => 'Status', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'name', 'sortBy' => 'name',  'label' => 'First Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'selling_price', 'sortBy' => 'selling_price',  'label' => 'Selling Price', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'qty', 'sortBy' => 'qty',  'label' => 'Quantity', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'updated_by', 'sortBy' => 'updated_by',  'label' => 'Updated By', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'created_at', 'sortBy' => 'created_at',  'label' => 'Created At', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'updated_at', 'sortBy' => 'updated_at',  'label' => 'Updated At', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
@@ -70,37 +66,30 @@ class SalesOrderDetailList extends Component
   {
 
     $query = SalesOrderDetail::query()
-      ->join('products', 'sales_order_details.product_id', 'products.id')
+      ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
+      ->join('products', 'sales_order_detail.product_id', 'products.id')
       ->select(
-        'sales_detail_orders.*',
-        'customers.id as customer_id',
-        'customers.first_name as first_name',
-        'customers.last_name as last_name',
+        'sales_order_detail.*',
+        'products.id as product_id',
+        'products.name',
       );
 
-    $query->when($this->search, fn($q) => $q->where('customers.first_name', 'like', "%{$this->search}%"))
-      ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('sales_orders.id', 'like', "%{$this->filters['id']}%"))
-      ->when(($this->filters['first_name'] ?? ''), fn($q) => $q->where('customers.first_name', 'like', "%{$this->filters['first_name']}%"))
-      ->when(($this->filters['last_name'] ?? ''), fn($q) => $q->where('customers.last_name', 'like', "%{$this->filters['last_name']}%"))
-      ->when(($this->filters['date'] ?? ''), function ($q) {
-        $dateTime = $this->filters['date'];
-        $dateOnly = substr($dateTime, 0, 10);
-        $q->whereDate('date', $dateOnly);
-      })
-      ->when(($this->filters['number'] ?? ''), fn($q) => $q->where('sales_orders.number', 'like', "%{$this->filters['number']}%"))
-      ->when(($this->filters['status'] ?? ''), fn($q) => $q->where('sales_orders.status', 'like', "%{$this->filters['status']}%"))
+    $query->when($this->search, fn($q) => $q->where('sales_orders.name', 'like', "%{$this->search}%"))
+      ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('sales_order_detail.id', 'like', "%{$this->filters['id']}%"))
+      ->when(($this->filters['selling_price'] ?? ''), fn($q) => $q->where('sales_order_detail.selling_price', 'like', "%{$this->filters['selling_price']}%"))
+      ->when(($this->filters['qty'] ?? ''), fn($q) => $q->where('sales_order_detail.qty', 'like', "%{$this->filters['qty']}%"))
       ->when(($this->filters['created_by'] ?? ''), fn($q) => $q->where('created_by', 'like', "%{$this->filters['created_by']}%"))
       ->when(($this->filters['updated_by'] ?? ''), fn($q) => $q->where('updated_by', 'like', "%{$this->filters['created_by']}%"))
       ->when((($this->filters['is_activated'] ?? '') != ''), fn($q) => $q->where('is_activated', $this->filters['is_activated']))
-      ->when(($this->filters['sales_orders.created_at'] ?? ''), function ($q) {
-        $dateTime = $this->filters['sales_orders.created_at'];
+      ->when(($this->filters['sales_order_detail.created_at'] ?? ''), function ($q) {
+        $dateTime = $this->filters['sales_order_detail.created_at'];
         $dateOnly = substr($dateTime, 0, 10);
-        $q->whereDate('sales_orders.created_at', $dateOnly);
+        $q->whereDate('sales_order_detail.created_at', $dateOnly);
       })
-      ->when(($this->filters['sales_orders.updated_at'] ?? ''), function ($q) {
-        $dateTime = $this->filters['sales_orders.updated_at'];
+      ->when(($this->filters['sales_order_detail.updated_at'] ?? ''), function ($q) {
+        $dateTime = $this->filters['sales_order_detail.updated_at'];
         $dateOnly = substr($dateTime, 0, 10);
-        $q->whereDate('sales_orders.updated_at', $dateOnly);
+        $q->whereDate('sales_order_detail.updated_at', $dateOnly);
       });
 
     $paginator = $query
@@ -122,11 +111,10 @@ class SalesOrderDetailList extends Component
     $validatedFilters = $this->validate(
       [
         'filterForm.id' => 'nullable|string',
-        'filterForm.first_name' => 'nullable|string',
-        'filterForm.last_name' => 'nullable|string',
-        'filterForm.date' => 'nullable|string',
+        'filterForm.name' => 'nullable|string',
         'filterForm.number' => 'nullable|string',
-        'filterForm.status' => 'nullable|string',
+        'filterForm.selling_price' => 'nullable|integer',
+        'filterForm.qty' => 'nullable|integer',
         'filterForm.created_by' => 'nullable|string',
         'filterForm.updated_by' => 'nullable|string',
         'filterForm.is_activated' => 'nullable|integer',
@@ -136,11 +124,9 @@ class SalesOrderDetailList extends Component
       [],
       [
         'filterForm.id' => 'First Name',
-        'filterForm.first_name' => 'First Name',
-        'filterForm.last_name' => 'Last Name',
-        'filterForm.date' => 'Date',
-        'filterForm.number' => 'Number',
-        'filterForm.status' => 'Status',
+        'filterForm.name' => 'Name',
+        'filterForm.selling_price' => 'Selling Price',
+        'filterForm.qty' => 'Quantity',
         'filterForm.created_by' => 'Created By',
         'filterForm.updated_by' => 'Updated By',
         'filterForm.is_activated' => 'Is Activated',
@@ -185,7 +171,7 @@ class SalesOrderDetailList extends Component
 
   public function render()
   {
-    return view('livewire.pages.admin.sales.sales-order-resources.sales-order-detail-list')
+    return view('livewire.pages.admin.sales.sales-order-detail-resources.sales-order-detail-list')
       ->title($this->title);
   }
 }

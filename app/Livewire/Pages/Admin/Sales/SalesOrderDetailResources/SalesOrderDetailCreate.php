@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Pages\Admin\Sales\SalesOrderResources;
+namespace App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources;
 
-use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
+use App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\Forms\SalesOrderDetailForm;
 use Livewire\Component;
 use App\Models\SalesOrder;
 
@@ -10,7 +10,7 @@ class SalesOrderDetailCreate extends Component
 {
   public function render()
   {
-    return view('livewire.pages.admin.sales.sales-order-resources.sales-order-detail-create')
+    return view('livewire.pages.admin.sales.sales-order-detail-resources.sales-order-detail-create')
       ->title($this->title);
   }
 

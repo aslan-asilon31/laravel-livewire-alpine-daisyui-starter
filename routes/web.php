@@ -16,10 +16,10 @@ Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderRes
 Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderEdit::class)->name('sales-orders.edit');
 Route::get('/sales-orders/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderShow::class)->name('sales-orders.show');
 
-Route::get('/sales-order-details', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailList::class)->name('sales-orders.list');
-Route::get('/sales-order-details/create', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailCreate::class)->name('sales-orders.create');
-Route::get('/sales-order-details/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailEdit::class)->name('sales-orders.edit');
-Route::get('/sales-order-details/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailShow::class)->name('sales-orders.show');
+Route::get('/sales-order-details', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailList::class)->name('sales-order-details.list');
+Route::get('/sales-order-details/create', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailCreate::class)->name('sales-order-details.create');
+Route::get('/sales-order-details/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailEdit::class)->name('sales-order-details.edit');
+Route::get('/sales-order-details/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\SalesOrderDetailShow::class)->name('sales-order-details.show');
 
 // Route::group(['middleware' => 'auth'], function () {
 
