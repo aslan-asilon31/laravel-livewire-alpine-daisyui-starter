@@ -6,11 +6,11 @@
 
   <x-form wire:submit="update" wire:confirm="Are you sure?">
 
-    <x-input wire:model="masterForm.employee_name" label="Employee Name" placeholder="First Name" />
     <x-input wire:model="masterForm.first_name" label="First Name" placeholder="First Name" />
     <x-input wire:model="masterForm.last_name" label="Last Name" placeholder="Last Name" />
     <x-input wire:model="masterForm.date" label="Date" placeholder="Date" />
     <x-input wire:model="masterForm.number" label="Number" placeholder="Number" />
+    <x-input wire:model="masterForm.employee_name" label="Employee Name" placeholder="First Name" />
     <x-input wire:model="masterForm.status" label="Status" placeholder="Status" />
 
     <x-input wire:model="masterForm.fraud_status" label="Fraud Status" placeholder="Fraud Status" />

@@ -52,7 +52,7 @@
 
     <x-table :headers="$this->headers" class="" :rows="$this->rows" :sort-by="$sortBy" with-pagination>
       @scope('cell_action', $row)
-        <x-dropdown>
+        <x-dropdown class="z-99">
           <x-menu-item title="Edit" icon="o-pencil-square" link="/sales-orders/edit/{{ $row->id }}" />
           <x-menu-item title="Show" icon="o-eye" link="/sales-orders/show/{{ $row->id }}/readonly" />
         </x-dropdown>
