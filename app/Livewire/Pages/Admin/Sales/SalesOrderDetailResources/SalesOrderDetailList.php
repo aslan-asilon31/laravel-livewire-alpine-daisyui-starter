@@ -10,12 +10,14 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mary\Traits\Toast;
+use App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\Forms\SalesOrderDetailForm;
 
 class SalesOrderDetailList extends Component
 {
 
   public string $title = "Sales Order Detail";
   public string $url = "/sales-order-details";
+  public $modalSalesOrderDetailCreate = false;
 
   #[\Livewire\Attributes\Locked]
   public $id;
@@ -42,6 +44,9 @@ class SalesOrderDetailList extends Component
   ];
 
 
+  public SalesOrderDetailForm $masterForm;
+
+
   public function mount() {}
 
   #[Computed]
@@ -51,7 +56,7 @@ class SalesOrderDetailList extends Component
       ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'no_urut', 'label' => '#', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'id', 'label' => 'ID', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
-      ['key' => 'name', 'sortBy' => 'name',  'label' => 'First Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'name', 'sortBy' => 'name',  'label' => 'Product Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'selling_price', 'sortBy' => 'selling_price',  'label' => 'Selling Price', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'qty', 'sortBy' => 'qty',  'label' => 'Quantity', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'updated_by', 'sortBy' => 'updated_by',  'label' => 'Updated By', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
@@ -60,6 +65,10 @@ class SalesOrderDetailList extends Component
       ['key' => 'is_activated', 'sortBy' => 'is_activated',  'label' => 'Is Activated', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right']
     ];
   }
+
+  #[\Livewire\Attributes\Locked]
+  protected $masterModel = \App\Models\SalesOrderDetail::class;
+
 
   #[Computed]
   public function rows(): LengthAwarePaginator
@@ -74,7 +83,7 @@ class SalesOrderDetailList extends Component
         'products.name',
       );
 
-    $query->when($this->search, fn($q) => $q->where('sales_orders.name', 'like', "%{$this->search}%"))
+    $query->when($this->search, fn($q) => $q->where('products.name', 'like', "%{$this->search}%"))
       ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('sales_order_detail.id', 'like', "%{$this->filters['id']}%"))
       ->when(($this->filters['selling_price'] ?? ''), fn($q) => $q->where('sales_order_detail.selling_price', 'like', "%{$this->filters['selling_price']}%"))
       ->when(($this->filters['qty'] ?? ''), fn($q) => $q->where('sales_order_detail.qty', 'like', "%{$this->filters['qty']}%"))
@@ -123,7 +132,7 @@ class SalesOrderDetailList extends Component
       ],
       [],
       [
-        'filterForm.id' => 'First Name',
+        'filterForm.id' => 'Name',
         'filterForm.name' => 'Name',
         'filterForm.selling_price' => 'Selling Price',
         'filterForm.qty' => 'Quantity',
@@ -142,12 +151,93 @@ class SalesOrderDetailList extends Component
     $this->filterDrawer = false;
   }
 
+  public function modalSalesOrderDetailCreate()
+  {
+    $this->modalSalesOrderDetailCreate = true;
+  }
+
   public function clear(): void
   {
     $this->reset('filters');
     $this->reset('filterForm');
     $this->success('filter cleared');
   }
+
+
+
+  public function edit($id)
+  {
+    $this->id = $id;
+    $this->modalSalesOrderDetailCreate = true;
+
+    $masterData = $this->masterModel::query()
+      ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
+      ->join('products', 'sales_order_detail.product_id', 'products.id')
+      ->select(
+        'sales_order_detail.*',
+        'products.id as product_id',
+        'products.name',
+      )->findOrFail($this->id);
+
+    if ($masterData) {
+
+      $this->masterForm->fill($masterData->toArray());
+    } else {
+      $this->error('Data tidak ditemukan');
+    }
+  }
+
+  public function update()
+  {
+    $validatedForm = $this->validate(
+      $this->masterForm->rules(),
+      [],
+      $this->masterForm->attributes()
+    )['masterForm'];
+
+    $masterData = $this->masterModel::findOrFail($this->id);
+
+    // dd($validatedForm);
+    $validatedForm['updated_by'] = 'admin';
+
+    DB::beginTransaction();
+    try {
+
+      \App\Models\SalesOrder::where('id', $this->id)->update([
+        'date' => $validatedForm['date'],
+        'number' => $validatedForm['number'],
+        'status' => $validatedForm['status'],
+        'is_activated' => $validatedForm['is_activated'],
+      ]);
+
+      \App\Models\Customer::where('id', $this->id)->update([
+        'first_name' => $validatedForm['first_name'],
+        'last_name' => $validatedForm['last_name'],
+        'phone' => $validatedForm['phone'],
+        'email' => $validatedForm['email'],
+      ]);
+
+      \App\Models\Employee::where('id', $this->id)->update([
+        'name' => $validatedForm['name'],
+      ]);
+
+
+      DB::commit();
+
+      $this->success('Data has been updated');
+    } catch (\Throwable $th) {
+      DB::rollBack();
+      $this->error('Data failed to update');
+
+      // Catat log error detail untuk debug
+      \Log::error('Update failed:', [
+        'error' => $th->getMessage(),
+        'validatedForm' => $validatedForm,
+        'id' => $this->id
+      ]);
+    }
+  }
+
 
   public function delete()
   {

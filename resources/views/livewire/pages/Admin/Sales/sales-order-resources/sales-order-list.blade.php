@@ -17,8 +17,12 @@
       <x-input placeholder="Filter By Number" label="Number" wire:model="filterForm.number" icon="o-banknotes"
         clearable />
 
-      <x-input placeholder="Filter By Status" label="Status" wire:model="filterForm.status" icon="o-banknotes"
-        clearable />
+      <x-select wire:model="filterForm.status" label="Status" :options="[
+          ['id' => 'pending', 'name' => 'Pending'],
+          ['id' => 'settlement', 'name' => 'Settlement'],
+          ['id' => 'failed', 'name' => 'Failed'],
+      ]" placeholder="- Is Activated -"
+        placeholder-value="" />
 
       <x-select wire:model="filterForm.is_activated" label="Is Activated" :options="[['id' => 1, 'name' => 'Yes'], ['id' => 0, 'name' => 'No']]"
         placeholder="- Is Activated -" placeholder-value="" />
@@ -50,10 +54,12 @@
 
   <div class="">
 
-    <x-table :headers="$this->headers" class="" :rows="$this->rows" :sort-by="$sortBy" with-pagination>
+    <x-table :headers="$this->headers" class="table-sm border border-gray-400 dark:border-gray-500" :rows="$this->rows"
+      :sort-by="$sortBy" with-pagination>
       @scope('cell_action', $row)
-        <x-dropdown class="z-99">
+        <x-dropdown class="btn-xs">
           <x-menu-item title="Edit" icon="o-pencil-square" link="/sales-orders/edit/{{ $row->id }}" />
+
           <x-menu-item title="Show" icon="o-eye" link="/sales-orders/show/{{ $row->id }}/readonly" />
         </x-dropdown>
       @endscope

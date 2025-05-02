@@ -45,34 +45,23 @@ class SalesOrderDetailEdit extends Component
   public array $options = [];
 
   #[\Livewire\Attributes\Locked]
-  protected $masterModel = \App\Models\SalesOrder::class;
+  protected $masterModel = \App\Models\SalesOrderDetail::class;
 
-  public SalesOrderForm $masterForm;
+
+  public SalesOrderDetailForm $masterForm;
 
 
   public function mount()
   {
 
     $masterData = $this->masterModel::query()
-      ->join('customers', 'sales_orders.customer_id', 'customers.id')
-      ->join('employees', 'sales_orders.employee_id', 'employees.id')
-      ->select([
-        'customers.id as employee_id',
-        'employees.id as customer_id',
-        'sales_orders.id',
-        'employees.name as employee_name',
-        'customers.first_name',
-        'customers.last_name',
-        'customers.phone',
-        'sales_orders.date',
-        'sales_orders.number',
-        'sales_orders.status',
-        'sales_orders.fraud_status',
-        'sales_orders.updated_by',
-        'sales_orders.created_at',
-        'sales_orders.updated_at',
-        'sales_orders.is_activated',
-      ])->findOrFail($this->id);
+      ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
+      ->join('products', 'sales_order_detail.product_id', 'products.id')
+      ->select(
+        'sales_order_detail.*',
+        'products.id as product_id',
+        'products.name',
+      )->findOrFail($this->id);
 
     if ($masterData) {
 
@@ -90,10 +79,7 @@ class SalesOrderDetailEdit extends Component
       $this->masterForm->attributes()
     )['masterForm'];
 
-    dd($validatedForm);
-
     $masterData = $this->masterModel::findOrFail($this->id);
-
 
     // dd($validatedForm);
     $validatedForm['updated_by'] = 'admin';
@@ -108,17 +94,18 @@ class SalesOrderDetailEdit extends Component
         'is_activated' => $validatedForm['is_activated'],
       ]);
 
-      \App\Models\Customer::where('id', $this->id)->update([
+      $masterDataCustomer = \App\Models\Customer::find($validatedForm['customer_id']);
+      $masterDataCustomer->update([
+        'id' => $validatedForm['customer_id'],
         'first_name' => $validatedForm['first_name'],
         'last_name' => $validatedForm['last_name'],
         'phone' => $validatedForm['phone'],
-        'email' => $validatedForm['email'],
       ]);
 
-      \App\Models\Employee::where('id', $this->id)->update([
-        'name' => $validatedForm['name'],
+      $masterDataEmployee = \App\Models\Employee::find($validatedForm['employee_id']);
+      $masterDataEmployee->update([
+        'name' => $validatedForm['employee_name'],
       ]);
-
 
       DB::commit();
 

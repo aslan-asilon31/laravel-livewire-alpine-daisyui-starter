@@ -11,13 +11,11 @@ class SalesOrderDetailForm extends Form
 {
   public ?string $id;
 
-  public ?string $employee_name;
-  public ?string $first_name;
-  public ?string $last_name;
-  public ?string $phone;
-  public ?string $date = null;
-  public ?string $number = null;
-  public ?string $note = null;
+  public ?string $name;
+  public ?string $sales_order_id;
+  public ?string $product_id;
+  public int $selling_price;
+  public int $qty;
   public ?string $created_by = null;
   public ?string $updated_by = null;
   public ?string $status = null;
@@ -29,12 +27,11 @@ class SalesOrderDetailForm extends Form
   {
     return [
       'masterForm.id' => ['nullable', 'string', 'max:255'],
-      'masterForm.employee_name' => ['nullable', 'string', 'max:255'],
-      'masterForm.first_name' => ['nullable', 'string', 'max:255'],
-      'masterForm.last_name' => ['nullable', 'string', 'max:255'],
-      'masterForm.phone' => ['nullable', 'string', 'max:255'],
-      'masterForm.date' => ['nullable', 'string', 'max:255'],
-      'masterForm.number' => ['nullable', 'string', 'max:255'],
+      'masterForm.name' => ['nullable', 'string', 'max:255'],
+      'masterForm.sales_order_id' => ['nullable', 'string', 'max:255'],
+      'masterForm.product_id' => ['nullable', 'string', 'max:255'],
+      'masterForm.selling_price' => ['nullable', 'integer'],
+      'masterForm.qty' => ['nullable', 'integer'],
       'masterForm.created_by' => ['nullable', 'string', 'max:255'],
       'masterForm.updated_by' => ['nullable', 'string', 'max:255'],
       'masterForm.status' => ['nullable', 'string', 'max:255'],
@@ -46,12 +43,11 @@ class SalesOrderDetailForm extends Form
   {
     return [
       'masterForm.id' => 'Id',
-      'masterForm.employee_name' => 'Employee Awal',
-      'masterForm.first_name' => 'Nama Awal',
-      'masterForm.last_name' => 'Nama Akhir',
-      'masterForm.phone' => 'Phone',
-      'masterForm.date' => 'Date',
-      'masterForm.number' => 'Number',
+      'masterForm.name' => 'Name',
+      'masterForm.sales_order_id' => 'Sales Order ID',
+      'masterForm.product_id' => 'Product ID',
+      'masterForm.selling_price' => 'Selling Price',
+      'masterForm.qty' => 'Quantity',
       'masterForm.created_by' => 'Created By',
       'masterForm.updated_by' => 'Updated By',
       'masterForm.status' => 'Status',

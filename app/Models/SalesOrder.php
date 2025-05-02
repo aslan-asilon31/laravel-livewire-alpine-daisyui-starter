@@ -8,12 +8,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class SalesOrder extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory, HasUuids;
 
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $guarded = [];
+
+    protected static function booted(): void
+
+    {
+        // static::addGlobalScope(new \App\Models\Scopes\ActivateScope);
+    }
 
     public function customer()
     {

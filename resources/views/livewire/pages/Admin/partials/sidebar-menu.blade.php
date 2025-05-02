@@ -32,7 +32,7 @@
 
   <x-menu-item title="Product Brand " icon="o-squares-2x2" link="/product-brands" :class="request()->is('product-brands') ? 'active' : ''" />
 
-  <x-menu-item title="Product " icon="o-squares-2x2" link="/products" :class="request()->is('products') ? 'active' : ''" />
+  <x-menu-item title="Product " icon="o-archive-box" link="/products" :class="request()->is('products') ? 'active' : ''" />
 
   <x-menu-item title="Product Content" icon="o-squares-2x2" link="/product-contents" :class="request()->is('product-contents') ? 'active' : ''" />
 

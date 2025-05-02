@@ -11,6 +11,8 @@ class SalesOrderForm extends Form
 {
   public ?string $id;
 
+  public ?string $employee_id;
+  public ?string $customer_id;
   public ?string $employee_name;
   public ?string $first_name;
   public ?string $last_name;
@@ -29,6 +31,8 @@ class SalesOrderForm extends Form
   {
     return [
       'masterForm.id' => ['nullable', 'string', 'max:255'],
+      'masterForm.customer_id' => ['nullable', 'string', 'max:255'],
+      'masterForm.employee_id' => ['nullable', 'string', 'max:255'],
       'masterForm.employee_name' => ['nullable', 'string', 'max:255'],
       'masterForm.first_name' => ['nullable', 'string', 'max:255'],
       'masterForm.last_name' => ['nullable', 'string', 'max:255'],
@@ -46,6 +50,8 @@ class SalesOrderForm extends Form
   {
     return [
       'masterForm.id' => 'Id',
+      'masterForm.employee_id' => 'Employee Id',
+      'masterForm.customer_id' => 'Customer Id',
       'masterForm.employee_name' => 'Employee Awal',
       'masterForm.first_name' => 'Nama Awal',
       'masterForm.last_name' => 'Nama Akhir',

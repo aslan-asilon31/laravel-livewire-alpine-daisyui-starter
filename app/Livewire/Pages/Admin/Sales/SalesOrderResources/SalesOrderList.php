@@ -58,11 +58,22 @@ class SalesOrderList extends Component
       ['key' => 'last_name', 'sortBy' => 'last_name',  'label' => 'Last Name', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'date', 'sortBy' => 'date',  'label' => 'Date', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'number', 'sortBy' => 'number',  'label' => 'Number', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'status', 'sortBy' => 'status',  'label' => 'Status', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
+      ['key' => 'status', 'sortBy' => 'status',  'label' => 'Status', 'class' => 'font-bold whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'updated_by', 'sortBy' => 'updated_by',  'label' => 'Updated By', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'created_at', 'sortBy' => 'created_at',  'label' => 'Created At', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'updated_at', 'sortBy' => 'updated_at',  'label' => 'Updated At', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'is_activated', 'sortBy' => 'is_activated',  'label' => 'Is Activated', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right']
+    ];
+  }
+
+  #[Computed]
+  public function row_decoration(): array
+  {
+
+    return [
+      'bg-red-100' => fn(SalesOrder $sales_order) => $sales_order->status == 'failed',
+      'bg-yellow-100' => fn(SalesOrder $sales_order) => $sales_order->status == 'pending',
+      'bg-green-100 ' => fn(SalesOrder $sales_order) => $sales_order->status == 'settlement'
     ];
   }
 

@@ -2,10 +2,6 @@
 
   <x-list-menu :title="$title" :url="$url" :id="$id" shadow class="" />
 
-
-
-
-
   <x-form wire:submit="update" wire:confirm="Are you sure?">
 
     <div class="mb-3">

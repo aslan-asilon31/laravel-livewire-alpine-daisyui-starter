@@ -65,6 +65,8 @@ class CustomerList extends Component
     ];
   }
 
+
+
   #[Computed]
   public function rows(): LengthAwarePaginator
   {

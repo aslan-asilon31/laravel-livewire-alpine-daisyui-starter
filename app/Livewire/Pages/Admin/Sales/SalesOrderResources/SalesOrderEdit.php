@@ -6,8 +6,13 @@ use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
+
 class SalesOrderEdit extends Component
 {
+
+  public string $selectedTab = 'sales-order-tab';
+
+
   public function render()
   {
     return view('livewire.pages.admin.sales.sales-order-resources.sales-order-edit')
@@ -57,8 +62,8 @@ class SalesOrderEdit extends Component
       ->join('customers', 'sales_orders.customer_id', 'customers.id')
       ->join('employees', 'sales_orders.employee_id', 'employees.id')
       ->select([
-        'customers.id as employee_id',
-        'employees.id as customer_id',
+        'customers.id as customer_id',
+        'employees.id as employee_id',
         'sales_orders.id',
         'employees.name as employee_name',
         'customers.first_name',
@@ -90,35 +95,32 @@ class SalesOrderEdit extends Component
       $this->masterForm->attributes()
     )['masterForm'];
 
-    dd($validatedForm);
-
     $masterData = $this->masterModel::findOrFail($this->id);
 
-
-    // dd($validatedForm);
     $validatedForm['updated_by'] = 'admin';
 
     DB::beginTransaction();
     try {
 
-      \App\Models\SalesOrder::where('id', $this->id)->update([
+      $sales_orders = \App\Models\SalesOrder::where('id', $this->id)->update([
         'date' => $validatedForm['date'],
         'number' => $validatedForm['number'],
         'status' => $validatedForm['status'],
         'is_activated' => $validatedForm['is_activated'],
       ]);
 
-      \App\Models\Customer::where('id', $this->id)->update([
+      $masterDataCustomer = \App\Models\Customer::find($validatedForm['customer_id']);
+      $masterDataCustomer->update([
+        'id' => $validatedForm['customer_id'],
         'first_name' => $validatedForm['first_name'],
         'last_name' => $validatedForm['last_name'],
         'phone' => $validatedForm['phone'],
-        'email' => $validatedForm['email'],
       ]);
 
-      \App\Models\Employee::where('id', $this->id)->update([
-        'name' => $validatedForm['name'],
+      $masterDataEmployee = \App\Models\Employee::find($validatedForm['employee_id']);
+      $masterDataEmployee->update([
+        'name' => $validatedForm['employee_name'],
       ]);
-
 
       DB::commit();
 
