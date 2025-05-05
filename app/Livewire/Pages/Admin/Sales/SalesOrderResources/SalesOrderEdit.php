@@ -3,9 +3,14 @@
 namespace App\Livewire\Pages\Admin\Sales\SalesOrderResources;
 
 use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
+use App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\Forms\SalesOrderDetailForm;
 use Livewire\Component;
+use App\Models\Customer;
+use App\Models\Employee;
+use App\Models\Product;
+use App\Models\SalesOrderDetail;
 use Illuminate\Support\Facades\DB;
-
+use Livewire\Attributes\Computed;
 
 class SalesOrderEdit extends Component
 {
@@ -51,8 +56,16 @@ class SalesOrderEdit extends Component
 
   #[\Livewire\Attributes\Locked]
   protected $masterModel = \App\Models\SalesOrder::class;
+  protected $masterModelDetail = \App\Models\SalesOrderDetail::class;
 
   public SalesOrderForm $masterForm;
+  public SalesOrderDetailForm $masterFormDetail;
+
+
+  // public function mount()
+  // {
+  //   $this->edit();
+  // }
 
 
   public function mount()
@@ -80,14 +93,39 @@ class SalesOrderEdit extends Component
       ])->findOrFail($this->id);
 
     if ($masterData) {
-
       $this->masterForm->fill($masterData->toArray());
+    } else {
+      $this->error('Data tidak ditemukan');
+    }
+
+    $this->SalesOrderDetailInitialize();
+  }
+
+
+  public function SalesOrderDetailInitialize()
+  {
+
+    $masterDataDetail = SalesOrderDetail::query()
+      ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
+      ->join('products', 'sales_order_detail.product_id', 'products.id')
+      ->select(
+        'sales_order_detail.*',
+        'products.id as product_id',
+        'products.name',
+      )->where('sales_order_id', $this->id)->first();
+
+
+    if ($masterDataDetail) {
+
+      $this->masterFormDetail->fill($masterDataDetail->toArray());
     } else {
       $this->error('Data tidak ditemukan');
     }
   }
 
-  public function update()
+
+
+  public function updateSalesOrderDetail()
   {
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
@@ -102,24 +140,18 @@ class SalesOrderEdit extends Component
     DB::beginTransaction();
     try {
 
-      $sales_orders = \App\Models\SalesOrder::where('id', $this->id)->update([
-        'date' => $validatedForm['date'],
-        'number' => $validatedForm['number'],
-        'status' => $validatedForm['status'],
+      dd($validatedForm);
+
+      \App\Models\SalesOrderDetail::where('id', $this->id)->update([
+        'selling_price' => $validatedForm['selling_price'],
+        'qty' => $validatedForm['qty'],
         'is_activated' => $validatedForm['is_activated'],
       ]);
 
-      $masterDataCustomer = \App\Models\Customer::find($validatedForm['customer_id']);
-      $masterDataCustomer->update([
-        'id' => $validatedForm['customer_id'],
-        'first_name' => $validatedForm['first_name'],
-        'last_name' => $validatedForm['last_name'],
-        'phone' => $validatedForm['phone'],
-      ]);
 
-      $masterDataEmployee = \App\Models\Employee::find($validatedForm['employee_id']);
-      $masterDataEmployee->update([
-        'name' => $validatedForm['employee_name'],
+      $masterDataProduct = \App\Models\Product::find($validatedForm['product_id']);
+      $masterDataProduct->update([
+        'id' => $validatedForm['product_id'],
       ]);
 
       DB::commit();
@@ -139,41 +171,108 @@ class SalesOrderEdit extends Component
   }
 
 
-  // public function update()
-  // {
+  public function createDetail() {}
 
-  //   $validatedForm = $this->validate(
-  //     $this->masterForm->rules(),
-  //     [],
-  //     $this->masterForm->attributes()
-  //   )['masterForm'];
+  public function editDetail() {}
 
-  //   $masterData = $this->masterModel::findOrFail($this->id);
+  public function updateDetail() {}
+
+  public function deleteDetail() {}
 
 
-  //   unset($validatedForm['customer_id']);
-  //   unset($validatedForm['employee_id']);
-  //   unset($validatedForm['first_name']);
-  //   unset($validatedForm['last_name']);
-  //   unset($validatedForm['employee_name']);
+  public function update()
+  {
+    $validatedForm = $this->validate(
+      $this->masterForm->rules(),
+      [],
+      $this->masterForm->attributes()
+    )['masterForm'];
 
 
-  //   \Illuminate\Support\Facades\DB::beginTransaction();
-  //   try {
+    $masterData = $this->masterModel::findOrFail($this->id);
+
+    $validatedForm['updated_by'] = 'admin';
+
+    DB::beginTransaction();
+    try {
+
+      $sales_orders = \App\Models\SalesOrder::where('id', $this->id)->update([
+        'customer_id' => $validatedForm['customer_id'],
+        'employee_id' => $validatedForm['employee_id'],
+        'date' => $validatedForm['date'],
+        'number' => $validatedForm['number'],
+        'status' => $validatedForm['status'],
+        'is_activated' => $validatedForm['is_activated'],
+        'created_by' => $validatedForm['created_by'],
+        'updated_by' => $validatedForm['updated_by'],
+        'created_at' => $validatedForm['created_at'],
+        'updated_at' => $validatedForm['updated_at'],
+      ]);
 
 
-  //     $validatedForm['updated_by'] = 'admin';
-  //     $masterData->update($validatedForm);
 
-  //     \Illuminate\Support\Facades\DB::commit();
+      DB::commit();
 
-  //     $this->success('Data has been updated');
-  //   } catch (\Throwable $th) {
-  //     \Illuminate\Support\Facades\DB::rollBack();
-  //     $this->error('Data failed to update');
-  //     \Log::error('Store data failed: ' . $th->getMessage());
-  //   }
-  // }
+      $this->success('Data has been updated');
+    } catch (\Throwable $th) {
+      DB::rollBack();
+      $this->error('Data failed to update');
+
+      // Catat log error detail untuk debug
+      \Log::error('Update failed:', [
+        'error' => $th->getMessage(),
+        'validatedForm' => $validatedForm,
+        'id' => $this->id
+      ]);
+    }
+  }
+
+
+
+  #[Computed]
+  public function customers()
+  {
+    return Customer::get()
+      ->map(function ($customer) {
+        return [
+          'id' => $customer->id,
+          'first_name' => $customer->first_name,
+          'last_name' => $customer->last_name,
+          'name' => trim($customer->first_name . ' ' . $customer->last_name),
+        ];
+      })
+      ->toArray();
+  }
+
+
+  #[Computed]
+  public function products()
+  {
+    return Product::get()
+      ->toArray();
+  }
+
+  #[Computed]
+  public function employees()
+  {
+    return Employee::get()
+      ->toArray();
+  }
+
+  #[Computed]
+  public function customer()
+  {
+    $masterData = $this->masterModel::query()
+      ->join('customers', 'sales_orders.customer_id', 'customers.id')
+
+      ->select([
+        'sales_orders.id',
+        'customers.id as customer_id',
+        'customers.first_name as customer_first_name',
+      ])->where('sales_orders.id', $this->id)->first();
+
+    return $masterData;
+  }
 
   public function delete()
   {

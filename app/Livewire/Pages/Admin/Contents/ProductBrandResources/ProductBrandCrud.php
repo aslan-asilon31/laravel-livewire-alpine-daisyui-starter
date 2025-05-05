@@ -77,13 +77,13 @@ class ProductBrandCrud extends Component
 
   public function create()
   {
-    $this->permission($this->basePageName.'-create');
+    $this->permission($this->basePageName . '-create');
     $this->masterForm->reset();
   }
 
   public function store()
   {
-    $this->permission( $this->basePageName.'-create');
+    $this->permission($this->basePageName . '-create');
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -110,7 +110,7 @@ class ProductBrandCrud extends Component
       );
       // ./image_url
 
-  
+
 
       $this->masterModel::create($validatedForm);
       \Illuminate\Support\Facades\DB::commit();
@@ -125,7 +125,7 @@ class ProductBrandCrud extends Component
 
   public function show()
   {
-    $this->permission($this->basePageName.'-show');
+    $this->permission($this->basePageName . '-show');
     $this->isReadonly = true;
     $this->isDisabled = true;
     $masterData = $this->masterModel::findOrFail($this->id);
@@ -134,14 +134,14 @@ class ProductBrandCrud extends Component
 
   public function edit()
   {
-    $this->permission($this->basePageName.'-update');
+    $this->permission($this->basePageName . '-update');
     $masterData = $this->masterModel::findOrFail($this->id);
     $this->masterForm->fill($masterData);
   }
 
   public function update()
   {
-    $this->permission($this->basePageName.'-update');
+    $this->permission($this->basePageName . '-update');
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -184,7 +184,7 @@ class ProductBrandCrud extends Component
 
   public function delete()
   {
-    $this->permission($this->basePageName.'-delete');
+    $this->permission($this->basePageName . '-delete');
 
     $masterData = $this->masterModel::findOrFail($this->id);
 

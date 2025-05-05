@@ -66,16 +66,7 @@ class SalesOrderList extends Component
     ];
   }
 
-  #[Computed]
-  public function row_decoration(): array
-  {
 
-    return [
-      'bg-red-100' => fn(SalesOrder $sales_order) => $sales_order->status == 'failed',
-      'bg-yellow-100' => fn(SalesOrder $sales_order) => $sales_order->status == 'pending',
-      'bg-green-100 ' => fn(SalesOrder $sales_order) => $sales_order->status == 'settlement'
-    ];
-  }
 
   #[Computed]
   public function rows(): LengthAwarePaginator
