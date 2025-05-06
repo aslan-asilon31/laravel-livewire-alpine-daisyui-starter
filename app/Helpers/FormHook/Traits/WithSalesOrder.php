@@ -12,7 +12,7 @@ use App\Models\SalesOrderDetail;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 
-trait WithSalesOrderHook
+trait WithSalesOrder
 {
 
 
