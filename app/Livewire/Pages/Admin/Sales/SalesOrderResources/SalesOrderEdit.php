@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Pages\Admin\Sales\SalesOrderResources;
 
-use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
-use App\Livewire\Pages\Admin\Sales\SalesOrderDetailResources\Forms\SalesOrderDetailForm;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\Employee;
@@ -11,12 +9,12 @@ use App\Models\Product;
 use App\Models\SalesOrderDetail;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Collection;
 
 class SalesOrderEdit extends Component
 {
 
   public string $selectedTab = 'sales-order-tab';
-
 
   public function render()
   {
@@ -25,6 +23,7 @@ class SalesOrderEdit extends Component
   }
 
   use \Mary\Traits\Toast;
+  use \App\Helpers\FormHook\Traits\WithSalesOrderHook;
 
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'sales-order';
@@ -39,28 +38,6 @@ class SalesOrderEdit extends Component
   #[\Livewire\Attributes\Locked]
   private string $baseImageName = 'sales_order_image';
 
-  #[\Livewire\Attributes\Locked]
-  public string $id = '';
-
-  #[\Livewire\Attributes\Locked]
-  public string $readonly = '';
-
-  #[\Livewire\Attributes\Locked]
-  public bool $isReadonly = false;
-
-  #[\Livewire\Attributes\Locked]
-  public bool $isDisabled = false;
-
-  #[\Livewire\Attributes\Locked]
-  public array $options = [];
-
-  #[\Livewire\Attributes\Locked]
-  protected $masterModel = \App\Models\SalesOrder::class;
-  protected $masterModelDetail = \App\Models\SalesOrderDetail::class;
-
-  public SalesOrderForm $masterForm;
-  public SalesOrderDetailForm $masterFormDetail;
-
 
   // public function mount()
   // {
@@ -71,7 +48,7 @@ class SalesOrderEdit extends Component
   public function mount()
   {
 
-    $masterData = $this->masterModel::query()
+    $masterData = $this->headerModel::query()
       ->join('customers', 'sales_orders.customer_id', 'customers.id')
       ->join('employees', 'sales_orders.employee_id', 'employees.id')
       ->select([
@@ -92,36 +69,47 @@ class SalesOrderEdit extends Component
         'sales_orders.is_activated',
       ])->findOrFail($this->id);
 
-    if ($masterData) {
-      $this->masterForm->fill($masterData->toArray());
-    } else {
-      $this->error('Data tidak ditemukan');
-    }
+    $this->masterForm->fill($masterData->toArray());
 
-    $this->SalesOrderDetailInitialize();
+    // $this->SalesOrderDetailInitialize();
+
+    $this->searchCustomer();
+    $this->searchEmployee();
+    $this->searchProduct();
   }
 
 
-  public function SalesOrderDetailInitialize()
+
+
+  public function search(string $value = '')
   {
 
-    $masterDataDetail = SalesOrderDetail::query()
-      ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
-      ->join('products', 'sales_order_detail.product_id', 'products.id')
-      ->select(
-        'sales_order_detail.*',
-        'products.id as product_id',
-        'products.name',
-      )->where('sales_order_id', $this->id)->first();
-
-
-    if ($masterDataDetail) {
-
-      $this->masterFormDetail->fill($masterDataDetail->toArray());
-    } else {
-      $this->error('Data tidak ditemukan');
-    }
+    $data = Customer::query()
+      ->select([
+        'customers.id',
+        DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as name"),
+      ])->where('customers.first_name', 'like', "%$value%")
+      ->orderBy('customers.created_at')
+      ->get();
   }
+
+
+
+
+  // public function SalesOrderDetailInitialize()
+  // {
+
+  //   $masterDataDetail = SalesOrderDetail::query()
+  //     ->join('sales_orders', 'sales_order_detail.sales_order_id', 'sales_orders.id')
+  //     ->join('products', 'sales_order_detail.product_id', 'products.id')
+  //     ->select(
+  //       'sales_order_detail.*',
+  //       'products.id as product_id',
+  //       'products.name',
+  //     )->where('sales_order_id', $this->id)->first();
+
+  //   $this->masterFormDetail->fill($masterDataDetail?->toArray() ?? []);
+  // }
 
 
 
@@ -133,7 +121,7 @@ class SalesOrderEdit extends Component
       $this->masterForm->attributes()
     )['masterForm'];
 
-    $masterData = $this->masterModel::findOrFail($this->id);
+    $masterData = $this->headerModel::findOrFail($this->id);
 
     $validatedForm['updated_by'] = 'admin';
 
@@ -171,13 +159,9 @@ class SalesOrderEdit extends Component
   }
 
 
-  public function createDetail() {}
 
-  public function editDetail() {}
 
-  public function updateDetail() {}
 
-  public function deleteDetail() {}
 
 
   public function update()
@@ -189,7 +173,7 @@ class SalesOrderEdit extends Component
     )['masterForm'];
 
 
-    $masterData = $this->masterModel::findOrFail($this->id);
+    $masterData = $this->headerModel::findOrFail($this->id);
 
     $validatedForm['updated_by'] = 'admin';
 
@@ -200,16 +184,10 @@ class SalesOrderEdit extends Component
         'customer_id' => $validatedForm['customer_id'],
         'employee_id' => $validatedForm['employee_id'],
         'date' => $validatedForm['date'],
-        'number' => $validatedForm['number'],
-        'status' => $validatedForm['status'],
         'is_activated' => $validatedForm['is_activated'],
-        'created_by' => $validatedForm['created_by'],
-        'updated_by' => $validatedForm['updated_by'],
-        'created_at' => $validatedForm['created_at'],
-        'updated_at' => $validatedForm['updated_at'],
+        'updated_by' => 'admin',
+        'updated_at' => now(),
       ]);
-
-
 
       DB::commit();
 
@@ -262,7 +240,7 @@ class SalesOrderEdit extends Component
   #[Computed]
   public function customer()
   {
-    $masterData = $this->masterModel::query()
+    $masterData = $this->headerModel::query()
       ->join('customers', 'sales_orders.customer_id', 'customers.id')
 
       ->select([
@@ -277,7 +255,7 @@ class SalesOrderEdit extends Component
   public function delete()
   {
 
-    $masterData = $this->masterModel::findOrFail($this->id);
+    $masterData = $this->headerModel::findOrFail($this->id);
 
     \Illuminate\Support\Facades\DB::beginTransaction();
     try {

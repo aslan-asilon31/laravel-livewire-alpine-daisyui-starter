@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 use App\Models\SalesOrderDetail;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Collection;
+
 
 class SalesOrderCreate extends Component
 {
@@ -23,6 +25,7 @@ class SalesOrderCreate extends Component
   }
 
   use \Mary\Traits\Toast;
+  use \App\Helpers\FormHook\Traits\WithSalesOrderHook;
 
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'sales-order';
@@ -37,36 +40,13 @@ class SalesOrderCreate extends Component
   #[\Livewire\Attributes\Locked]
   private string $baseImageName = 'sales_order_image';
 
-  #[\Livewire\Attributes\Locked]
-  public string $id = '';
 
-  #[\Livewire\Attributes\Locked]
-  public string $readonly = '';
-
-  #[\Livewire\Attributes\Locked]
-  public bool $isReadonly = false;
-
-  #[\Livewire\Attributes\Locked]
-  public bool $isDisabled = false;
-
-  #[\Livewire\Attributes\Locked]
-  public array $options = [];
-
-  #[\Livewire\Attributes\Locked]
-  protected $headerModel = \App\Models\SalesOrder::class;
-  protected $detailModel = \App\Models\SalesOrderDetail::class;
-
-  public array $validatedForm = [];
-  public array $validatedFormDetail = [];
-  public bool $modalDetail = false;
-  public array $details = [];
-  public  $detailId = null;
-  public array $headers = [];
-
-  public SalesOrderForm $masterForm;
-  public SalesOrderDetailForm $masterFormDetail;
-
-  public function mount() {}
+  public function mount()
+  {
+    $this->searchEmployee();
+    $this->searchProduct();
+    $this->searchCustomer();
+  }
 
   public function initialize() {}
 
@@ -75,6 +55,7 @@ class SalesOrderCreate extends Component
     $this->masterForm->reset();
     $this->masterFormDetail->reset();
   }
+
 
   public function store()
   {
@@ -91,8 +72,6 @@ class SalesOrderCreate extends Component
       $this->validatedForm['updated_by'] = 'admin';
       $this->validatedForm['status'] = 'pending';
       $this->validatedForm['number'] = 'tes1';
-
-
 
       $salesOrder = $this->headerModel::create($this->validatedForm);
       $detailData = $this->detailModel::insert([
@@ -120,101 +99,6 @@ class SalesOrderCreate extends Component
     }
   }
 
-
-  public function createDetail()
-  {
-
-    if ($this->detailId) {
-      $this->editDetail($this->detailId);
-    }
-
-    $this->masterFormDetail->reset();
-    $this->modalDetail = true;
-
-    if ($this->detailId) {
-      $this->editDetail($this->detailId);
-    }
-  }
-
-  public function editDetail($detailId)
-  {
-    $this->detailId = $detailId;
-    $detail = collect($this->details)->firstWhere('id', $detailId);
-    if ($detail) {
-      $this->masterFormDetail->fill($detail);
-      $this->modalDetail = true;
-    } else {
-      session()->flash('error', 'Detail tidak ditemukan.');
-    }
-  }
-
-
-  public function updateDetail()
-  {
-    $validated = $this->validate(
-      $this->masterFormDetail->rules(),
-      [],
-      $this->masterFormDetail->attributes()
-    )['masterFormDetail'];
-
-    foreach ($this->details as $index => $detail) {
-      if ($detail['id'] === $this->detailId) {
-        $validated['id'] = $this->detailId;
-        $this->details[$index] = $validated;
-        break;
-      }
-    }
-
-    $this->reset(['modalDetail', 'detailId']);
-  }
-
-
-  public function deleteDetail($id)
-  {
-    foreach ($this->details as $index => $detail) {
-      if ($detail['id'] === $id) {
-        unset($this->details[$index]);
-        // Re-index array agar $loop->iteration tetap berurutan di tampilan
-        $this->details = array_values($this->details);
-        break;
-      }
-    }
-
-    session()->flash('message', 'Detail berhasil dihapus.');
-  }
-
-
-  public function storeDetail()
-  {
-    if ($this->detailId) {
-      $this->editDetail($this->detailId);
-    }
-
-    $this->validatedFormDetail = $this->validate(
-      $this->masterFormDetail->rules(),
-      [],
-      $this->masterFormDetail->attributes()
-    )['masterFormDetail'];
-
-
-    try {
-
-      $this->validatedFormDetail['created_by'] = 'admin';
-      $this->validatedFormDetail['updated_by'] = 'admin';
-
-      $this->validatedFormDetail['created_at'] = now();
-      $this->validatedFormDetail['updated_at'] = now();
-
-      $this->details[] = $this->validatedFormDetail;
-
-      $this->modalDetail = false;
-
-      $this->success('Data has been stored');
-    } catch (\Throwable $th) {
-      \Log::error('Data failed to store: ' . $th->getMessage());
-      $this->error('Data failed to store');
-    }
-  }
 
 
   #[Computed]

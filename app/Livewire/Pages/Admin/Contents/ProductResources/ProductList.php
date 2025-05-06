@@ -17,6 +17,8 @@ class ProductList extends Component
   public string $title = "Products";
   public string $url = "/products";
 
+
+
   #[\Livewire\Attributes\Locked]
   public $id;
 

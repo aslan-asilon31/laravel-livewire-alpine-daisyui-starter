@@ -63,6 +63,7 @@ class SalesOrderDetailEdit extends Component
         'products.name',
       )->findOrFail($this->id);
 
+    dd($masterData);
     if ($masterData) {
 
       $this->masterForm->fill($masterData->toArray());

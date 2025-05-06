@@ -1,5 +1,4 @@
 <div>
-
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 
@@ -8,32 +7,30 @@
 
       <div class="grid grid-cols-2 mb-4">
         <div>
-
           <x-button label="List" link="{{ $url }}" class="btn-ghost btn-outline" />
+        </div>
 
-        </div>
-        <div class="text-right">
-          <x-button label="Delete" wire:click="delete" wire:confirm="Apakah kamu yakin ingin menghapus data ini?"
-            class="btn-ghost btn-outline text-red-500" />
-        </div>
       </div>
 
       <input wire:model="masterForm.employee_id" type="hidden" />
       <input wire:model="masterForm.customer_id" type="hidden" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
         <div class="mb-3">
-          <x-choices label="Customer" wire:model="masterForm.customer_id" :options="$this->customers()" single clearable />
-        </div>
 
+          <x-choices label="Customer" wire:model="masterForm.customer_id" :options="$customersSearchable"
+            placeholder="Search customer..." search-function="searchCustomer" no-result-text="Data tidak ditemukan !"
+            single searchable />
+
+        </div>
 
         <div class="mb-3">
           <x-datepicker label="Date" wire:model="masterForm.date" icon="o-calendar" />
         </div>
 
         <div class="mb-3">
-          <x-select label="Employee" wire:model="masterForm.employee_id" :options="$this->employees()" single clearable />
+
+          <x-choices label="Employee" wire:model="masterForm.employee_id" :options="$employeesSearchable" placeholder="Search ..."
+            search-function="searchEmployee" no-result-text="Data tidak ditemukan !" single searchable />
         </div>
 
         <div class="mb-3">
@@ -42,8 +39,7 @@
         </div>
       </div>
 
-
-      <x-button label="Tambah Detail Sales Order" class="btn-success text-white" @click="$wire.createDetail" />
+      <x-button label="Tambah Detail Sales Order" class="btn-success text-white" wire:click="createDetail" />
       <table class="table-auto w-full border border-gray-300 text-left text-sm mt-8">
         <thead class="bg-gray-100">
           <tr>
@@ -52,6 +48,7 @@
             <th class="border px-4 py-2">Product Name</th>
             <th class="border px-4 py-2">Selling Price</th>
             <th class="border px-4 py-2">Quantity</th>
+            <th class="border px-4 py-2">Is Activated</th>
           </tr>
         </thead>
         <tbody>
@@ -60,7 +57,7 @@
               <td class="border px-4 py-2">
                 <x-dropdown class="btn-xs">
                   <x-menu-item title="Edit" icon="o-pencil-square" wire:click="editDetail('{{ $row['id'] }}')" />
-                  <x-menu-item title="Delete" icon="o-pencil-square" wire:click="deleteDetail('{{ $row['id'] }}')"
+                  <x-menu-item title="Delete" icon="o-trash" wire:click="deleteDetail('{{ $row['id'] }}')"
                     wire:confirm="are you sure ?" />
                 </x-dropdown>
               </td>
@@ -68,6 +65,7 @@
               <td class="border px-4 py-2">{{ $row['product_name'] ?? '' }}</td>
               <td class="border px-4 py-2">{{ $row['qty'] ?? '' }}</td>
               <td class="border px-4 py-2">{{ $row['selling_price'] ?? '' }}</td>
+              <td class="border px-4 py-2">{{ $row['is_activated'] ?? '' }}</td>
             </tr>
           @empty
             <tr>
@@ -89,13 +87,15 @@
 
 
   <x-modal wire:model="modalDetail" title="Sales Order Detail" class="backdrop-blur">
+
     <x-form wire:submit="{{ $detailId ? 'updateDetail' : 'storeDetail' }}">
       <div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div class="mb-3">
-            <x-select label="Product" wire:model="masterFormDetail.product_id" :options="$this->products()" option-label="name"
-              option-value="id" icon="o-user" />
+            <x-choices label="Product" wire:model="masterFormDetail.product_id" :options="$productsSearchable"
+              placeholder="Search ..." search-function="searchProduct" no-result-text="Data tidak ditemukan !" single
+              searchable />
           </div>
 
           <div class="mb-3">
@@ -109,10 +109,11 @@
           </div>
 
           <div class="mb-3">
-            <x-choices-offline wire:model="masterFormDetail.is_activated" label="Is Activated" :options="[['id' => 0, 'name' => 'Inactive'], ['id' => 1, 'name' => 'Active']]" single
-              searchable />
-          </div>
 
+            <x-choices-offline label="Is Activated" wire:model="masterFormDetail.is_activated" :options="[['id' => 0, 'name' => 'Inactive'], ['id' => 1, 'name' => 'Active']]"
+              placeholder="Search ..." single clearable searchable />
+
+          </div>
 
         </div>
 
