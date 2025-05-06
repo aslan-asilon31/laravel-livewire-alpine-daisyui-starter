@@ -17,6 +17,8 @@ class SalesOrderCrud extends Component
   use \Livewire\WithFileUploads;
   use \App\Helpers\ImageUpload\Traits\WithImageUpload;
   use \Mary\Traits\Toast;
+  use \App\Helpers\FormHook\Traits\WithSalesOrder;
+
 
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'sales-order';
@@ -83,7 +85,7 @@ class SalesOrderCrud extends Component
 
   public function create()
   {
-
+    dd('page create');
     $this->masterForm->reset();
   }
 

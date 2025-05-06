@@ -12,7 +12,8 @@ Route::get('/customers/edit/{id}', \App\Livewire\Pages\Admin\Sales\CustomerResou
 Route::get('/customers/show/{id}/{readonly}', \App\Livewire\Pages\Admin\Sales\CustomerResources\CustomerShow::class)->where('readonly', 'readonly')->name('customer.show');
 
 Route::get('/sales-orders', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderList::class)->name('sales-orders.list');
-Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCreate::class)->name('sales-orders.create');
+// Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCreate::class)->name('sales-orders.create');
+Route::get('/sales-orders/create', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderCrud::class)->name('sales-orders.create');
 Route::get('/sales-orders/edit/{id}', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderEdit::class)->name('sales-orders.edit');
 Route::get('/sales-orders/show/{id}/readonly', \App\Livewire\Pages\Admin\Sales\SalesOrderResources\SalesOrderShow::class)->name('sales-orders.show');
 

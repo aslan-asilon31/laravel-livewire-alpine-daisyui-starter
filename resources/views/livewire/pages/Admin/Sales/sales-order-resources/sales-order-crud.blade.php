@@ -8,28 +8,6 @@
       </div>
     </div>
 
-    <x-form wire:submit="{{ $detailIndex >= 0 ? 'updateDetail' : 'storeDetail' }}">
-      <x-choices label="Product" wire:model.live="detailForm.product_id" :options="$productsSearchable" placeholder="Product ..."
-        search-function="searchProduct" single searchable />
-
-      <div>
-        Product Name : {{ $detailForm['product_name'] }}
-      </div>
-
-      <x-input label="Selling Price" wire:model="detailForm.selling_price" placeholder="Selling Price" />
-
-      <x-input label="Quantity" wire:model="detailForm.qty" placeholder="Qty" />
-
-
-      <div class="text-center mt-3">
-        <x-errors class="text-white mb-3" />
-        <x-button type="submit" label="{{ $detailIndex >= 0 ? 'Update' : 'Store' }} Detail {{ $detailIndex }}"
-          class="btn-success btn-sm text-white" />
-      </div>
-    </x-form>
-
-    <hr />
-
 
     <x-form wire:submit="{{ $id ? 'update' : 'store' }}">
 
@@ -96,5 +74,29 @@
         <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
       </div>
     </x-form>
+
+
+    <x-modal wire:model="modalDetail" title="Sales Order Detail" class="backdrop-blur">
+      <x-form wire:submit="{{ $detailIndex >= 0 ? 'updateDetail' : 'storeDetail' }}">
+        <x-choices label="Product" wire:model.live="detailForm.product_id" :options="$productsSearchable" placeholder="Product ..."
+          search-function="searchProduct" single searchable />
+  
+        <div>
+          Product Name : {{ $detailForm['product_name'] }}
+        </div>
+  
+        <x-input label="Selling Price" wire:model="detailForm.selling_price" placeholder="Selling Price" />
+  
+        <x-input label="Quantity" wire:model="detailForm.qty" placeholder="Qty" />
+  
+  
+        <div class="text-center mt-3">
+          <x-errors class="text-white mb-3" />
+          <x-button type="submit" label="{{ $detailIndex >= 0 ? 'Update' : 'Store' }} Detail {{ $detailIndex }}"
+            class="btn-success btn-sm text-white" />
+        </div>
+      </x-form>
+    </x-modal>
+    
   </x-card>
 </div>

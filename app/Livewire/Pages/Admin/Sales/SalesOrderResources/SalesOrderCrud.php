@@ -9,6 +9,11 @@ use Livewire\Component;
 
 class SalesOrderCrud extends Component
 {
+
+  use \App\Helpers\FormHook\Traits\WithSalesOrder;
+  use \Mary\Traits\Toast;
+
+
   public function render()
   {
     return view('livewire.pages.admin.sales.sales-order-resources.sales-order-crud')

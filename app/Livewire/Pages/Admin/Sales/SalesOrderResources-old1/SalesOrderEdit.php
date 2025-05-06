@@ -23,7 +23,6 @@ class SalesOrderEdit extends Component
   }
 
   use \Mary\Traits\Toast;
-  use \App\Helpers\FormHook\Traits\WithSalesOrderHook;
 
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'sales-order';

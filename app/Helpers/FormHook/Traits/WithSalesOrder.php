@@ -17,9 +17,6 @@ trait WithSalesOrder
 
 
     #[\Livewire\Attributes\Locked]
-    public string $id = '';
-
-    #[\Livewire\Attributes\Locked]
     public string $readonly = '';
 
     #[\Livewire\Attributes\Locked]
