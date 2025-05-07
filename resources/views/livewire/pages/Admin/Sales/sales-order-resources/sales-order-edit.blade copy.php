@@ -12,10 +12,6 @@
       <x-choices label="Product" wire:model.live="detailForm.product_id" :options="$productsSearchable" placeholder="Product ..."
         search-function="searchProduct" single searchable />
 
-      <div>
-        Product Name : {{ $detailForm['product_name'] }}
-      </div>
-
       <x-input label="Selling Price" wire:model="detailForm.selling_price" placeholder="Selling Price" />
 
       <x-input label="Quantity" wire:model="detailForm.qty" placeholder="Qty" />
@@ -68,23 +64,23 @@
         </thead>
         <tbody>
           @forelse ($details as $index => $row)
-            <tr>
-              <td class="border px-4 py-2">
-                <x-dropdown class="btn-xs">
-                  <x-menu-item title="Edit" icon="o-pencil-square" wire:click="editDetail({{ $index }})" />
-                  <x-menu-item title="Delete" icon="o-trash" wire:click="deleteDetail({{ $index }})"
-                    wire:confirm="are you sure ?" />
-                </x-dropdown>
-              </td>
-              <td class="border px-4 py-2 text-center">{{ $loop->iteration }}</td>
-              <td class="border px-4 py-2">{{ $row['product_name'] ?? '' }}</td>
-              <td class="border px-4 py-2">{{ $row['selling_price'] ?? '' }}</td>
-              <td class="border px-4 py-2">{{ $row['qty'] ?? '' }}</td>
-            </tr>
+          <tr>
+            <td class="border px-4 py-2">
+              <x-dropdown class="btn-xs">
+                <x-menu-item title="Edit" icon="o-pencil-square" wire:click="editDetail({{ $index }})" />
+                <x-menu-item title="Delete" icon="o-trash" wire:click="deleteDetail({{ $index }})"
+                  wire:confirm="are you sure ?" />
+              </x-dropdown>
+            </td>
+            <td class="border px-4 py-2 text-center">{{ $loop->iteration }}</td>
+            <td class="border px-4 py-2">{{ $row['product_name'] ?? '' }}</td>
+            <td class="border px-4 py-2">{{ $row['selling_price'] ?? '' }}</td>
+            <td class="border px-4 py-2">{{ $row['qty'] ?? '' }}</td>
+          </tr>
           @empty
-            <tr>
-              <td class="border px-4 py-2 text-center" colspan="100%">No data available.</td>
-            </tr>
+          <tr>
+            <td class="border px-4 py-2 text-center" colspan="100%">No data available.</td>
+          </tr>
           @endforelse
 
         </tbody>

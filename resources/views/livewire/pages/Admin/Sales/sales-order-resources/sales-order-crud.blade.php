@@ -9,7 +9,8 @@
     </div>
 
 
-    <x-form wire:submit="{{ $id ? 'update' : 'store' }}">
+    <x-form wire:submit="{{ $id ? 'update' : 'store' }}"
+      wire:confirm="are you sure to this {{ $id ? 'update' : 'store' }} data ?">
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-3">
@@ -51,7 +52,7 @@
                 <x-dropdown class="btn-xs">
                   <x-menu-item title="Edit" icon="o-pencil-square" wire:click="editDetail({{ $index }})" />
                   <x-menu-item title="Delete" icon="o-trash" wire:click="deleteDetail({{ $index }})"
-                    wire:confirm="are you sure ?" />
+                    wire:confirm="are you sure to delete this data ?" />
                 </x-dropdown>
               </td>
               <td class="border px-4 py-2 text-center">{{ $loop->iteration }}</td>
@@ -68,35 +69,27 @@
         </tbody>
       </table>
 
-
       <div class="text-center mt-3">
         <x-errors class="text-white mb-3" />
         <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
       </div>
     </x-form>
-
-
-    <x-modal wire:model="modalDetail" title="Sales Order Detail" class="backdrop-blur">
-      <x-form wire:submit="{{ $detailIndex >= 0 ? 'updateDetail' : 'storeDetail' }}">
-        <x-choices label="Product" wire:model.live="detailForm.product_id" :options="$productsSearchable" placeholder="Product ..."
-          search-function="searchProduct" single searchable />
-  
-        <div>
-          Product Name : {{ $detailForm['product_name'] }}
-        </div>
-  
-        <x-input label="Selling Price" wire:model="detailForm.selling_price" placeholder="Selling Price" />
-  
-        <x-input label="Quantity" wire:model="detailForm.qty" placeholder="Qty" />
-  
-  
-        <div class="text-center mt-3">
-          <x-errors class="text-white mb-3" />
-          <x-button type="submit" label="{{ $detailIndex >= 0 ? 'Update' : 'Store' }} Detail {{ $detailIndex }}"
-            class="btn-success btn-sm text-white" />
-        </div>
-      </x-form>
-    </x-modal>
-    
   </x-card>
+
+  <x-modal wire:model="modalDetail" title="Sales Order Detail" class="backdrop-blur" without-trap-focus>
+    <x-form wire:submit="{{ $detailId ? 'updateDetail' : 'storeDetail' }}"
+      wire:confirm="are you sure to {{ $detailId ? 'Update' : 'Store' }} this data ?">
+      <x-choices label="Product" wire:model.live="detailForm.product_id" :options="$productsSearchable" placeholder="Product ..."
+        search-function="searchProduct" single searchable />
+
+      <x-input label="Selling Price" wire:model="detailForm.selling_price" placeholder="Selling Price" />
+
+      <x-input label="Quantity" wire:model="detailForm.qty" placeholder="Qty" />
+
+      <div class="text-center mt-3">
+        <x-errors class="text-white mb-3" />
+        <x-button type="submit" label="{{ $detailId ? 'Update' : 'Store' }}" class="btn-success btn-sm text-white" />
+      </div>
+    </x-form>
+  </x-modal>
 </div>

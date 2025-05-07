@@ -2,8 +2,7 @@
 
 namespace App\Helpers\FormHook\Traits;
 
-use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
-use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderDetailForm;
+
 use Illuminate\Support\Collection;
 use App\Models\Customer;
 use App\Models\Employee;
@@ -11,9 +10,18 @@ use App\Models\Product;
 use App\Models\SalesOrderDetail;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Str;
+use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
+use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderDetailForm;
+
 
 trait WithSalesOrder
 {
+
+    public SalesOrderForm $headerForm;
+    public SalesOrderDetailForm $detailForm;
+
+    public int $detailIndex;
 
 
     #[\Livewire\Attributes\Locked]
@@ -39,8 +47,8 @@ trait WithSalesOrder
     public  $detailId = null;
     public array $headers = [];
 
-    public SalesOrderForm $masterForm;
-    public SalesOrderDetailForm $masterFormDetail;
+
+
 
     public Collection $customersSearchable;
     public Collection $employeesSearchable;
@@ -48,171 +56,129 @@ trait WithSalesOrder
 
     public function openModal()
     {
+        $this->detailForm->reset();
         return $this->modalDetail = true;
     }
 
     public function closeModal()
     {
         return $this->modalDetail = false;
+        $this->detailForm->reset();
     }
-
-    public function searchCustomer(string $value = '')
-    {
-        $this->validatedForm = $this->validate(
-            $this->masterForm->rules(),
-            [],
-            $this->masterForm->attributes()
-        )['masterForm'];
-
-        $selectedOption = Customer::where('id', $this->validatedForm['customer_id'])->get();
-
-        $this->customersSearchable = Customer::query()
-            ->select([
-                'customers.id',
-                DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as name"),
-            ])->where('customers.first_name', 'like', "%$value%")
-            ->orderBy('customers.created_at')
-            ->get()
-            ->merge($selectedOption);
-    }
-
-    public function searchEmployee(string $value = '')
-    {
-        $this->validatedForm = $this->validate(
-            $this->masterForm->rules(),
-            [],
-            $this->masterForm->attributes()
-        )['masterForm'];
-
-        $selectedOption = Employee::where('id', $this->validatedForm['employee_id'])->get();
-
-        $this->employeesSearchable = Employee::query()
-            ->select([
-                'employees.id',
-                'employees.name',
-            ])->where('employees.name', 'like', "%$value%")
-            ->orderBy('employees.created_at')
-            ->get()
-            ->merge($selectedOption);
-    }
-
-    public function searchProduct(string $value = '')
-    {
-        $this->validatedForm = $this->validate(
-            $this->masterFormDetail->rules(),
-            [],
-            $this->masterFormDetail->attributes()
-        )['masterFormDetail'];
-
-        $selectedOption = Product::where('id', $this->validatedForm['id'])->get();
-
-        $this->productsSearchable = Product::query()
-            ->select([
-                'products.*',
-            ])->where('products.name', 'like', "%$value%")
-            ->orderBy('products.created_at')
-            ->get()
-            ->merge($selectedOption);
-    }
-
 
 
     public function createDetail()
     {
-        $this->masterFormDetail->selling_price = 0;
-        $this->masterFormDetail->qty = 0;
-        // $this->masterFormDetail->reset();
+        $this->detailForm->selling_price = 0;
+        $this->detailForm->qty = 0;
+        $this->detailForm->product_name = '';
         $this->openModal();
     }
 
     public function storeDetail()
     {
-        if ($this->detailId) {
-            $this->editDetail($this->detailId);
-        }
-
-        $this->validatedFormDetail = $this->validate(
-            $this->masterFormDetail->rules(),
+        $this->detailForm->id = str()->orderedUuid()->toString();
+        $this->detailForm->sales_order_id = str()->orderedUuid()->toString();
+        $this->detailForm->product_name = $this->getSelectedProductName();
+        $this->validatedDetailForm = $this->validate(
+            $this->detailForm->rules(),
             [],
-            $this->masterFormDetail->attributes()
-        )['masterFormDetail'];
+            $this->detailForm->attributes()
+        )['detailForm'];
 
-
-        try {
-
-            $this->validatedFormDetail['created_by'] = 'admin';
-            $this->validatedFormDetail['updated_by'] = 'admin';
-
-            $this->validatedFormDetail['created_at'] = now();
-            $this->validatedFormDetail['updated_at'] = now();
-
-            $this->details[] = $this->validatedFormDetail;
-
-            $this->closeModal();
-
-
-            $this->success('Data has been stored');
-        } catch (\Throwable $th) {
-            \Log::error('Data failed to store: ' . $th->getMessage());
-            $this->error('Data failed to store');
-        }
+        $this->details[] =  $this->validatedDetailForm;
+        $this->modalDetail = false;
+        $this->reset('detailForm');
+        $this->success('Sales Order Detail Created.');
     }
 
-    public function editDetail($detailId)
+    public function editDetail($detailIndex)
     {
-        $this->detailId = $detailId;
+        $detailData = $this->details[$detailIndex];
+        $this->detailForm->fill($detailData);
+        $this->detailId = $this->detailForm->id;
 
-        $detail = $this->detailModel::where('id', $detailId)->first();
-        if ($detail) {
-            $this->masterFormDetail->reset();
-            $this->masterFormDetail->fill($detail);
-            $this->openModal();
-        } else {
-            $this->error('Data not found');
-
-            session()->flash('error', 'Detail tidak ditemukan.');
-        }
+        $this->detailIndex = $detailIndex;
+        return $this->modalDetail = true;
     }
 
     public function updateDetail()
     {
-
-        $validatedForm = $this->validate(
-            $this->masterFormDetail->rules(),
+        $validatedDetailForm = $this->validate(
+            $this->detailForm->rules(),
             [],
-            $this->masterFormDetail->attributes()
-        )['masterFormDetail'];
+            $this->detailForm->attributes()
+        )['detailForm'];
 
-        $masterData = $this->detailModel::findOrFail($this->detailId);
+        $this->details[$this->detailIndex] = $this->detailForm->toArray();
 
-        try {
-
-            $validatedForm['updated_by'] = 'admin';
-
-            $masterData->update($validatedForm);
-
-            \Illuminate\Support\Facades\DB::commit();
-
-            $this->success('Data has been updated');
-        } catch (\Throwable $e) {
-            \Log::error('Data failed : ' . $e->getMessage());
-
-            \Illuminate\Support\Facades\DB::rollBack();
-            $this->error('Data failed to update');
-        }
-
-
+        $this->reset(['detailForm', 'detailIndex']);
         $this->modalDetail = false;
+        $this->success('Sales Order Detail Updated.');
     }
 
-    public function deleteDetail($detailId)
+    public function deleteDetail($detailIndex)
     {
-        $this->detailId = $detailId;
-        $detail = $this->detailModel::find($this->detailId);
-        if (!$detail) {
-            $this->error('Data failed to delete');
-        }
-        $detail->delete();
-        $this->success('Data success to delete');
+        unset($this->details[$detailIndex]);
+        $this->details = array_values($this->details);
+        $this->success('Sales Order Detail Created.');
     }
+
+
+    // hook detail
+
+
+    public function getSelectedProductName()
+    {
+        $productId = $this->detailForm->product_id ?? null;
+        if (!$productId) {
+            return null;
+        }
+
+        $product = \App\Models\Product::find($productId);
+
+        return $product ? $product->name : null;
+    }
+
+    public function searchProduct(string $value = '')
+    {
+        $selectedOption = \App\Models\Product::where('id', $this->detailForm->product_id ?? null)->get();
+
+        $this->productsSearchable = \App\Models\Product::query()
+            ->where('name', 'like', "%$value%")
+            ->orderBy('name')
+            ->get()
+            ->merge($selectedOption);
+    }
+
+    public function updatedDetailFormProductId($productId)
+    {
+        $product = \App\Models\Product::findOrFail($productId)->toArray();
+        $this->detailForm->selling_price = $product['selling_price'];
+        $this->detailForm->qty = 1;
+    }
+
+
+    // hook header
+    public function searchEmployee(string $value = '')
+    {
+        $selectedOption = \App\Models\Employee::where('id', $this->headerForm->employee_id)->get();
+
+        $this->employeesSearchable = \App\Models\Employee::query()
+            ->where('name', 'like', "%$value%")
+            ->orderBy('name')
+            ->get()
+            ->merge($selectedOption);
+    }
+
+    public function searchCustomer(string $value = '')
+    {
+        $selectedOption = \App\Models\Customer::where('id', $this->headerForm->customer_id)->get();
+        $this->customersSearchable = \App\Models\Customer::query()
+            ->where('first_name', 'like', "%$value%")
+            ->orderBy('created_at')
+            ->get()
+            ->merge($selectedOption);
+    }
+    // ./hook header
 }

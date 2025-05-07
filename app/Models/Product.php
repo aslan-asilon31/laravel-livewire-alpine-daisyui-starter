@@ -20,6 +20,7 @@ class Product extends Model
     'product_category_first_id',
     'name',
     'selling_price',
+    'qty',
     'availability',
     'image_url',
     'created_by',
