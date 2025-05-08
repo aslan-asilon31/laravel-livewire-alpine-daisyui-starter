@@ -4,10 +4,13 @@
 
     <div class="grid grid-cols-2 mb-4">
       <div>
-        <x-button label="List" link="{{ $url }}" class="btn-ghost btn-outline" />
+        <x-button label="List" link="/sales-orders" class="btn-ghost btn-outline" />
+        @if ($id)
+          <x-button label="Delete" wire:click="delete" class="btn-error btn-outline" />
+        @endif
       </div>
-    </div>
 
+    </div>
 
     <x-form wire:submit="{{ $id ? 'update' : 'store' }}"
       wire:confirm="are you sure to this {{ $id ? 'update' : 'store' }} data ?">
@@ -15,25 +18,27 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-3">
           <x-choices label="Employee" wire:model="headerForm.employee_id" :options="$employeesSearchable" placeholder="Employee ..."
-            search-function="searchEmployee" single searchable />
+            search-function="searchEmployee" single searchable :disabled="$isDisabled" />
         </div>
 
         <div class="mb-3">
           <x-choices label="Customer" wire:model="headerForm.customer_id" :options="$customersSearchable" placeholder="Customer ..."
-            search-function="searchCustomer" option-value="id" option-label="first_name" single searchable />
+            search-function="searchCustomer" option-value="id" option-label="first_name" single searchable
+            :disabled="$isDisabled" />
         </div>
 
         <div class="mb-3">
-          <x-datepicker label="Date" wire:model="headerForm.date" icon="o-calendar" />
+          <x-datepicker label="Date" wire:model="headerForm.date" icon="o-calendar" :disabled="$isDisabled" />
         </div>
 
         <div class="mb-3">
           <x-choices-offline wire:model="headerForm.is_activated" label="Is Activated" :options="[['id' => 0, 'name' => 'Inactive'], ['id' => 1, 'name' => 'Active']]" single
-            searchable />
+            :disabled="$isDisabled" searchable />
         </div>
       </div>
 
-      <x-button label="Tambah Detail Sales Order" class="btn-sm btn-success text-white" wire:click="createDetail" />
+      <x-button label="Tambah Detail Sales Order" class="btn-sm btn-success text-white" wire:click="createDetail"
+        :disabled="$isDisabled" />
 
       <table class="table-auto w-full border border-gray-300 text-left text-sm mt-8">
         <thead class="bg-gray-100">
@@ -49,7 +54,7 @@
           @forelse ($details as $index => $row)
             <tr>
               <td class="border px-4 py-2">
-                <x-dropdown class="btn-xs">
+                <x-dropdown class="btn-xs" :disabled="$isDisabled">
                   <x-menu-item title="Edit" icon="o-pencil-square" wire:click="editDetail({{ $index }})" />
                   <x-menu-item title="Delete" icon="o-trash" wire:click="deleteDetail({{ $index }})"
                     wire:confirm="are you sure to delete this data ?" />
@@ -71,7 +76,7 @@
 
       <div class="text-center mt-3">
         <x-errors class="text-white mb-3" />
-        <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" />
+        <x-button type="submit" :label="$id ? 'Update' : 'Store'" class="btn-success btn-sm text-white" :disabled="$isDisabled" />
       </div>
     </x-form>
   </x-card>

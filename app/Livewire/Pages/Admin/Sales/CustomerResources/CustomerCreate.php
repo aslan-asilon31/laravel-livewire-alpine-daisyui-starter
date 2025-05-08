@@ -20,7 +20,6 @@ class CustomerCreate extends Component
   use \App\Helpers\Permission\Traits\WithPermission;
   use \Mary\Traits\Toast;
 
-
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'customer';
 
@@ -29,7 +28,6 @@ class CustomerCreate extends Component
 
   #[\Livewire\Attributes\Locked]
   public string $url = '/customers';
-
 
   #[\Livewire\Attributes\Locked]
   private string $baseImageName = 'customer_image';
@@ -69,7 +67,6 @@ class CustomerCreate extends Component
       [],
       $this->masterForm->attributes()
     )['masterForm'];
-
 
     \Illuminate\Support\Facades\DB::beginTransaction();
     try {

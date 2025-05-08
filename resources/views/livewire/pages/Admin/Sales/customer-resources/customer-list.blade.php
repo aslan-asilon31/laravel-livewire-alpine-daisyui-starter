@@ -39,7 +39,7 @@
 
   <div class="">
 
-    <x-table :headers="$this->headers" class="" :rows="$this->rows" :sort-by="$sortBy" with-pagination>
+    <x-table :headers="$this->headers" class="" :rows="$this->rows" :sort-by="$sortBy" with-pagination show-empty-text>
 
       @scope('cell_action', $row)
         <x-dropdown>

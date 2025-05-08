@@ -20,7 +20,7 @@ class CustomerCrud extends Component
   use \App\Helpers\Permission\Traits\WithPermission;
   use \Mary\Traits\Toast;
 
-  
+
   #[\Livewire\Attributes\Locked]
   private string $basePageName = 'customer';
 
@@ -69,21 +69,17 @@ class CustomerCrud extends Component
     $this->initialize();
   }
 
-  public function initialize()
-  {
-  }
+  public function initialize() {}
 
   public function create()
   {
-    $this->permission($this->basePageName.'-create');
-
+    $this->permission($this->basePageName . '-create');
     $this->masterForm->reset();
   }
 
   public function store()
   {
-    $this->permission($this->basePageName.'-create');
-
+    $this->permission($this->basePageName . '-create');
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -112,7 +108,7 @@ class CustomerCrud extends Component
 
   public function show()
   {
-    $this->permission($this->basePageName.'-show');
+    $this->permission($this->basePageName . '-show');
 
     $this->isReadonly = true;
     $this->isDisabled = true;
@@ -129,7 +125,7 @@ class CustomerCrud extends Component
 
   public function update()
   {
-    $this->permission($this->basePageName.'-update');
+    $this->permission($this->basePageName . '-update');
 
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
@@ -159,7 +155,7 @@ class CustomerCrud extends Component
 
   public function delete()
   {
-    $this->permission($this->basePageName.'-delete');
+    $this->permission($this->basePageName . '-delete');
 
     $masterData = $this->masterModel::findOrFail($this->id);
 
@@ -176,6 +172,4 @@ class CustomerCrud extends Component
       $this->error('Data failed to delete');
     }
   }
-
-
 }

@@ -55,12 +55,12 @@
   <div class="">
 
     <x-table :headers="$this->headers" class="table-sm border border-gray-400 dark:border-gray-500" :rows="$this->rows"
-      :sort-by="$sortBy" with-pagination>
+      :sort-by="$sortBy" with-pagination show-empty-text>
       @scope('cell_action', $row)
-        <x-dropdown class="btn-xs">
+        <x-dropdown class="btn-xs" no-x-anchor>
           <x-menu-item title="Edit" icon="o-pencil-square" link="/sales-orders/edit/{{ $row->id }}" />
 
-          <x-menu-item title="Show" icon="o-eye" link="/sales-orders/show/{{ $row->id }}/readonly" />
+          <x-menu-item title="Show" icon="o-eye" link="/sales-orders/show/{{ $row->id }}" />
         </x-dropdown>
       @endscope
       @scope('cell_is_activated', $sales_order)

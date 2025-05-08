@@ -4,13 +4,7 @@ namespace App\Helpers\FormHook\Traits;
 
 
 use Illuminate\Support\Collection;
-use App\Models\Customer;
-use App\Models\Employee;
-use App\Models\Product;
-use App\Models\SalesOrderDetail;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Computed;
-use Illuminate\Support\Str;
+
 use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderForm;
 use App\Livewire\Pages\Admin\Sales\SalesOrderResources\Forms\SalesOrderDetailForm;
 
@@ -121,7 +115,19 @@ trait WithSalesOrder
     {
         unset($this->details[$detailIndex]);
         $this->details = array_values($this->details);
-        $this->success('Sales Order Detail Created.');
+        $this->success('Sales Order Detail Deleted.');
+    }
+
+    public function delete()
+    {
+        $headerModel = $this->headerModel::findOrFail($this->id);
+        try {
+            $headerModel->delete();
+            $this->success('Data has been deleted');
+            $this->redirect('/sales-orders');
+        } catch (\Throwable $th) {
+            $this->error('Data failed to delete');
+        }
     }
 
 

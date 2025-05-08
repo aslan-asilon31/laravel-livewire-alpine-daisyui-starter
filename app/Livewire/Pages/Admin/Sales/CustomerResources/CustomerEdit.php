@@ -82,12 +82,9 @@ class CustomerEdit extends Component
 
   public function delete()
   {
-
     $masterData = $this->masterModel::findOrFail($this->id);
-
     \Illuminate\Support\Facades\DB::beginTransaction();
     try {
-
       $masterData->delete();
       \Illuminate\Support\Facades\DB::commit();
 

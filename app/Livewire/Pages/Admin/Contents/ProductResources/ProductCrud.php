@@ -86,7 +86,7 @@ class ProductCrud extends Component
 
   public function store()
   {
-
+    dd($this->masterForm);
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -234,6 +234,7 @@ class ProductCrud extends Component
 
   public function updatedMasterFormDiscountValue()
   {
+
     try {
       $this->masterForm->discount_persentage = ($this->masterForm->discount_value / $this->masterForm->selling_price) * 100;
       $this->masterForm->discount_persentage = number_format($this->masterForm->discount_persentage, 2);

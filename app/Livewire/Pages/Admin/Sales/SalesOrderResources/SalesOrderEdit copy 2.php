@@ -20,6 +20,13 @@ class SalesOrderEdit extends Component
   use \Mary\Traits\Toast;
   use WithPagination;
 
+  #[Url(except: '')]
+  public ?string $search = '';
+
+  public bool $filterDrawer;
+
+  public array $sortBy = ['column' => 'product_name', 'direction' => 'desc'];
+
 
   public SalesOrderForm $headerForm;
   public SalesOrderDetailForm $detailForm;
@@ -29,6 +36,15 @@ class SalesOrderEdit extends Component
     return view('livewire.pages.admin.sales.sales-order-resources.sales-order-crud')
       ->title($this->title);
   }
+
+  #[Url(except: '')]
+  public array $filters = [];
+  public array $filterForm = [
+    'product_name' => '',
+    'selling_price' => '',
+    'qty' => '',
+  ];
+
 
   public string $title = 'Sales Order Edit';
   public ?string $id = '';
