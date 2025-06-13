@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'pegawai' => [
+            'driver' => 'session',
+            'provider' => 'ms_pegawai',
+        ],
     ],
 
     /*
@@ -63,6 +68,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        'ms_pegawai' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\MsPegawai::class),
         ],
 
         // 'users' => [

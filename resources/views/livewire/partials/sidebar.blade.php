@@ -22,9 +22,15 @@
 
       <x-menu-item title="Dashboard" icon="o-chart-bar-square" link="/" :class="request()->is('dashboard') ? 'active' : ''" />
       <x-menu-separator title="Management" icon="o-sparkles" />
-      <x-menu-item title="Product" icon="o-archive-box" link="/products" :class="request()->is('products') ? 'active' : ''" />
-      <x-menu-item title="Customers" icon="o-users" link="/customers/" :class="request()->is('customers/') ? 'active' : ''" />
-      <x-menu-item title="Sales Order" icon="o-banknotes" link="/sales-orders" :class="request()->is('orders') ? 'active' : ''" />
+      <x-menu-item title="Master Barang" icon="o-archive-box" link="/products" :class="request()->is('products') ? 'active' : ''" />
+      <x-menu-item title="Master Cabang" icon="o-archive-box" link="/cabang" :class="request()->is('cabang') ? 'active' : ''" />
+      <x-menu-item title="Master Gudang" icon="o-archive-box" link="/gudang" :class="request()->is('gudang') ? 'active' : ''" />
+      <x-menu-item title="Master Pegawai" icon="o-archive-box" link="/pegawai" :class="request()->is('pegawai') ? 'active' : ''" />
+      <x-menu-item title="Master Pelanggan" icon="o-archive-box" link="/pelanggan" :class="request()->is('pelanggan') ? 'active' : ''" />
+      <x-menu-item title="Master Status" icon="o-archive-box" link="/status" :class="request()->is('status') ? 'active' : ''" />
+      <x-menu-item title="Master File" icon="o-archive-box" link="/file" :class="request()->is('file') ? 'active' : ''" />
+      <x-menu-item title="Master File Jenis" icon="o-archive-box" link="/file-jenis" :class="request()->is('file-jenis') ? 'active' : ''" />
+      <x-menu-item title="pesanan Penjualan" icon="o-archive-box" link="/tr-pesanan-penjualan" :class="request()->is('tr-pemesanan-penjualan') ? 'active' : ''" />
 
       <x-menu-sub title="Settings" icon="o-cog-6-tooth">
         <x-menu-item title="Setting" icon-right="o-arrow-long-right" link="####" />
