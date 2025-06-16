@@ -22,10 +22,14 @@ class HakAksesPegawaiCabang  extends  Authenticatable
     const CREATED_AT = 'tgl_dibuat';
     const UPDATED_AT = 'tgl_diupdate';
 
-    // public function modelHasRoles()
-    // {
-    //     return $this->hasMany(ModelHasRole::class, 'model_id');
-    // }
 
-    public function roles() {}
+    public function msPegawai()
+    {
+        return $this->hasMany(MsPegawai::class);
+    }
+
+    public function msCabang()
+    {
+        return $this->hasMany(MsCabang::class);
+    }
 }

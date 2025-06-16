@@ -16,7 +16,7 @@ class Pegawai
     public function handle(Request $request, Closure $next): Response
     {
         if (!\Illuminate\Support\Facades\Auth::guard('pegawai')->check()) {
-            return redirect()->route('login');
+            return redirect()->route('dashboard');
         }
         return $next($request);
     }

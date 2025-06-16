@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ms_pegawai', function (Blueprint $table) {
+        Schema::create('ms_pegawai_akun', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            $table->uuid('ms_jabatan_id')->nullable();
-            $table->foreign('ms_jabatan_id', 'fk_ms_jabatan_id')->references('id')->on('ms_jabatan')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->string('nama', 255);
-            $table->string('no_telepon', 30);
-            $table->string('email');
-            $table->string('image_url')->nullable();
+            $table->uuid('ms_pegawai_id');
+            $table->foreign('ms_pegawai_id')->references('id')->on('ms_pegawai')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('username', 255);
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
             $table->timestamp('tgl_dibuat');
-            $table->timestamp('tgl_diupdate')->nullable();
+            $table->timestamp('tgl_diupdate');
             $table->string('status')->index()->default('aktif');
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ms_pegawai');
+        Schema::dropIfExists('ms_pegawai_akun');
     }
 };

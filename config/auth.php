@@ -38,9 +38,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'ms_pegawai',
         ],
-
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
         'pegawai' => [
             'driver' => 'session',
             'provider' => 'ms_pegawai',
@@ -67,14 +70,13 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\MsPegawaiAkun::class),
         ],
 
         'ms_pegawai' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\MsPegawai::class),
+            'model' => env('AUTH_MODEL', App\Models\MsPegawaiAkun::class),
         ],
-
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

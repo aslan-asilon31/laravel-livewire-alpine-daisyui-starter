@@ -10,25 +10,25 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Helpers\Permission\Traits\HasAccess;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class MsJabatan  extends  Authenticatable
+class HakAksesJabatan  extends  Authenticatable
 {
     use HasFactory, HasUuids;
     protected $keyType = 'string';
     public $incrementing = false;
-    public $table = 'ms_jabatan';
+    public $table = 'hak_akses_jabatan';
     public $timestamps = false;
     public $guarded = [];
 
     const CREATED_AT = 'tgl_dibuat';
     const UPDATED_AT = 'tgl_diupdate';
 
-    public function msPegawai()
+    public function msJabatan()
     {
-        return $this->hasMany(MsPegawai::class, 'ms_jabatan_id', 'id');
+        return $this->hasMany(MsJabatan::class);
     }
 
-    public function hakAksesJabatan()
+    public function hakAkses()
     {
-        return $this->belongsTo(HakAksesJabatan::class);
+        return $this->hasMany(HakAkses::class);
     }
 }

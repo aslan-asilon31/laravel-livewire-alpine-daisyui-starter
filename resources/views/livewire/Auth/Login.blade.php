@@ -1,9 +1,9 @@
 <div>
   <form wire:submit="login">
     <div>
-      <label for="email">Email</label>
-      <input type="email" id="email" wire:model="email" placeholder="Email">
-      @error('email')
+      <label for="username">Username</label>
+      <input type="username" id="username" wire:model="username" placeholder="Username">
+      @error('username')
         <span class="text-red-500">{{ $message }}</span>
       @enderror
     </div>

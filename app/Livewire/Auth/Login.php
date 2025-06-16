@@ -9,29 +9,39 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends Component
 {
-    public $email;
+    public $username;
     public $password;
 
     protected $rules = [
-        'email' => 'required|email',
+        'username' => 'required',
         'password' => 'required|min:6',
     ];
 
     public function login()
     {
-        // $this->validate();
+        $this->validate();
 
-        if (Auth::guard('pegawai')->attempt(['email' => $this->email, 'password' => $this->password])) {
+        $credentials = [
+            'username' => $this->username,
+            'password' => $this->password,
+        ];
+
+        if (Auth::guard('pegawai')->attempt($credentials)) {
+            session()->regenerate();
+
             return redirect()->route('dashboard');
-        } else {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
         }
+
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect.'],
+        ]);
     }
+
+
 
     public function render()
     {
-        return view('livewire.auth.login');
+        return view('livewire.auth.login')
+            ->layout('components.layouts.app_auth');
     }
 }

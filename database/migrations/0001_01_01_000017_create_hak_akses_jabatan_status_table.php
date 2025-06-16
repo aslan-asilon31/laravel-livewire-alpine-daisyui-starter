@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hak_akses_jabatan_halaman', function (Blueprint $table) {
+        Schema::create('hak_akses_jabatan_status', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('ms_jabatan_id');
-            $table->foreign('ms_jabatan_id')->references('id')->on('ms_jabatan')->onDelete('cascade')->onUpdate('cascade');
+            $table->uuid('hak_akses_jabatan_id');
+            $table->foreign('hak_akses_jabatan_id', 'fk_hak_akses_jabatan_id')->references('id')->on('hak_akses_jabatan')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->uuid('ms_halaman_id');
-            $table->foreign('ms_halaman_id')->references('id')->on('ms_halaman')->onDelete('cascade')->onUpdate('cascade');
+            $table->uuid('ms_status_id');
+            $table->foreign('ms_status_id')->references('id')->on('ms_status')->onDelete('cascade')->onUpdate('cascade');
 
             $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hak_akses_jabatan_halaman');
+        Schema::dropIfExists('hak_akses_jabatan_status');
     }
 };

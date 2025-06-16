@@ -58,8 +58,8 @@ class MsCabangPerbaharui extends Component
       $this->title .= ' (Lihat)';
       $this->lihat();
     } else if ($this->id) {
-      $this->title .= ' (Ubah)';
-      $this->ubah();
+      $this->title .= ' (Edit)';
+      $this->edit();
     } else {
       $this->title .= ' (Buat)';
       $this->buat();
@@ -113,7 +113,7 @@ class MsCabangPerbaharui extends Component
     $this->masterForm->fill($masterData);
   }
 
-  public function ubah()
+  public function edit()
   {
     $this->optionStatus = $this->aksesStatusOption();
 

@@ -41,7 +41,7 @@
 
       <div class="bg-white p-2">
 
-        <x-header title="Tanda Terima Service Detail" subtitle="">
+        <x-header title="Pemesanan Penjualan Detail" subtitle="">
           <x-slot:actions>
             <x-button label="Filters" @click="$wire.filterDrawer = true" responsive icon="o-funnel"
               class="btn-primary" />

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MsCabang extends Model
+class TrPemesananPenjualanHeader extends Model
 {
     use HasFactory, HasUuids;
 
@@ -14,13 +14,14 @@ class MsCabang extends Model
     {
         return (string) str()->orderedUuid();
     }
-    protected $guarded = [];
-    protected $keyType = 'string';
-    protected $table = 'ms_cabang';
-    public $incrementing = false;
 
     const CREATED_AT = 'tgl_dibuat';
     const UPDATED_AT = 'tgl_diupdate';
+
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $guarded = [];
+    protected $table = 'tr_pemesanan_penjualan_header';
 
     protected function casts(): array
     {
@@ -35,8 +36,23 @@ class MsCabang extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function hakAksesPegeawaiCabang()
+    public function msCabangs()
     {
-        return $this->belongsTo(HakAksesPegawaiCabang::class);
+        return $this->hasMany(MsCabang::class);
+    }
+
+    public function msPelanggan()
+    {
+        return $this->hasOne(MsPelanggan::class, 'id', 'ms_pelanggan_id');
+    }
+
+    public function msCabang()
+    {
+        return $this->hasOne(MsCabang::class, 'id', 'ms_cabang_id');
+    }
+
+    public function trTandaTerimaSuratPerintahServiceDetail()
+    {
+        return $this->hasMany(TrPemesananPenjualanDetail::class, 'id', 'tr_pemesanan_penjualan_header_id');
     }
 }

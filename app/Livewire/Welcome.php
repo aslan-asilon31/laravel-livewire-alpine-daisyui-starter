@@ -59,8 +59,45 @@ class Welcome extends Component
             });
     }
 
+    public function mount()
+    {
+        // dd(\Illuminate\Support\Facades\Auth::guard('pegawai'));
+
+
+        // $akses_cabang = \Illuminate\Support\Facades\DB::table('hak_akses_pegawai_cabang as hapc')
+        //     ->join('ms_cabang as mc', 'hapc.ms_cabang_id', '=', 'mc.id')
+        //     ->join('ms_pegawai as mp', 'mp.id', '=', 'hapc.ms_pegawai_id')
+        //     ->join('ms_pegawai_akun as mpa', 'mp.id', '=', 'mpa.ms_pegawai_id')
+        //     ->where('mpa.id', \Illuminate\Support\Facades\Auth::guard('pegawai')->id())
+        //     ->select('mc.id', 'mc.nama')
+        //     ->get();
+
+        // $akses_cabang = \Illuminate\Support\Facades\DB::table('hak_akses_pegawai_cabang as hapc')
+        //     ->join('ms_cabang as mc', 'hapc.ms_cabang_id', '=', 'mc.id')
+        //     ->join('ms_pegawai as mp', 'mp.id', '=', 'hapc.ms_pegawai_id')
+        //     ->join('ms_pegawai_akun as mpa', 'mp.id', '=', 'mpa.ms_pegawai_id')
+        //     ->where('mpa.id', \Illuminate\Support\Facades\Auth::guard('pegawai')->id())
+        //     ->select('mc.id', 'mc.nama')
+        //     ->get();
+
+        // if ($akses_cabang->isEmpty()) {
+        //     abort(403, 'Tidak memiliki akses cabang');
+        // }
+
+        // $akses_gudang = \Illuminate\Support\Facades\DB::table('ms_gudang')
+        //     ->whereIn('ms_cabang_id', $akses_cabang->pluck('id')->toArray())
+        //     ->get();
+
+        // if ($akses_gudang->isEmpty()) {
+        //     abort(403, 'Tidak memiliki akses gudang');
+        // }
+
+        // dd($akses_cabang, $akses_gudang);
+    }
+
     public function render()
     {
+
         return view('livewire.welcome', [
             'users' => $this->users(),
             'headers' => $this->headers()

@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hak_akses_jabatan_halaman_status', function (Blueprint $table) {
+        Schema::create('hak_akses_grup', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('hak_akses_jabatan_halaman_id');
-            $table->foreign('hak_akses_jabatan_halaman_id', 'fk_hak_akses_jabatan_halaman_id')->references('id')->on('hak_akses_jabatan_halaman')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->uuid('ms_status_id');
-            $table->foreign('ms_status_id')->references('id')->on('ms_status')->onDelete('cascade')->onUpdate('cascade');
-
+            $table->string('nama');
             $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hak_akses_jabatan_halaman_status');
+        Schema::dropIfExists('hak_akses_grup');
     }
 };

@@ -23,10 +23,40 @@ class MsPegawai  extends  Authenticatable
     const CREATED_AT = 'tgl_dibuat';
     const UPDATED_AT = 'tgl_diupdate';
 
+
+    public function msPegawaiAkun()
+    {
+        return $this->hasMany(MsPegawaiAkun::class, 'id', 'ms_pegawai_id');
+    }
+
+    public function msJabatan()
+    {
+        return $this->belongsTo(MsJabatan::class, 'ms_jabatan_id', 'id');
+    }
+
+    public function hakAksesJabatans()
+    {
+        return $this->hasMany(HakAksesJabatan::class, 'ms_pegawai_id');
+    }
+
+
+    public function hakAkses()
+    {
+        return $this->hasManyThrough(HakAkses::class, HakAksesJabatan::class, 'ms_pegawai_id', 'id', 'id', 'hak_akses_id');
+    }
+
     // public function modelHasRoles()
     // {
     //     return $this->hasMany(ModelHasRole::class, 'model_id');
     // }
 
-    public function roles() {}
+    // public function msPegawaiAkun()
+    // {
+    //     return $this->belongsTo(MsPegawaiAkun::class);
+    // }
+
+    // public function hakAksesPegeawaiCabang()
+    // {
+    //     return $this->belongsTo(HakAksesPegawaiCabang::class);
+    // }
 }

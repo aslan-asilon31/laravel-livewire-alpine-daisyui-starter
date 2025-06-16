@@ -20,8 +20,11 @@
             <div class="flex justify-between">
               <div>
                 <p class="text-2xl text-indigo-900 ">Selamat Datang
-                  <br><strong>{{ Auth::guard('pegawai')->user()->nama }}</strong>
+                  <br><strong>{{ Auth::guard('pegawai')->user()->msPegawai->nama }}</strong>
                 </p>
+                <h6 class="">Anda Login Sebagai
+                  <b>{{ Auth::guard('pegawai')->user()->msPegawai->msJabatan->nama ?? 'tidak ada jabatan' }}</b>
+                </h6>
               </div>
               <div>
                 <img src="{{ asset('frontend/assets/img/flat-img1.png') }}" class="w-48" alt=""
