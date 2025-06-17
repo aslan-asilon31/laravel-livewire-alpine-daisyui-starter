@@ -48,6 +48,7 @@
                 <th class="px-4 py-2 text-center border-b">Simpan</th>
                 <th class="px-4 py-2 text-center border-b">Edit</th>
                 <th class="px-4 py-2 text-center border-b">Update</th>
+                <th class="px-4 py-2 text-center border-b">Lihat</th>
               </tr>
             </thead>
             <tbody class="text-sm">
