@@ -25,7 +25,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
 
   public function render()
   {
-    return view('livewire.tanda-terima-service-header-resources.tanda-terima-service-header-crud')
+    return view('livewire.pemesanan-penjualan.pemesanan-penjualan-header-perbaharui')
       ->title($this->title);
   }
 
@@ -61,7 +61,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
   public $productCategoryFirsts = [];
   public $productCategories = [];
   public $header;
-  public $halaman = 'tanda-terima-service';
+  public $halaman = 'pemesanan-penjualan';
   public $cabang;
   public $detailId = null;
 
@@ -119,33 +119,30 @@ class PemesananPenjualanHeaderPerbaharui extends Component
   public PemesananPenjualanHeaderForm $headerForm;
   public PemesananPenjualanDetailForm $detailForm;
 
+
+
+
+
   public function mount()
   {
-    $this->initialize();
+
+    $this->cariPelanggan();
+    $this->cariCabang();
+    $this->cariBarang();
+
 
     if ($this->id && $this->readonly) {
       $this->title .= ' (Tampil)';
       $this->tampil();
     } else if ($this->id) {
-      $this->title .= ' (Ubah)';
-      $this->ubah();
+      $this->title .= ' (Edit)';
+      $this->edit();
     } else {
       $this->title .= ' (Buat)';
       $this->buat();
     }
   }
 
-
-  public function initialize()
-  {
-    $this->cariPelanggan();
-    $this->cariCabang();
-    $this->cariBarang();
-    $this->cariRak();
-
-    $this->pegawai = \Illuminate\Support\Facades\Auth::guard('pegawai')->user();
-    session()->put('PemesananPenjualanHeaderId', $this->id);
-  }
 
   public function simpan()
   {
@@ -156,16 +153,21 @@ class PemesananPenjualanHeaderPerbaharui extends Component
       $this->headerForm->attributes()
     )['headerForm'];
 
-    $halaman = 'tanda_terima_service-simpan';
+    $halaman = 'pemesanan_penjualan-simpan';
     $msCabangId = $validatedHeaderForm['ms_cabang_id'];
-    $status = $validatedHeaderForm['status'];
+    $statusId = $validatedHeaderForm['status_option'];
+    $halamanId = \App\Models\HakAkses::where('nama', $halaman)->value('id');
 
-    $result = \Illuminate\Support\Facades\Gate::authorize('simpan', [
-      \App\Models\Permission::class,
-      $halaman,
+    $cekHakAkses = \Illuminate\Support\Facades\Gate::authorize('simpan', [
+      \App\Models\HakAkses::class,
+      $halamanId,
       $msCabangId,
-      $status,
+      $statusId,
     ]);
+
+    if (!$cekHakAkses) {
+      abort(403, 'Akses halaman untuk menyimpan data ditolak.');
+    }
 
 
     \Illuminate\Support\Facades\DB::beginTransaction();
@@ -180,7 +182,6 @@ class PemesananPenjualanHeaderPerbaharui extends Component
         ->map(function ($detail, $index) use ($header) {
           return [
             'id' => str()->orderedUuid()->toString(),
-            'tr_tanda_terima_service_header_id' => $header->id,
             'ms_barang_id' => $detail['ms_barang_id'],
             'ms_rak_id' => $detail['ms_rak_id'],
             'catatan' => $detail['catatan'],
@@ -198,7 +199,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
       $this->headerForm->reset();
       $this->reset('details');
       \Illuminate\Support\Facades\DB::commit();
-      $this->redirect('/tanda-terima-service', true);
+      $this->redirect('/pemesanan-penjualan', true);
       $this->success('Data has been stored');
     } catch (\Throwable $th) {
       \Illuminate\Support\Facades\DB::rollBack();
@@ -228,7 +229,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
   }
 
 
-  public function ubahDetail($detailIndex)
+  public function editDetail($detailIndex)
   {
     $detailData = $this->details[$detailIndex];
     $this->detailForm->fill($detailData);
@@ -237,13 +238,6 @@ class PemesananPenjualanHeaderPerbaharui extends Component
     $this->detailIndex = $detailIndex;
     return $this->modalDetail = true;
   }
-
-  // public function ubahDetail($detailIndex)
-  // {
-  //   $masterDetail = $this->detailModel::findOrFail($detailIndex);
-  //   $this->detailForm->fill($masterDetail);
-  //   $this->modalDetail = true;
-  // }
 
   public function updateDetail()
   {
@@ -270,13 +264,17 @@ class PemesananPenjualanHeaderPerbaharui extends Component
 
   public function buat()
   {
-    $this->optionStatus = $this->aksesStatusOption();
+    $halamanId = \App\Models\HakAkses::where('nama', 'pemesanan_penjualan-buat')->value('id');
+    \Illuminate\Support\Facades\Gate::authorize('buat', [
+      \App\Models\HakAkses::class,
+      $halamanId,
+    ]);
 
-    $this->permission('tanda_terima_service-buat');
+
     $this->headerForm->reset();
     $this->detailForm->reset();
 
-    $nomorHeaderTerakhir = \Illuminate\Support\Facades\DB::table('tr_tanda_terima_service_header')->max('nomor') ?? 0;
+    $nomorHeaderTerakhir = \Illuminate\Support\Facades\DB::table('tr_pemesanan_penjualan_header')->max('nomor') ?? 0;
     $this->headerForm->nomor = $nomorHeaderTerakhir + 1;
   }
 
@@ -284,7 +282,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
   {
     $this->detailForm->reset();
     $this->modalDetail = true;
-    $nomorDetailTerakhir = \Illuminate\Support\Facades\DB::table('tr_tanda_terima_service_detail')->max('nomor') ?? 0;
+    $nomorDetailTerakhir = \Illuminate\Support\Facades\DB::table('tr_pemesanan_penjualan_detail')->max('nomor') ?? 0;
     $this->detailForm->nomor = $nomorDetailTerakhir + 1;
   }
 
@@ -292,16 +290,32 @@ class PemesananPenjualanHeaderPerbaharui extends Component
 
   public function tampil()
   {
+    $halaman = 'pemesanan_penjualan-tampil';
+    $halamanId = \App\Models\HakAkses::where('nama', $halaman)->value('id');
+
+    \Illuminate\Support\Facades\Gate::authorize('lihat', [
+      \App\Models\HakAkses::class,
+      $halamanId,
+    ]);
     $this->isReadonly = true;
     $this->isDisabled = true;
     $masterHeaderData = $this->headerModel::findOrFail($this->id);
     $this->headerForm->fill($masterHeaderData);
   }
 
-  public function ubah()
+  public function edit()
   {
-    $this->options = $this->aksesStatusOption();
-    $this->permission('tanda_terima_service-ubah');
+    $halaman = 'pemesanan_penjualan-edit';
+    $halamanId = \App\Models\HakAkses::where('nama', $halaman)->value('id');
+
+    \Illuminate\Support\Facades\Gate::authorize('edit', [
+      \App\Models\HakAkses::class,
+      $halamanId,
+    ]);
+
+
+    $this->optionStatus = $this->aksesStatusOption();
+
     $this->isReadonly = false;
     $this->isDisabled = false;
     $masterHeaderData = $this->headerModel::findOrFail($this->id);
@@ -310,28 +324,32 @@ class PemesananPenjualanHeaderPerbaharui extends Component
 
   public function update()
   {
-    $halaman = 'tanda_terima_service-update';
-
-    $halamanId = Permission::where('name', $halaman)->value('id');
+    $halaman = 'pemesanan_penjualan-update';
 
     $validatedHeaderForm = $this->validate(
       $this->headerForm->rules(),
       [],
       $this->headerForm->attributes()
     )['headerForm'];
-
-
     $msCabangId = $validatedHeaderForm['ms_cabang_id'];
-    $status = $validatedHeaderForm['status'];
+    $statusId = $validatedHeaderForm['status_option'];
+    $halamanId = \App\Models\HakAkses::where('nama', $halaman)->value('id');
 
-    $this->aksesPermissionPolicy($halaman, $msCabangId, $status);
+    \Illuminate\Support\Facades\Gate::authorize('update', [
+      \App\Models\HakAkses::class,
+      $halamanId,
+      $msCabangId,
+      $statusId,
+    ]);
+
+    dd('stop update');
 
     $masterHeaderData = $this->headerModel::findOrFail($this->id);
 
     try {
       $validatedHeaderForm['diupdate_oleh'] = \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->nama ?? null;
       $masterHeaderData->update($validatedHeaderForm);
-      $this->redirect('/tanda-terima-service', true);
+      $this->redirect('/pemesanan-penjualan', true);
       $this->success('Data berhasil di update');
     } catch (\Throwable $e) {
       \Log::error('Data failed : ' . $e->getMessage());
@@ -352,9 +370,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
       ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'nomor', 'label' => '#', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'id', 'label' => 'ID', 'sortBy' => 'id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
-      ['key' => 'tr_tanda_terima_service_header_id', 'label' => 'Pemesanan Penjualan Header ID', 'sortBy' => 'tr_tanda_terima_service_header_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'ms_barang_id', 'label' => 'Barang ID', 'sortBy' => 'ms_barang_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
-      ['key' => 'ms_rak_id', 'label' => 'Rak ID', 'sortBy' => 'ms_rak_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'catatan', 'label' => 'Catatan', 'sortBy' => 'catatan', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'qty', 'label' => 'Quantity', 'sortBy' => 'qty', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'status', 'label' => 'Status', 'sortBy' => 'status', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
@@ -369,9 +385,7 @@ class PemesananPenjualanHeaderPerbaharui extends Component
     $query = TrPemesananPenjualanDetail::query();
     $query->when($this->search, fn($q) => $q->where('id', 'like', "%{$this->search}%"))
       ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('id', 'like', "%{$this->filters['id']}%"))
-      ->when(($this->filters['tr_tanda_terima_service_header_id'] ?? ''), fn($q) => $q->where('tr_tanda_terima_service_header_id', 'like', "%{$this->filters['tr_tanda_terima_service_header_id']}%"))
       ->when(($this->filters['ms_barang_id'] ?? ''), fn($q) => $q->where('ms_barang_id', 'like', "%{$this->filters['ms_barang_id']}%"))
-      ->when(($this->filters['ms_rak_id'] ?? ''), fn($q) => $q->where('ms_rak_id', 'like', "%{$this->filters['ms_rak_id']}%"))
       ->when(($this->filters['catatan'] ?? ''), fn($q) => $q->where('catatan', 'like', "%{$this->filters['catatan']}%"))
       ->when(($this->filters['qty'] ?? ''), fn($q) => $q->where('qty', $this->filters['qty']))
       ->when(($this->filters['tgl_dibuat'] ?? ''), function ($q) {
@@ -382,7 +396,6 @@ class PemesananPenjualanHeaderPerbaharui extends Component
 
     $paginator = $query
       // ->orderBy('nomor', 'asc')
-      ->where('tr_tanda_terima_service_header_id', session('PemesananPenjualanHeaderId'))
       ->paginate(20);
 
     $start = ($paginator->currentPage() - 1) * $paginator->perPage();
@@ -444,25 +457,6 @@ class PemesananPenjualanHeaderPerbaharui extends Component
       return [
         'id' => $barang->id,
         'name' => $barang->nama,
-      ];
-    });
-  }
-
-
-  public function cariRak(string $value = '')
-  {
-
-    $selectedOption = \App\Models\MsRak::where('id', $this->detailForm->ms_rak_id)->get();
-    $this->pencarianRak = \App\Models\MsRak::query()
-      ->where('nama', 'like', "%$value%")
-      ->orderBy('tgl_dibuat')
-      ->get()
-      ->merge($selectedOption);
-
-    $this->pencarianRak = $this->pencarianRak->map(function ($rak) {
-      return [
-        'id' => $rak->id,
-        'name' => $rak->nama,
       ];
     });
   }

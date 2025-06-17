@@ -13,6 +13,7 @@ class PemesananPenjualanHeaderForm extends Form
   public int|null $nomor = null;
   public string|null $memo = null;
   public string|null $status = "";
+  public string|null $status_option = "";
 
   public function rules(string|null $id = null): array
   {
@@ -23,6 +24,7 @@ class PemesananPenjualanHeaderForm extends Form
       'headerForm.nomor' => 'nullable|integer',
       'headerForm.memo' => 'required|string',
       'headerForm.status' => 'required|string',
+      'headerForm.status_option' => 'required|string',
     ];
   }
 
@@ -34,6 +36,7 @@ class PemesananPenjualanHeaderForm extends Form
       'headerForm.ms_cabang_id' => 'Cabang ID',
       'headerForm.nomor' => 'Nomor',
       'headerForm.status' => 'Status',
+      'headerForm.status_option' => 'Status Option',
     ];
   }
 }

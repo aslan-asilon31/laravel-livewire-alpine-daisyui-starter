@@ -49,8 +49,8 @@
 
       @scope('cell_action', $row)
         <x-dropdown>
-          <x-menu-item title="Ubah" icon="o-pencil-square" link="/tanda-terima-service/ubah/{{ $row->id }}" />
-          <x-menu-item title="Tampil" icon="o-eye" link="/tanda-terima-service/show/{{ $row->id }}" />
+          <x-menu-item title="edit" icon="o-pencil-square" link="/pemesanan-penjualan/edit/{{ $row->id }}" />
+          <x-menu-item title="Tampil" icon="o-eye" link="/pemesanan-penjualan/show/{{ $row->id }}" />
         </x-dropdown>
       @endscope
 

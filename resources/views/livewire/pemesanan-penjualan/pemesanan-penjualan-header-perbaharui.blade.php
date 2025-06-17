@@ -32,7 +32,7 @@
           </div>
 
           <div class="mb-3">
-            <x-select label="Status" wire:model="headerForm.status" :options="$optionStatus" />
+            <x-select label="Status" wire:model="headerForm.status_option" :options="$optionStatus" />
           </div>
         </div>
 
@@ -63,7 +63,6 @@
               <th class="border px-4 py-2">Action</th>
               <th class="border px-4 py-2">#</th>
               <th class="border px-4 py-2">Barang ID</th>
-              <th class="border px-4 py-2">Rak ID</th>
               <th class="border px-4 py-2">Catatan</th>
               <th class="border px-4 py-2">Qty</th>
               <th class="border px-4 py-2">Tanggal Dibuat</th>
@@ -76,13 +75,12 @@
               <tr>
                 <td class="border px-4 py-2">
                   <x-dropdown>
-                    <x-menu-item title="Ubah" icon="o-pencil-square" wire:click="ubahDetail({{ $index }})" />
+                    <x-menu-item title="edit" icon="o-pencil-square" wire:click="editDetail({{ $index }})" />
                     {{-- <x-menu-item title="Show" icon="o-eye" wire:click="deleteDetail({{ $index }}) /> --}}
                   </x-dropdown>
                 </td>
                 <td class="border px-4 py-2">{{ $loop->iteration }}</td>
                 <td class="border px-4 py-2">{{ $item['ms_barang_id'] ?? '' }}</td>
-                <td class="border px-4 py-2">{{ $item['ms_rak_id'] ?? '' }}</td>
                 <td class="border px-4 py-2">{{ $item['catatan'] ?? '' }}</td>
                 <td class="border px-4 py-2">{{ $item['qty'] ?? '' }}</td>
                 <td class="border px-4 py-2">{{ \Carbon\Carbon::parse($item['tgl_dibuat'])->format('d-m-Y H:i') }}</td>
@@ -100,17 +98,13 @@
         <div class="mt-4">
           {{ $this->rows->links() }}
         </div>
-
-
-
       </div>
-
 
 
       <div class="text-center mt-3">
         <x-errors class="text-white mb-3" />
-        <x-button type="submit" :label="$id ? 'ubah' : 'simpan'" class="btn-success btn-sm text-white" />
-        <x-button label="batal" class="btn-error btn-sm text-white" link="/tanda-terima-service" />
+        <x-button type="submit" :label="$id ? 'edit' : 'simpan'" class="btn-success btn-sm text-white" />
+        <x-button label="batal" class="btn-error btn-sm text-white" link="/pemesanan-penjualan" />
       </div>
     </x-form>
 
@@ -124,10 +118,6 @@
             placeholder="Barang ..." search-function="cariBarang" single searchable :disabled="$isDisabled" />
         </div>
 
-        <div class="mb-3">
-          <x-choices-offline label="Rak" wire:model="detailForm.ms_rak_id" :options="$pencarianRak" placeholder="Rak ..."
-            search-function="cariRak" single searchable :disabled="$isDisabled" />
-        </div>
         <x-input label="Nomor" wire:model="detailForm.nomor" placeholder="Nomor" :readonly="true" />
         <x-input label="Catatan" wire:model="detailForm.catatan" placeholder="Catatan" :readonly="$isReadonly" />
         <x-input label="Qty" wire:model="detailForm.qty" placeholder="Qty" />

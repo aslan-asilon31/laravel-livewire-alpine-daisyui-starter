@@ -12,12 +12,17 @@ Route::middleware('pegawai')->group(function () {
 
         Route::get('/buat', \App\Livewire\MsCabang\MsCabangPerbaharui::class)->name('buat');
 
-        Route::get('/ubah/{id}', \App\Livewire\MsCabang\MsCabangPerbaharui::class)->name('ubah');
+        Route::get('/edit/{id}', \App\Livewire\MsCabang\MsCabangPerbaharui::class)->name('edit');
 
         Route::get('/lihat/{id}/hanya-lihat', \App\Livewire\MsCabang\MsCabangPerbaharui::class)->name('lihat');
     });
 
-    Route::get('/pemesanan-penjualan', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderDaftar::class)->name('pemesanan-penjualan.list');
+    Route::get('/pemesanan-penjualan', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderDaftar::class)->name('pemesanan-penjualan.daftar');
     Route::get('/pemesanan-penjualan/buat', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderPerbaharui::class)->name('pemesanan-penjualan.buat');
-    Route::get('/pemesanan-penjualan/ubah/{id}', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderPerbaharui::class)->name('pemesanan-penjualan.edit');
+    Route::get('/pemesanan-penjualan/edit/{id}', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderPerbaharui::class)->name('pemesanan-penjualan.edit');
+
+
+    Route::get('/hak-akses-jabatan', \App\Livewire\HakAksesJabatan\HakAksesJabatanDaftar::class)->name('hak-akses-jabatan.daftar');
+    Route::get('/hak-akses-jabatan/buat', \App\Livewire\HakAksesJabatan\HakAksesJabatanPerbaharui::class)->name('hak-akses-jabatan.buat');
+    Route::get('/hak-akses-jabatan/edit/{id}', \App\Livewire\HakAksesJabatan\HakAksesJabatanPerbaharui::class)->name('hak-akses-jabatan.edit');
 });

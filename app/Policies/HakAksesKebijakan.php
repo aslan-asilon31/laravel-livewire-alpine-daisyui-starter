@@ -2,11 +2,13 @@
 
 namespace App\Policies;
 
-use App\Models\MsPegawai;
+use App\Models\MsPegawaiAkun;
 use App\Models\HakAkses;
+use App\Models\HakAksesJabatanStatus;
 use Spatie\Permission\Models\Permission;
-use App\Models\PegawaiAksesCabang;
+use App\Models\HakAksesPegawaiCabang;
 use App\Models\RoleAksesStatus;
+use App\Models\HakAksesJabatan;
 use App\Models\TrPemesananPenjualanHeader;
 
 class HakAksesKebijakan
@@ -19,49 +21,36 @@ class HakAksesKebijakan
         //
     }
 
-    public function daftar(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
+    public function daftar(MsPegawaiAkun $msPegawaiAkun, $halamanId): bool
     {
-        return true;
+        return HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->exists();
     }
 
-    public function buat(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
+    public function buat(MsPegawaiAkun $msPegawaiAkun, $halamanId): bool
     {
-        return true;
+        return HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->exists();
     }
 
-    public function simpan(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
+    public function simpan(MsPegawaiAkun $msPegawaiAkun, $halamanId, $cabangId, $statusId): bool
     {
-        return true;
-    }
+        $adakahPermission = HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->first();
 
-    public function edit(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
-    {
-        return true;
-    }
-
-    public function update(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
-    {
-        dd('stop');
-        $semuaPermission = HakAkses::where()::pluck('name')
-            ->contains($halaman);
-        $adakahPermission = $msPegawai->getAllPermissions()
-            ->pluck('name')
-            ->contains($halaman);
         if (!$adakahPermission) {
             return false;
         }
 
-        $adakahAksesCabang = PegawaiAksesCabang::where('ms_pegawai_id', $msPegawai->id)->value('ms_cabang_id');
-        if ($adakahAksesCabang != $cabang) {
+        $adakahAksesCabang = HakAksesPegawaiCabang::where('ms_pegawai_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->id)
+            ->where('ms_cabang_id', $cabangId)->first();
+        if (!$adakahAksesCabang) {
             return false;
         }
 
-        $halamanId = Permission::where('name', $halaman)->value('id');
-        $adakahAksesStatus = RoleAksesStatus::where('role_id', $msPegawai->roles()->pluck('id')->toArray())
-            ->where('permission_id', $halamanId)
-            ->where('status', 'aktif')
-            ->exists();
-        if ($adakahAksesStatus != $status) {
+        $adakahAksesStatus = HakAksesJabatanStatus::where('hak_akses_jabatan_id', $adakahPermission->id)
+            ->where('ms_status_id', $statusId)->get();
+        if (!$adakahAksesStatus) {
             return false;
         }
 
@@ -73,13 +62,56 @@ class HakAksesKebijakan
         return $diizinkankahsemua;
     }
 
-    public function hapus(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
+    public function edit(MsPegawaiAkun $msPegawaiAkun, $halamanId, $cabangId, $statusId): bool
     {
-        return true;
+        return HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->exists();
     }
 
-    public function lihat(MsPegawai $msPegawai, $halaman, $cabang, $status): bool
+    public function update(MsPegawaiAkun $msPegawaiAkun, $halamanId, $cabangId, $statusId): bool
     {
-        return true;
+        $adakahPermission = HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->first();
+
+        if (!$adakahPermission) {
+            return false;
+        }
+
+        $adakahAksesCabang = HakAksesPegawaiCabang::where('ms_pegawai_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->id)
+            ->where('ms_cabang_id', $cabangId)->first();
+        if (!$adakahAksesCabang) {
+            return false;
+        }
+
+        $adakahAksesStatus = HakAksesJabatanStatus::where('hak_akses_jabatan_id', $adakahPermission->id)
+            ->where('ms_status_id', $statusId)->get();
+        if (!$adakahAksesStatus) {
+            return false;
+        }
+
+        if ($adakahPermission && $adakahAksesCabang && $adakahAksesStatus)
+            $diizinkankahsemua = true;
+        else {
+            $diizinkankahsemua = false;
+        }
+        return $diizinkankahsemua;
+    }
+
+
+    public function lihat(MsPegawaiAkun $msPegawaiAkun, $halamanId, $cabangId): bool
+    {
+        $adakahPermission = HakAksesJabatan::where('ms_jabatan_id', \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->msJabatan->id)
+            ->where('hak_akses_id', $halamanId)->first();
+
+        if (!$adakahPermission) {
+            return false;
+        }
+
+        if ($adakahPermission)
+            $diizinkankahsemua = true;
+        else {
+            $diizinkankahsemua = false;
+        }
+        return $diizinkankahsemua;
     }
 }

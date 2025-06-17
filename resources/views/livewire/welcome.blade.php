@@ -1,23 +1,20 @@
 <div>
-  <!-- HEADER -->
-  <x-header title="Hello" separator progress-indicator>
-    <x-slot:middle class="!justify-end">
-      <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
-    </x-slot:middle>
-    <x-slot:actions>
-      <x-button label="Filters" @click="$wire.drawer = true" responsive icon="o-funnel" class="btn-primary" />
-    </x-slot:actions>
-  </x-header>
+  <x-list-menu :title="$title" :url="$url" shadow />
 
 
   <x-card>
     <div class="space-y-4 p-4">
 
-      <div class="w-10/12">
+      <div class="w-12/12">
         <div class="flex flex-row">
-          <div class="bg-no-repeat bg-blue-200 border border-blue-300 rounded-xl w-7/12 mr-2 p-6 shadow-lg "
+          <div class="bg-no-repeat  rounded-xl w-7/12 mr-2 p-6 shadow-lg "
             style="background-image: url(); background-position: 90% center;">
-            <div class="flex justify-between">
+            <canvas id="salesLineChart" width="800" height="400"></canvas>
+
+          </div>
+
+          <div class="bg-no-repeat   rounded-xl w-5/12 ml-2 p-6" style=" background-position: 100% 40%;">
+            <div class="">
               <div>
                 <p class="text-2xl text-indigo-900 ">Selamat Datang
                   <br><strong>{{ Auth::guard('pegawai')->user()->msPegawai->nama }}</strong>
@@ -31,33 +28,22 @@
                   srcset="">
               </div>
             </div>
-
-          </div>
-
-          <div class="bg-no-repeat bg-blue-100 border border-blue-200  rounded-xl w-5/12 ml-2 p-6"
-            style=" background-position: 100% 40%;">
-            Chart1
           </div>
         </div>
         <div class="flex flex-row h-64 mt-6">
           <div class="bg-white bg-blue-100 border border-blue-200 rounded-xl shadow-lg px-6 py-4 w-4/12">
-            a
+            <canvas id="barChart" width="400" height="200"></canvas>
           </div>
           <div class="bg-white bg-blue-100 border border-blue-200 rounded-xl shadow-lg mx-6 px-6 py-4 w-4/12">
-            b
+            <canvas id="pieChart"></canvas>
           </div>
           <div class="bg-white bg-blue-100 border border-blue-200 rounded-xl shadow-lg px-6 py-4 w-4/12">
-            c
+            <canvas id="lineChart"></canvas>
           </div>
         </div>
       </div>
 
-      {{-- <h2 class="text-xl font-semibold text-gray-800">
-        Selamat Datang, {{ Auth::guard('pegawai')->user()->nama }}
-      </h2>
-      <p class="text-sm text-gray-600">
-        Jabatan: {{ $user_role ?? 'Tidak diketahui' }}
-      </p> --}}
+
 
     </div>
   </x-card>
@@ -73,4 +59,88 @@
       <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer = false" />
     </x-slot:actions>
   </x-drawer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <script>
+    const ctx = document.getElementById('salesLineChart').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: @json($labelMonths),
+        datasets: @json($datasetProducts)
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Pendapatan Tiap Bulan di Tahun 2025'
+          },
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Units Sold'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Month'
+            }
+          }
+        }
+      }
+    });
+  </script>
+
+  <script>
+    // Bar Chart
+    new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels: @json($barData['labels']),
+        datasets: [{
+          label: 'Bar Sample',
+          data: @json($barData['data']),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)'
+        }]
+      }
+    });
+
+    // Pie Chart
+    new Chart(document.getElementById('pieChart'), {
+      type: 'pie',
+      data: {
+        labels: @json($pieData['labels']),
+        datasets: [{
+          data: @json($pieData['data']),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+      }
+    });
+
+    // Line Chart
+    new Chart(document.getElementById('lineChart'), {
+      type: 'line',
+      data: {
+        labels: @json($lineData['labels']),
+        datasets: [{
+          label: 'Line Sample',
+          data: @json($lineData['data']),
+          borderColor: '#4BC0C0',
+          fill: false
+        }]
+      }
+    });
+  </script>
+
 </div>

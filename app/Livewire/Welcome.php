@@ -9,8 +9,15 @@ use Mary\Traits\Toast;
 class Welcome extends Component
 {
     use Toast;
-
+    public $labelMonths;
+    public $datasetProducts;
+    public $barData;
+    public $pieData;
+    public $lineData;
     public string $search = '';
+
+    public string $title = "Dashboard";
+    public string $url = "/dashboard";
 
     public bool $drawer = false;
 
@@ -61,46 +68,58 @@ class Welcome extends Component
 
     public function mount()
     {
-        // dd(\Illuminate\Support\Facades\Auth::guard('pegawai'));
 
+        $this->labelMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-        // $akses_cabang = \Illuminate\Support\Facades\DB::table('hak_akses_pegawai_cabang as hapc')
-        //     ->join('ms_cabang as mc', 'hapc.ms_cabang_id', '=', 'mc.id')
-        //     ->join('ms_pegawai as mp', 'mp.id', '=', 'hapc.ms_pegawai_id')
-        //     ->join('ms_pegawai_akun as mpa', 'mp.id', '=', 'mpa.ms_pegawai_id')
-        //     ->where('mpa.id', \Illuminate\Support\Facades\Auth::guard('pegawai')->id())
-        //     ->select('mc.id', 'mc.nama')
-        //     ->get();
+        $this->datasetProducts = [
+            [
+                'label' => 'TV',
+                'data' => [120, 140, 100, 130, 150, 170, 0, 0, 0, 0, 0, 0],
+                'borderColor' => 'rgba(255, 99, 132, 1)',
+                'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                'fill' => false,
+                'type' => 'line',
+                'tension' => 0.3,
+            ],
+            [
+                'label' => 'Refrigerator',
+                'data' => [100, 90, 110, 105, 115, 125, 0, 0, 0, 0, 0, 0],
+                'borderColor' => 'rgba(54, 162, 235, 1)',
+                'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                'fill' => false,
+                'type' => 'line',
+                'tension' => 0.3,
+            ],
+            [
+                'label' => 'Washing Machine',
+                'data' => [60, 70, 65, 75, 80, 90, 0, 0, 0, 0, 0, 0],
+                'borderColor' => 'rgba(75, 192, 192, 1)',
+                'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                'fill' => false,
+                'type' => 'line',
+                'tension' => 0.3,
+            ]
+        ];
 
-        // $akses_cabang = \Illuminate\Support\Facades\DB::table('hak_akses_pegawai_cabang as hapc')
-        //     ->join('ms_cabang as mc', 'hapc.ms_cabang_id', '=', 'mc.id')
-        //     ->join('ms_pegawai as mp', 'mp.id', '=', 'hapc.ms_pegawai_id')
-        //     ->join('ms_pegawai_akun as mpa', 'mp.id', '=', 'mpa.ms_pegawai_id')
-        //     ->where('mpa.id', \Illuminate\Support\Facades\Auth::guard('pegawai')->id())
-        //     ->select('mc.id', 'mc.nama')
-        //     ->get();
+        $this->barData = [
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr'],
+            'data' => [10, 20, 30, 25],
+        ];
 
-        // if ($akses_cabang->isEmpty()) {
-        //     abort(403, 'Tidak memiliki akses cabang');
-        // }
+        $this->pieData = [
+            'labels' => ['A', 'B', 'C'],
+            'data' => [40, 30, 30],
+        ];
 
-        // $akses_gudang = \Illuminate\Support\Facades\DB::table('ms_gudang')
-        //     ->whereIn('ms_cabang_id', $akses_cabang->pluck('id')->toArray())
-        //     ->get();
-
-        // if ($akses_gudang->isEmpty()) {
-        //     abort(403, 'Tidak memiliki akses gudang');
-        // }
-
-        // dd($akses_cabang, $akses_gudang);
+        $this->lineData = [
+            'labels' => ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            'data' => [5, 15, 10, 20],
+        ];
     }
 
     public function render()
     {
 
-        return view('livewire.welcome', [
-            'users' => $this->users(),
-            'headers' => $this->headers()
-        ]);
+        return view('livewire.welcome');
     }
 }

@@ -4,7 +4,7 @@
     <x-list-menu :title="$title" :url="$url" :id="$id" shadow class="" />
 
 
-    <x-form wire:submit="{{ $id ? 'ubah' : 'simpan' }}">
+    <x-form wire:submit="{{ $id ? 'edit' : 'simpan' }}">
 
       <div id="pertanyaan">
 
@@ -38,7 +38,7 @@
 
           <div class="text-center mt-3">
             <x-errors class="text-white mb-3" />
-            <x-button type="submit" :label="$id ? 'ubah' : 'simpan'" class="btn-success btn-sm text-white" />
+            <x-button type="submit" :label="$id ? 'edit' : 'simpan'" class="btn-success btn-sm text-white" />
             <x-button label="batal" class="btn-error btn-sm text-white" wire.click="closeModal" />
           </div>
 

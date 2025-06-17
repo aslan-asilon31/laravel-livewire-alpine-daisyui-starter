@@ -20,7 +20,7 @@ class PemesananPenjualanHeaderDaftar extends Component
 {
 
   public string $title = "Pemesanan Penjualan List";
-  public string $url = "/tanda-terima-service";
+  public string $url = "/pemesanan-penjualan";
 
 
   #[\Livewire\Attributes\Locked]
@@ -46,6 +46,17 @@ class PemesananPenjualanHeaderDaftar extends Component
     'status' => '',
   ];
 
+
+
+  public function boot()
+  {
+    $halamanId = \App\Models\HakAkses::where('nama', 'pemesanan_penjualan-daftar')->value('id');
+
+    \Illuminate\Support\Facades\Gate::authorize('daftar', [
+      \App\Models\HakAkses::class,
+      $halamanId,
+    ]);
+  }
 
   public function mount() {}
 
@@ -132,7 +143,7 @@ class PemesananPenjualanHeaderDaftar extends Component
   public function render()
   {
 
-    return view('livewire.tanda-terima-service-header-resources.tanda-terima-service-header-list')
+    return view('livewire.pemesanan-penjualan.pemesanan-penjualan-header-daftar')
       ->title($this->title);
   }
 }

@@ -1,11 +1,10 @@
 <x-header title="{{ $title }}" subtitle="" separator>
   <x-slot:actions>
     @if (empty($id))
-      @if ('/' . request()->path() == $url . '/create')
+      @if ('/' . request()->path() == $url . '/buat')
       @else
         @if (request()->path() != $url)
-          <x-button icon-right="o-plus-circle" label="Create" link="{{ $url . '/create' }}"
-            class=" btn-ghost btn-outline" />
+          <x-button icon-right="o-plus-circle" label="Buat" link="{{ $url . '/buat' }}" class=" btn-ghost btn-outline" />
         @endif
       @endif
     @else

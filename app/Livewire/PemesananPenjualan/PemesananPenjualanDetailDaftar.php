@@ -18,7 +18,7 @@ class PemesananPenjualanDetailDaftar extends Component
 {
 
   public string $title = "Pemesanan Penjualan Detail List";
-  public string $url = "/tanda-terima-service";
+  public string $url = "/pemesanan-penjualan";
 
 
   #[\Livewire\Attributes\Locked]
@@ -56,7 +56,7 @@ class PemesananPenjualanDetailDaftar extends Component
 
   public function mount()
   {
-    $this->permission('tanda_terima_service-list');
+    $this->permission('pemesanan_penjualan-list');
   }
 
   public function fetchIdFromHeader() {}
@@ -68,7 +68,7 @@ class PemesananPenjualanDetailDaftar extends Component
       ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'nomor', 'label' => '#', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'id', 'label' => 'ID', 'sortBy' => 'id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
-      ['key' => 'tr_tanda_terima_service_header_id', 'label' => 'Pemesanan Penjualan Header ID', 'sortBy' => 'tr_tanda_terima_service_header_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
+      ['key' => 'tr_pemesanan_penjualan_header_id', 'label' => 'Pemesanan Penjualan Header ID', 'sortBy' => 'tr_pemesanan_penjualan_header_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'ms_barang_id', 'label' => 'Barang ID', 'sortBy' => 'ms_barang_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'ms_rak_id', 'label' => 'Rak ID', 'sortBy' => 'ms_rak_id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'catatan', 'label' => 'Catatan', 'sortBy' => 'catatan', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
@@ -84,8 +84,8 @@ class PemesananPenjualanDetailDaftar extends Component
 
     $query = TrPemesananPenjualanDetail::query();
     $query->when($this->search, fn($q) => $q->where('id', 'like', "%{$this->search}%"))
-      ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('id', 'like', "%{$this->filters['tr_tanda_terima_service_header_id']}%"))
-      ->when(($this->filters['tr_tanda_terima_service_header_id'] ?? ''), fn($q) => $q->where('tr_tanda_terima_service_header_id', 'like', "%{$this->filters['tr_tanda_terima_service_header_id']}%"))
+      ->when(($this->filters['id'] ?? ''), fn($q) => $q->where('id', 'like', "%{$this->filters['tr_pemesanan_penjualan_header_id']}%"))
+      ->when(($this->filters['tr_pemesanan_penjualan_header_id'] ?? ''), fn($q) => $q->where('tr_pemesanan_penjualan_header_id', 'like', "%{$this->filters['tr_pemesanan_penjualan_header_id']}%"))
       ->when(($this->filters['ms_barang_id'] ?? ''), fn($q) => $q->where('ms_barang_id', 'like', "%{$this->filters['ms_barang_id']}%"))
       ->when(($this->filters['ms_rak_id'] ?? ''), fn($q) => $q->where('ms_rak_id', 'like', "%{$this->filters['ms_rak_id']}%"))
       ->when(($this->filters['catatan'] ?? ''), fn($q) => $q->where('catatan', 'like', "%{$this->filters['catatan']}%"))
@@ -98,7 +98,7 @@ class PemesananPenjualanDetailDaftar extends Component
 
     $paginator = $query
       // ->orderBy('nomor', 'asc')
-      ->where('tr_tanda_terima_service_header_id', session('PemesananPenjualanHeaderId'))
+      ->where('tr_pemesanan_penjualan_header_id', session('PemesananPenjualanHeaderId'))
       ->paginate(20);
 
     $start = ($paginator->currentPage() - 1) * $paginator->perPage();
@@ -114,14 +114,14 @@ class PemesananPenjualanDetailDaftar extends Component
   {
     $validatedFilters = $this->validate(
       [
-        'filterForm.tr_tanda_terima_service_id' => 'nullable|string',
+        'filterForm.tr_pemesanan_penjualan_id' => 'nullable|string',
         'filterForm.ms_barang_id' => 'nullable|integer',
         'filterForm.ms_rak_id' => 'nullable|integer',
         'filterForm.tgl_dibuat' => 'nullable|string',
       ],
       [],
       [
-        'filterForm.tr_tanda_terima_service_id' => 'Pemesanan Penjualan ID',
+        'filterForm.tr_pemesanan_penjualan_id' => 'Pemesanan Penjualan ID',
         'filterForm.ms_barang_id' => 'Barang ID',
         'filterForm.ms_rak_id' => 'Rak ID',
         'filterForm.tgl_dibuat' => 'Tanggal Dibuat',
@@ -164,7 +164,7 @@ class PemesananPenjualanDetailDaftar extends Component
 
   public function render()
   {
-    return view('livewire.tanda-terima-service-header-resources.tanda-terima-service-detail-list')
+    return view('livewire.pemesanan-penjualan.pemesanan-penjualan-detail-daftar')
       ->title($this->title);
   }
 }

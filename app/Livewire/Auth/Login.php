@@ -26,6 +26,7 @@ class Login extends Component
             'password' => $this->password,
         ];
 
+
         if (Auth::guard('pegawai')->attempt($credentials)) {
             session()->regenerate();
 

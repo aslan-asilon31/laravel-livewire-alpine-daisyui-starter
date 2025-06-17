@@ -58,8 +58,8 @@
 
       <div class="text-center mt-3">
         <x-errors class="text-white mb-3" />
-        <x-button type="submit" :label="$id ? 'ubah' : 'simpan'" class="btn-success btn-sm text-white" />
-        <x-button label="batal" class="btn-error btn-sm text-white" link="/tanda-terima-service" />
+        <x-button type="submit" :label="$id ? 'edit' : 'simpan'" class="btn-success btn-sm text-white" />
+        <x-button label="batal" class="btn-error btn-sm text-white" link="/pemesanan-penjualan" />
       </div>
     </x-form>
 

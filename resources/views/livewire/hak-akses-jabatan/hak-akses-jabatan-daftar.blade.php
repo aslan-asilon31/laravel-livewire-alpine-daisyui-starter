@@ -44,8 +44,8 @@
 
       @scope('cell_action', $row)
         <x-dropdown>
-          <x-menu-item title="edit" icon="o-pencil-square" link="/cabang/edit/{{ $row->id }}" />
-          <x-menu-item title="Lihat" icon="o-eye" link="/cabang/lihat/{{ $row->id }}/read-only" />
+          <x-menu-item title="edit" icon="o-pencil-square" link="/hak-akses-jabatan/edit/{{ $row->id }}" />
+          <x-menu-item title="Lihat" icon="o-eye" link="/hak-akses-jabatan/lihat/{{ $row->id }}/read-only" />
         </x-dropdown>
       @endscope
 
@@ -60,6 +60,5 @@
 
 
 
-  {{-- <livewire:pages.admin.sales.customer-resources.components.customer-table /> --}}
 
 </div>

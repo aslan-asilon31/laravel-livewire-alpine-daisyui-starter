@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // \Illuminate\Support\Facades\Auth::shouldUse('pegawai');
+        \Illuminate\Support\Facades\Auth::shouldUse('pegawai');
         Gate::policy(HakAkses::class, HakAksesKebijakan::class);
     }
 }

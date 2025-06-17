@@ -17,7 +17,7 @@ class PemesananPenjualanDetailPerbaharui extends Component
 
   public function render()
   {
-    return view('livewire.tanda-terima-service-header-resources.tanda-terima-service-header-crud')
+    return view('livewire.pemesanan-penjualan.pemesanan-penjualan-header-perbaharui')
       ->title($this->title);
   }
 
@@ -71,8 +71,8 @@ class PemesananPenjualanDetailPerbaharui extends Component
       $this->title .= ' (Tampil)';
       $this->tampil();
     } else if ($this->id) {
-      $this->title .= ' (Ubah)';
-      $this->ubah();
+      $this->title .= ' (edit)';
+      $this->edit();
     } else {
       $this->title .= ' (Buat)';
       $this->buat();
@@ -128,7 +128,7 @@ class PemesananPenjualanDetailPerbaharui extends Component
 
   public function buat()
   {
-    $this->permission('tanda_terima_service-buat');
+    $this->permission('pemesanan_penjualan-buat');
     $this->masterForm->reset();
     // dd('cek1');
 
@@ -144,9 +144,9 @@ class PemesananPenjualanDetailPerbaharui extends Component
     $this->masterForm->fill($masterData);
   }
 
-  public function ubah()
+  public function edit(
   {
-    $this->permission('tanda_terima_service-ubah');
+    $this->permission('pemesanan_penjualan-edit');
 
     $this->isReadonly = false;
     $this->isDisabled = false;
