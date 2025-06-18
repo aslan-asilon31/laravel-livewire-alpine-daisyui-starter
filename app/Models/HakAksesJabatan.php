@@ -24,7 +24,7 @@ class HakAksesJabatan  extends  Authenticatable
 
     public function msJabatan()
     {
-        return $this->hasMany(MsJabatan::class);
+        return $this->belongsTo(MsJabatan::class);
     }
 
     public function hakAkses()

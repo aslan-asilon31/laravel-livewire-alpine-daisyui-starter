@@ -34,4 +34,9 @@ class HakAkses  extends  Authenticatable
     {
         return $this->hasMany(HakAksesGrup::class, 'hak_akses_grup_id');
     }
+
+    public function hakAksesJabatan()
+    {
+        return $this->belongsTo(HakAksesJabatan::class);
+    }
 }

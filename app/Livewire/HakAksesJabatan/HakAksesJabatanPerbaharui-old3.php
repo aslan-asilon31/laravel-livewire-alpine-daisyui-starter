@@ -68,7 +68,7 @@ class HakAksesJabatanPerbaharui extends Component
   public $selectedStatusPermissions  = [];
   public $statuses;
   public $groupedByPrefix = [];
-  public $subActionsByPermission = [];
+
 
   public function toggleCheckAll()
   {
@@ -84,37 +84,26 @@ class HakAksesJabatanPerbaharui extends Component
     $this->permissionList = true;
   }
 
+
   public function groupPermissions()
   {
+    // dd($this->role->hakAkses);
     $this->groupedPermissions = [];
-    $this->groupedByPrefix = [];
-
     foreach ($this->permissions as $permission) {
-      $parts = explode('-', $permission->nama);
-      $group = $parts[0] ?? $permission->nama;
-      $action = $parts[1] ?? null;
 
 
-      if (!isset($this->groupedPermissions[$group])) {
-        $this->groupedPermissions[$group] = [];
+      $parts = explode('-', $permission->name);
+      $prefix = $parts[0] ?? '';
+      $action = $parts[1] ?? '';
+
+
+      if (!isset($this->groupedByPrefix[$prefix])) {
+        $this->groupedPermissions[$prefix][$action] = [];
       }
-      $this->groupedPermissions[$group][] = $permission;
 
-      // Simpan berdasarkan prefix dan action tunggal
-      if ($action) {
-        if (!isset($this->groupedByPrefix[$group])) {
-          $this->groupedByPrefix[$group] = [];
-        }
-
-        // Gunakan array jika ada kemungkinan duplikat nama
-        if (!isset($this->groupedByPrefix[$group][$action])) {
-          $this->groupedByPrefix[$group][$action] = $permission;
-        }
-      }
+      $this->groupedPermissions[$prefix][$action] = $permission;
     }
   }
-
-
 
 
   public function mount()
@@ -189,39 +178,25 @@ class HakAksesJabatanPerbaharui extends Component
     }
 
     $this->permissions = HakAkses::all();
+
     $this->selectedPermissions = $this->role->hakAkses()->pluck('hak_akses.id')->toArray();
 
-    $statusPivot = \App\Models\HakAksesJabatanStatus::with(['msStatus', 'hakAksesJabatan'])
-      ->whereIn('hak_akses_jabatan_id', function ($query) {
-        $query->select('id')
-          ->from('hak_akses_jabatan')
-          ->where('ms_jabatan_id', $this->role->id);
-      })->get()
-      ->map(function ($item) {
-        $item->msStatus_nama = $item->msStatus->nama ?? null;
-        $item->hak_akses_id = $item->hakAksesJabatan->hak_akses_id ?? null;
-        return $item;
-      });
-
-    $this->subActionsByPermission = $statusPivot->groupBy(function ($item) {
-      return $item->hakAksesJabatan->hak_akses_id ?? null;
-    })->map(function ($group) {
-      return $group->map(function ($item) {
-        return [
-          'ms_status_id' => $item->ms_status_id,
-          'nama' => $item->msStatus->nama ?? null,
-        ];
-      })->toArray();
-    })->toArray();
+    $statusPivot = \App\Models\HakAksesJabatanStatus::whereIn('hak_akses_jabatan_id', function ($query) {
+      $query->select('id')
+        ->from('hak_akses_jabatan')
+        ->where('ms_jabatan_id', $this->role->id);
+    })->get();
 
 
-
+    // Format seperti: ["permissionId_statusId"]
     $this->selectedStatusPermissions = $statusPivot->map(function ($item) {
       return "{$item->hak_akses_id}_{$item->ms_status_id}";
     })->toArray();
 
-    $this->statuses = MsStatus::orderBy('nomor')->get();
+
     $this->groupPermissions();
+
+
     $this->isReadonly = false;
     $this->isDisabled = false;
     $masterData = $this->masterModel::findOrFail($this->id);

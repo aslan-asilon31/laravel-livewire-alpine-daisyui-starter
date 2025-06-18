@@ -31,4 +31,15 @@ class MsJabatan  extends  Authenticatable
     {
         return $this->belongsTo(HakAksesJabatan::class);
     }
+
+
+    public function hakAkses()
+    {
+        return $this->belongsToMany(
+            \App\Models\HakAkses::class,
+            'hak_akses_jabatan',
+            'ms_jabatan_id',
+            'hak_akses_id'
+        );
+    }
 }

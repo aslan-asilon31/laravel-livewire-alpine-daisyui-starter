@@ -24,11 +24,11 @@ class HakAksesJabatanStatus  extends  Authenticatable
 
     public function hakAksesJabatan()
     {
-        return $this->hasMany(HakAksesJabatan::class);
+        return $this->belongsTo(HakAksesJabatan::class, 'hak_akses_jabatan_id', 'id');
     }
 
     public function msStatus()
     {
-        return $this->hasMany(MsStatus::class);
+        return $this->belongsTo(MsStatus::class, 'ms_status_id', 'id');
     }
 }

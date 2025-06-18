@@ -36,120 +36,74 @@
       </div>
 
 
-      <div class="bg-white p-2">
+      <br>
 
-        <div class="overflow-x-auto p-4">
-          <table class="min-w-full table-auto border border-gray-200">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 text-left border-b">Hak Akses</th>
-                <th class="px-4 py-2 text-center border-b">Daftar</th>
-                <th class="px-4 py-2 text-center border-b">Buat</th>
-                <th class="px-4 py-2 text-center border-b">Simpan</th>
-                <th class="px-4 py-2 text-center border-b">Edit</th>
-                <th class="px-4 py-2 text-center border-b">Update</th>
-                <th class="px-4 py-2 text-center border-b">Lihat</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm">
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">ms_barang-lihat</td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
+
+      @php
+        $actions = ['daftar', 'buat', 'simpan', 'edit', 'update', 'lihat'];
+        $subActions = ['simpan', 'update'];
+      @endphp
+
+      <table class="w-auto table-auto border border-gray-200 text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-2 py-1  border-b ">Hak Akses {{ strtoupper($masterForm->nama) }}
+            </th>
+            @foreach ($actions as $action)
+              <th class="px-2 py-1 text-center border-b whitespace-nowrap capitalize">{{ $action }}</th>
+            @endforeach
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($groupedByPrefix as $prefix => $permissions)
+            <tr class="border-b hover:bg-gray-50 align-top">
+              <td class="px-4 py-2 font-semibold text-gray-700 w-16">
+                {{ ucfirst($prefix) }}
+              </td>
+
+              @foreach ($actions as $action)
+                <td class="text-center px-2 py-2 whitespace-nowrap align-top">
+                  @php
+                    $permission = $permissions[$action] ?? null;
+                  @endphp
+
+                  @if ($permission)
+                    {{-- Checkbox utama --}}
+                    <input type="checkbox" wire:model="selectedPermissions" value="{{ $permission->id }}"
+                      class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                      title="{{ $permission->nama }}">
+
+                    {{-- Sub-checkbox selalu ditampilkan --}}
+                    <div class="mt-2 space-y-1 text-left">
+                      @foreach ($statuses as $status)
+                        @php
+                          $statusKey = $permission->id . '_' . $status->id;
+                          $isChecked = in_array($statusKey, $selectedStatusPermissions ?? []);
+                          $isDisabled = !in_array($permission->id, $selectedPermissions ?? []);
+                        @endphp
+                        <label class="flex items-center space-x-1 text-xs">
+                          <input type="checkbox" wire:model="selectedStatusPermissions" value="{{ $statusKey }}"
+                            class="form-checkbox h-3 w-3 text-green-600"
+                            @if ($isDisabled) disabled @endif> <span
+                            class="{{ $isDisabled ? 'text-gray-400' : '' }}">{{ ucfirst($status->nama) }}</span>
+                        </label>
+                      @endforeach
+                    </div>
+                  @else
+                    <span class="text-gray-400">—</span>
+                  @endif
                 </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-              </tr>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">ms_barang-buat</td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-              </tr>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">ms_barang-simpan</td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-              </tr>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">ms_barang-edit</td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-              </tr>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">ms_barang-update</td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-                <td class="text-center">
-                  <x-checkbox label="" wire:model="item1" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              @endforeach
+            </tr>
+          @endforeach
+
+
+        </tbody>
+      </table>
 
 
 
 
-      </div>
 
 
 
