@@ -25,4 +25,10 @@ Route::middleware('pegawai')->group(function () {
     Route::get('/hak-akses-jabatan', \App\Livewire\HakAksesJabatan\HakAksesJabatanDaftar::class)->name('hak-akses-jabatan.daftar');
     Route::get('/hak-akses-jabatan/buat', \App\Livewire\HakAksesJabatan\HakAksesJabatanPerbaharui::class)->name('hak-akses-jabatan.buat');
     Route::get('/hak-akses-jabatan/edit/{id}', \App\Livewire\HakAksesJabatan\HakAksesJabatanPerbaharui::class)->name('hak-akses-jabatan.edit');
+
+    Route::get('/pegawai', \App\Livewire\MsPegawai\MsPegawaiDaftar::class)->name('master-pegawai.daftar');
+    Route::get('/pegawai/buat', \App\Livewire\MsPegawai\MsPegawaiPerbaharui::class)->name('master-pegawai.buat');
+    Route::get('/pegawai/edit/{id}', \App\Livewire\MsPegawai\MsPegawaiPerbaharui::class)->name('master-pegawai.edit');
+
+    Route::get('/profile', \App\Livewire\Profile\Profile::class)->name('profile');
 });

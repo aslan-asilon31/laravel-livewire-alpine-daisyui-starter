@@ -12,6 +12,16 @@
               :disabled="true" />
           </div>
 
+          <div class="mb-3" hidden>
+            <x-input label="id" wire:model="masterForm.tgl_dibuat" id="masterForm.tgl_dibuat"
+              nama="masterForm.tgl_dibuat" placeholder="id" :disabled="true" />
+          </div>
+
+          <div class="mb-3" hidden>
+            <x-input label="id" wire:model="masterForm.tgl_diupdate" id="masterForm.tgl_diupdate"
+              nama="masterForm.tgl_diupdate" placeholder="id" :disabled="true" />
+          </div>
+
           <div class="mb-3">
             <x-input label="Nama" wire:model.blur="masterForm.nama" id="masterForm.nama" nama="masterForm.nama"
               placeholder="Nama" :readonly="$isReadonly" />
@@ -29,87 +39,97 @@
           </div>
 
           <div class="mb-3">
-            <x-select label="Status" wire:model="masterForm.status" :options="$optionStatus" />
+            <x-select label="Status" wire:model="masterForm.status" :options="[['id' => 'aktif', 'name' => 'Aktif'], ['id' => 'tidak-aktif', 'name' => 'Tidak Aktif']]" />
           </div>
         </div>
 
       </div>
 
-
       <br>
-
 
       @php
         $actions = ['daftar', 'buat', 'simpan', 'edit', 'update', 'lihat'];
         $subActions = ['simpan', 'update'];
       @endphp
 
-      <table class="w-auto table-auto border border-gray-200 text-sm">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-2 py-1  border-b ">Hak Akses {{ strtoupper($masterForm->nama) }}
-            </th>
-            @foreach ($actions as $action)
-              <th class="px-2 py-1 text-center border-b whitespace-nowrap capitalize">{{ $action }}</th>
-            @endforeach
-          </tr>
-        </thead>
-        <tbody>
-          @foreach ($groupedByPrefix as $prefix => $permissions)
-            <tr class="border-b hover:bg-gray-50 align-top">
-              <td class="px-4 py-2 font-semibold text-gray-700 w-16">
-                {{ ucfirst($prefix) }}
-              </td>
+      <div class="flex items-center space-x-4 mb-3">
+        <label class="flex items-center space-x-1">
+          <input type="checkbox" wire:model="checkAll" wire:change="toggleCheckAll"
+            class="form-checkbox h-4 w-4 text-blue-600">
+          <span>Centang Semua Aksi</span>
+        </label>
 
+        <label class="flex items-center space-x-1">
+          <input type="checkbox" wire:model="checkAllSub" wire:change="toggleCheckAllSub"
+            class="form-checkbox h-4 w-4 text-green-600">
+          <span>Centang Semua Sub Aksi (Status)</span>
+        </label>
+      </div>
+
+
+      <div class="overflow-auto w-full m-2">
+        <table class="w-96 border border-gray-200 text-sm">
+          <thead class="bg-gray-100">
+
+            <tr>
+
+              <th class="px-2 py-1  border-b ">Hak Akses {{ strtoupper($masterForm->nama) }}
+              </th>
               @foreach ($actions as $action)
-                <td class="text-center px-2 py-2 whitespace-nowrap align-top">
-                  @php
-                    $permission = $permissions[$action] ?? null;
-                  @endphp
-
-                  @if ($permission)
-                    {{-- Checkbox utama --}}
-                    <input type="checkbox" wire:model="selectedPermissions" value="{{ $permission->id }}"
-                      class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
-                      title="{{ $permission->nama }}">
-
-                    {{-- Sub-checkbox selalu ditampilkan --}}
-                    <div class="mt-2 space-y-1 text-left">
-                      @foreach ($statuses as $status)
-                        @php
-                          $statusKey = $permission->id . '_' . $status->id;
-                          $isChecked = in_array($statusKey, $selectedStatusPermissions ?? []);
-                          $isDisabled = !in_array($permission->id, $selectedPermissions ?? []);
-                        @endphp
-                        <label class="flex items-center space-x-1 text-xs">
-                          <input type="checkbox" wire:model="selectedStatusPermissions" value="{{ $statusKey }}"
-                            class="form-checkbox h-3 w-3 text-green-600"
-                            @if ($isDisabled) disabled @endif> <span
-                            class="{{ $isDisabled ? 'text-gray-400' : '' }}">{{ ucfirst($status->nama) }}</span>
-                        </label>
-                      @endforeach
-                    </div>
-                  @else
-                    <span class="text-gray-400">—</span>
-                  @endif
-                </td>
+                <th class="px-2 py-1 text-center border-b whitespace-nowrap capitalize">{{ $action }}</th>
               @endforeach
             </tr>
-          @endforeach
+          </thead>
+          <tbody>
+            @foreach ($groupedByPrefix as $prefix => $permissions)
+              <tr class="border-b hover:bg-gray-50 align-top">
+                <td class="px-4 py-2 font-semibold text-gray-700 w-16">
+                  {{ ucfirst($prefix) }}
+                </td>
+                @foreach ($actions as $action)
+                  <td class="text-center px-2 py-2 whitespace-nowrap align-top">
+                    @php
+                      $permission = $permissions[$action] ?? null;
+                    @endphp
+
+                    @if ($permission)
+                      <x-checkbox label="{{ $permission->nama }}" class="" wire:model="selectedPermissions"
+                        value="{{ $permission->id }}" />
 
 
-        </tbody>
-      </table>
+                      @if (!in_array($action, ['daftar', 'lihat']))
+                        <div class="mt-2 space-y-1 ">
+                          @foreach ($statuses as $status)
+                            @php
+                              $statusKey = $permission->id . '_' . $status->id;
+                              $isChecked = in_array($statusKey, $selectedStatusPermissions ?? []);
+                              $isDisabled = !in_array($permission->id, $selectedPermissions ?? []);
+                            @endphp
+                            <label class="flex items-center space-x-1 text-xs m-2">
+
+                              <x-checkbox label="{{ ucfirst($status->nama) }}" wire:model="selectedStatusPermissions"
+                                value="{{ $statusKey }}" style="width:20px;" />
+
+                            </label>
+                          @endforeach
+                        </div>
+                      @endif
+                    @else
+                      <span class="text-gray-400">—</span>
+                    @endif
+                  </td>
+                @endforeach
+              </tr>
+            @endforeach
 
 
-
-
-
-
+          </tbody>
+        </table>
+      </div>
 
       <div class="text-center mt-3">
         <x-errors class="text-white mb-3" />
-        <x-button type="submit" :label="$id ? 'edit' : 'simpan'" class="btn-success btn-sm text-white" />
+        <x-button type="submit" :label="$id ? 'update' : 'simpan'" class="btn-success btn-sm text-white" />
         <x-button label="batal" class="btn-error btn-sm text-white" link="/pemesanan-penjualan" />
       </div>
     </x-form>

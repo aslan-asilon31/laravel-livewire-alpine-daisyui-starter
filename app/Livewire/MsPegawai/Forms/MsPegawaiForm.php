@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Livewire\HakAksesJabatan\Forms;
+namespace App\Livewire\MsPegawai\Forms;
 
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Form;
 
-class MsJabatanForm extends Form
+class MsPegawaiForm extends Form
 {
   public string|null $id = null;
   public string|null $nama = null;
   public int|null $nomor = null;
   public string|null $dibuat_oleh = null;
   public string|null $diupdate_oleh = null;
-  public string|null $tgl_dibuat = null;
-  public string|null $tgl_diupdate = null;
   public string|null $status = null;
+
+
 
   public function rules(string|null $id = null): array
   {
@@ -25,7 +25,6 @@ class MsJabatanForm extends Form
       'masterForm.diupdate_oleh' => 'required|string',
       'masterForm.tgl_dibuat' => 'required|string',
       'masterForm.tgl_diupdate' => 'required|string',
-
     ];
   }
 
@@ -36,8 +35,6 @@ class MsJabatanForm extends Form
       'masterForm.nomor' => 'Nomor',
       'masterForm.dibuat_oleh' => 'Dibuat Oleh',
       'masterForm.diupdate_oleh' => 'Diupdate Oleh',
-      'masterForm.tgl_dibuat' => 'Tanggal dibuat',
-      'masterForm.tgl_diupdate' => 'Tanggal diupdate',
     ];
   }
 }

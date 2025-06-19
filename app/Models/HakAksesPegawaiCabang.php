@@ -30,6 +30,6 @@ class HakAksesPegawaiCabang  extends  Authenticatable
 
     public function msCabang()
     {
-        return $this->hasMany(MsCabang::class);
+        return $this->belongsTo(MsCabang::class, 'ms_cabang_id', 'id');
     }
 }

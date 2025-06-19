@@ -2,10 +2,13 @@
 
 namespace App\Livewire\HakAksesJabatan;
 
-use App\Livewire\MsCabang\Forms\MsCabangForm;
+use App\Livewire\HakAksesJabatan\Forms\MsJabatanForm;
 use Livewire\Component;
 use App\Models\MsStatus;
 use App\Models\HakAkses;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class HakAksesJabatanPerbaharui extends Component
 {
@@ -50,8 +53,7 @@ class HakAksesJabatanPerbaharui extends Component
   #[\Livewire\Attributes\Locked]
   public array $optionStatus = [];
 
-  public MsCabangForm $masterForm;
-
+  public MsJabatanForm $masterForm;
 
   public $isLoading = false;
   public  $groupedPermissions = [];
@@ -69,6 +71,29 @@ class HakAksesJabatanPerbaharui extends Component
   public $statuses;
   public $groupedByPrefix = [];
   public $subActionsByPermission = [];
+  public array $checkAllByAction = [];
+  public bool $checkAllSub = false;
+
+
+  public function toggleCheckAllSub()
+  {
+    if (! $this->checkAllSub) {
+      $this->selectedStatusPermissions = [];
+      return;
+    }
+
+    $selectedStatusPermissions = [];
+
+    foreach ($this->permissions as $permission) {
+      foreach ($this->statuses as $status) {
+        $selectedStatusPermissions[] = $permission->id . '_' . $status->id;
+      }
+    }
+
+    $this->selectedStatusPermissions = $selectedStatusPermissions;
+  }
+
+
 
   public function toggleCheckAll()
   {
@@ -113,8 +138,6 @@ class HakAksesJabatanPerbaharui extends Component
       }
     }
   }
-
-
 
 
   public function mount()
@@ -214,8 +237,6 @@ class HakAksesJabatanPerbaharui extends Component
       })->toArray();
     })->toArray();
 
-
-
     $this->selectedStatusPermissions = $statusPivot->map(function ($item) {
       return "{$item->hak_akses_id}_{$item->ms_status_id}";
     })->toArray();
@@ -230,6 +251,11 @@ class HakAksesJabatanPerbaharui extends Component
 
   public function update()
   {
+    $this->masterForm->tgl_dibuat ?? now();
+    $this->masterForm->tgl_diupdate ?? now();
+
+    $this->masterForm->diupdate_oleh = Auth::guard('pegawai')->user()->msPegawai->nama ?? null;
+
     $validatedForm = $this->validate(
       $this->masterForm->rules(),
       [],
@@ -237,23 +263,75 @@ class HakAksesJabatanPerbaharui extends Component
     )['masterForm'];
     $masterData = $this->masterModel::findOrFail($this->id);
 
+    $this->masterForm->dibuat_oleh = \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama;
+    $this->masterForm->diupdate_oleh = \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama;
+
+    DB::beginTransaction();
+
     try {
+      \App\Models\HakAksesJabatan::where('ms_jabatan_id', $this->id)->delete();
+      $nomorAkhirHakAksesJabatan = \App\Models\HakAksesJabatan::max('nomor') ?? 0;
+      foreach ($this->selectedPermissions ?? [] as $hakAksesId) {
+        $nomorAkhirHakAksesJabatan++;
+
+        \App\Models\HakAksesJabatan::create([
+          'id' => Str::uuid(),
+          'ms_jabatan_id' => $this->id,
+          'hak_akses_id' => $hakAksesId,
+          'nomor' => $nomorAkhirHakAksesJabatan + 1,
+          'diupdate_oleh' => \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama,
+          'tgl_dibuat' => now(),
+          'tgl_diupdate' => now(),
+        ]);
+      }
+
+      \App\Models\HakAksesJabatanStatus::whereIn('hak_akses_jabatan_id', function ($query) {
+        $query->select('id')
+          ->from('hak_akses_jabatan')
+          ->where('ms_jabatan_id', $this->id);
+      })->delete();
+
+      $aksesJabatan = \App\Models\HakAksesJabatan::where('ms_jabatan_id', $this->id)->get();
+      $nomorAkhirHakAksesJabatanStatus = \App\Models\HakAksesJabatanStatus::max('nomor') ?? 0;
+
+      foreach ($aksesJabatan as $item) {
+        foreach ($this->selectedStatusPermissions ?? [] as $statusKey) {
+          [$explodedHakAksesId, $ms_status_id] = explode('_', $statusKey);
+          $nomorAkhirHakAksesJabatanStatus++;
+
+          if ($item->hak_akses_id == $explodedHakAksesId) {
+            \App\Models\HakAksesJabatanStatus::create([
+              'id' => Str::uuid(),
+              'hak_akses_jabatan_id' => $item->id,
+              'ms_status_id' => $ms_status_id,
+              'nomor' => $nomorAkhirHakAksesJabatanStatus,
+              'tgl_dibuat' => now(),
+              'tgl_diupdate' => now(),
+              'diupdate_oleh' => \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama,
+
+            ]);
+          }
+        }
+      }
+
+      DB::commit();
 
       $validatedForm['diupdate_oleh'] = \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->nama ?? null;
 
       $masterData->update($validatedForm);
-      $this->redirect('/cabang', true);
 
       $this->success('Data berhasil diupdate');
+      // $this->redirect('/cabang', true);
     } catch (\Throwable $e) {
-      \Log::error('Data gagal diupdate : ' . $e->getMessage());
-
-      \Illuminate\Support\Facades\DB::rollBack();
-      $this->error('Data gagal di update');
+      DB::rollBack();
+      \Log::error('Gagal update hak akses: ' . $e->getMessage());
+      $this->error('Terjadi kesalahan saat mengupdate data');
     }
   }
 
-  public function delete()
+
+
+  public function hapus()
   {
     $masterData = $this->masterModel::findOrFail($this->id);
 

@@ -1,31 +1,36 @@
 <?php
 
-namespace App\Livewire\HakAksesJabatan\Forms;
+namespace App\Livewire\Profile\Forms;
 
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Form;
 
-class MsJabatanForm extends Form
+class ProfileForm extends Form
 {
   public string|null $id = null;
   public string|null $nama = null;
+  public string|null $username = null;
+  public string|null $email = null;
+  public string|null $no_telepon = null;
   public int|null $nomor = null;
   public string|null $dibuat_oleh = null;
   public string|null $diupdate_oleh = null;
-  public string|null $tgl_dibuat = null;
-  public string|null $tgl_diupdate = null;
   public string|null $status = null;
+
+
 
   public function rules(string|null $id = null): array
   {
     return [
       'masterForm.nama' => 'required|string',
-      'masterForm.nomor' => 'nullable|integer',
+      'masterForm.username' => 'required|string',
+      'masterForm.email' => 'nullable|string',
+      'masterForm.no_telepon' => 'nullable|string',
+      'masterForm.image_url' => 'nullable|string',
       'masterForm.dibuat_oleh' => 'required|string',
       'masterForm.diupdate_oleh' => 'required|string',
       'masterForm.tgl_dibuat' => 'required|string',
       'masterForm.tgl_diupdate' => 'required|string',
-
     ];
   }
 
@@ -33,11 +38,12 @@ class MsJabatanForm extends Form
   {
     return [
       'masterForm.nama' => 'Nama',
-      'masterForm.nomor' => 'Nomor',
+      'masterForm.username' => 'Username',
+      'masterForm.email' => 'Email',
+      'masterForm.no_telepon' => 'Nomor Telepon',
+      'masterForm.image_url' => 'Image URL',
       'masterForm.dibuat_oleh' => 'Dibuat Oleh',
       'masterForm.diupdate_oleh' => 'Diupdate Oleh',
-      'masterForm.tgl_dibuat' => 'Tanggal dibuat',
-      'masterForm.tgl_diupdate' => 'Tanggal diupdate',
     ];
   }
 }

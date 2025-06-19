@@ -29,10 +29,16 @@ class MsPegawai  extends  Authenticatable
         return $this->hasMany(MsPegawaiAkun::class, 'id', 'ms_pegawai_id');
     }
 
+    public function hakAksesPegawaiCabang()
+    {
+        return $this->hasMany(HakAksesPegawaiCabang::class, 'ms_pegawai_id', 'id');
+    }
+
     public function msJabatan()
     {
         return $this->belongsTo(MsJabatan::class, 'ms_jabatan_id', 'id');
     }
+
 
     public function hakAksesJabatans()
     {
