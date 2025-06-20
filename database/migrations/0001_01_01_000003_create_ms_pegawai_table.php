@@ -17,16 +17,15 @@ return new class extends Migration
             $table->uuid('ms_jabatan_id')->nullable();
             $table->foreign('ms_jabatan_id', 'fk_ms_jabatan_id')->references('id')->on('ms_jabatan')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('nama', 255);
-            $table->string('no_telepon', 30);
-            $table->string('email');
+            $table->string('nama', 255)->nullable();
+            $table->string('no_telepon', 30)->nullable();
+            $table->text('alamat')->nullable();
+            $table->text('kode_pos')->nullable();
             $table->string('image_url')->nullable();
-            $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
             $table->timestamp('tgl_dibuat');
             $table->timestamp('tgl_diupdate')->nullable();
-            $table->string('status')->index()->default('aktif');
         });
     }
 

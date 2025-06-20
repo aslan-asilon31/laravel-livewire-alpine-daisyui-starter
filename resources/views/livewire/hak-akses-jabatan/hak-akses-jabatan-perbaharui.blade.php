@@ -25,7 +25,7 @@
           <div class="mb-3">
             <x-input label="Nama" wire:model.blur="masterForm.nama" id="masterForm.nama" nama="masterForm.nama"
               placeholder="Nama" :readonly="$isReadonly" />
-            <div wire:loading wire:target="masterForm.nama">
+            <div wire:loading wire:target="masterForm.nama" :readonly="$isReadonly">
               Typing Nama ...
             </div>
           </div>
@@ -47,10 +47,6 @@
 
       <br>
 
-      @php
-        $actions = ['daftar', 'buat', 'simpan', 'edit', 'update', 'lihat'];
-        $subActions = ['simpan', 'update'];
-      @endphp
 
       <div class="flex items-center space-x-4 mb-3">
         <label class="flex items-center space-x-1">
@@ -66,14 +62,17 @@
         </label>
       </div>
 
-
       <div class="overflow-auto w-full m-2">
+        @php
+          $actions = ['daftar', 'buat', 'simpan', 'edit', 'update', 'lihat'];
+          $subActions = ['simpan', 'update'];
+        @endphp
+
         <table class="w-96 border border-gray-200 text-sm">
           <thead class="bg-gray-100">
-
             <tr>
-
-              <th class="px-2 py-1  border-b ">Hak Akses {{ strtoupper($masterForm->nama) }}
+              <th class="px-2 py-1 border-b">
+                Hak Akses {{ strtoupper($masterForm->nama) }}
               </th>
               @foreach ($actions as $action)
                 <th class="px-2 py-1 text-center border-b whitespace-nowrap capitalize">{{ $action }}</th>
@@ -82,9 +81,15 @@
           </thead>
           <tbody>
             @foreach ($groupedByPrefix as $prefix => $permissions)
+              @php
+                $firstPermission = reset($permissions);
+                $groupName = $firstPermission['hak_akses_grup_nama'] ?? 'N/A';
+              @endphp
+
+
               <tr class="border-b hover:bg-gray-50 align-top">
-                <td class="px-4 py-2 font-semibold text-gray-700 w-16">
-                  {{ ucfirst($prefix) }}
+                <td class="px-4 py-2 font-semibold text-gray-700 ">
+                  {{ ucfirst($groupName) }}
                 </td>
                 @foreach ($actions as $action)
                   <td class="text-center px-2 py-2 whitespace-nowrap align-top">
@@ -93,23 +98,20 @@
                     @endphp
 
                     @if ($permission)
-                      <x-checkbox label="{{ $permission->nama }}" class="" wire:model="selectedPermissions"
-                        value="{{ $permission->id }}" />
-
+                      <x-checkbox label="{{ formatNamaHakAkses($permission['nama']) }}" wire:model="selectedPermissions"
+                        value="{{ $permission['id'] }}" />
 
                       @if (!in_array($action, ['daftar', 'lihat']))
-                        <div class="mt-2 space-y-1 ">
+                        <div class="mt-2 space-y-1">
                           @foreach ($statuses as $status)
                             @php
-                              $statusKey = $permission->id . '_' . $status->id;
+                              $statusKey = $permission['id'] . '_' . $status->id;
                               $isChecked = in_array($statusKey, $selectedStatusPermissions ?? []);
-                              $isDisabled = !in_array($permission->id, $selectedPermissions ?? []);
+                              $isDisabled = !in_array($permission['id'], $selectedPermissions ?? []);
                             @endphp
                             <label class="flex items-center space-x-1 text-xs m-2">
-
-                              <x-checkbox label="{{ ucfirst($status->nama) }}" wire:model="selectedStatusPermissions"
+                              <x-checkbox label="{{ ucfirst($status['nama']) }}" wire:model="selectedStatusPermissions"
                                 value="{{ $statusKey }}" style="width:20px;" />
-
                             </label>
                           @endforeach
                         </div>
@@ -121,10 +123,9 @@
                 @endforeach
               </tr>
             @endforeach
-
-
           </tbody>
         </table>
+
       </div>
 
       <div class="text-center mt-3">

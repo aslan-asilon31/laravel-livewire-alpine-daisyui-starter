@@ -1,0 +1,47 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\HakAkses; // Import the HakAkses model
+
+class HakAksesGrupSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $now = Carbon::now();
+
+        $accessRights = HakAkses::select('group')->distinct()->get();
+
+        foreach ($accessRights as $group) {
+            $rights = HakAkses::where('group', $group->group)->pluck('access_right')->toArray();
+
+            $formattedGroup = strtoupper(str_replace('_', ' ', $group->group));
+
+            DB::table('hak_akses_grup')->insert([
+                'id' => Str::uuid(),
+                'nama' => $formattedGroup,
+                'dibuat_oleh' => 'seeder',
+                'diupdate_oleh' => 'seeder',
+                'tgl_dibuat' => $now,
+                'tgl_diupdate' => $now,
+            ]);
+
+            foreach ($rights as $right) {
+                DB::table('hak_akses_grup')->insert([
+                    'id' => Str::uuid(),
+                    'nama' => strtoupper(str_replace('_', ' ', "{$group->group}-{$right}")), // Format the access right
+                    'dibuat_oleh' => 'seeder',
+                    'diupdate_oleh' => 'seeder',
+                    'tgl_dibuat' => $now,
+                    'tgl_diupdate' => $now,
+                ]);
+            }
+        }
+
+        $this->command->info('✔ hak_akses_grup seeded.');
+    }
+}

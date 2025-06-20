@@ -19,12 +19,10 @@ return new class extends Migration
             $table->uuid('ms_cabang_id');
             $table->foreign('ms_cabang_id')->references('id')->on('ms_cabang')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
             $table->timestamp('tgl_dibuat');
             $table->timestamp('tgl_diupdate');
-            $table->string('status')->index()->default('aktif');
         });
     }
 

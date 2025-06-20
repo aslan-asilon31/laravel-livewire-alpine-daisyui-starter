@@ -25,12 +25,13 @@ class DatabaseSeeder extends Seeder
       MsPelangganSeeder::class,
       MsStatusSeeder::class,
       HakAksesGrupSeeder::class,
-      HakAksesSeeder::class,
+
       HakAksesJabatanSeeder::class,
       HakAksesJabatanStatusSeeder::class,
       HakAksesPegawaiCabangSeeder::class,
       TrPesananPenjualanHeaderSeeder::class,
       TrPesananPenjualanDetailSeeder::class,
+
     ]);
   }
 }

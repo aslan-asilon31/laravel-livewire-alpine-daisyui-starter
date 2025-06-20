@@ -77,61 +77,66 @@ class HakAksesJabatanPerbaharui extends Component
 
   public function toggleCheckAllSub()
   {
-    // If 'checkAllSub' is unchecked, reset selected status permissions
-    if (!$this->checkAllSub) {
+    if (! $this->checkAllSub) {
       $this->selectedStatusPermissions = [];
       return;
     }
 
-    // Select all status permissions based on permissions and statuses
-    $this->selectedStatusPermissions = $this->permissions->flatMap(function ($permission) {
-      return $this->statuses->map(function ($status) use ($permission) {
-        return $permission->id . '_' . $status->id;
-      });
-    })->toArray();
+    $selectedStatusPermissions = [];
+
+    foreach ($this->permissions as $permission) {
+      foreach ($this->statuses as $status) {
+        $selectedStatusPermissions[] = $permission->id . '_' . $status->id;
+      }
+    }
+
+    $this->selectedStatusPermissions = $selectedStatusPermissions;
   }
+
+
 
   public function toggleCheckAll()
   {
-    // Select or deselect all permissions based on 'checkAll' state
-    $this->selectedPermissions = $this->checkAll
-      ? $this->permissions->pluck('id')->toArray()
-      : [];
+    if ($this->checkAll) {
+      $this->selectedPermissions = $this->permissions->pluck('id')->toArray();
+    } else {
+      $this->selectedPermissions = [];
+    }
   }
 
+  public function permissionList()
+  {
+    $this->permissionList = true;
+  }
 
   public function groupPermissions()
   {
     $this->groupedPermissions = [];
     $this->groupedByPrefix = [];
-    foreach ($this->permissions as $permissionGroup) {
-      if (!isset($permissionGroup['hak_akses']) || !is_array($permissionGroup['hak_akses'])) {
-        continue;
+
+    foreach ($this->permissions as $permission) {
+      $parts = explode('-', $permission->nama);
+      $group = $parts[0] ?? $permission->nama;
+      $action = $parts[1] ?? null;
+
+      if (!isset($this->groupedPermissions[$group])) {
+        $this->groupedPermissions[$group] = [];
       }
+      $this->groupedPermissions[$group][] = $permission;
 
-      foreach ($permissionGroup['hak_akses'] as $permission) {
-        $parts = explode('-', $permission['nama']);
-        $group = $parts[0] ?? $permission['nama'];
-        $action = $parts[1] ?? null;
-
-        if (!isset($this->groupedPermissions[$group])) {
-          $this->groupedPermissions[$group] = [];
+      // Simpan berdasarkan prefix dan action tunggal
+      if ($action) {
+        if (!isset($this->groupedByPrefix[$group])) {
+          $this->groupedByPrefix[$group] = [];
         }
-        $this->groupedPermissions[$group][] = $permission;
 
-        if ($action) {
-          if (!isset($this->groupedByPrefix[$group])) {
-            $this->groupedByPrefix[$group] = [];
-          }
-
-          if (!isset($this->groupedByPrefix[$group][$action])) {
-            $this->groupedByPrefix[$group][$action] = $permission;
-          }
+        // Gunakan array jika ada kemungkinan duplikat nama
+        if (!isset($this->groupedByPrefix[$group][$action])) {
+          $this->groupedByPrefix[$group][$action] = $permission;
         }
       }
     }
   }
-
 
 
   public function mount()
@@ -189,6 +194,7 @@ class HakAksesJabatanPerbaharui extends Component
 
   public function lihat()
   {
+    dd('stop');
     $this->isReadonly = true;
     $this->isDisabled = true;
     $masterData = $this->masterModel::findOrFail($this->id);
@@ -204,18 +210,7 @@ class HakAksesJabatanPerbaharui extends Component
       return;
     }
 
-    $this->permissions = \App\Models\HakAksesGrup::with('hakAkses')
-      ->orderBy('nomor')
-      ->get()
-      ->map(function ($group) {
-        $group->hakAkses->map(function ($permission) use ($group) {
-          $permission->hak_akses_grup_nama = $group->nama ?? null;
-          return $permission;
-        });
-        return $group;
-      })
-      ->toArray();
-
+    $this->permissions = HakAkses::all();
     $this->selectedPermissions = $this->role->hakAkses()->pluck('hak_akses.id')->toArray();
 
     $statusPivot = \App\Models\HakAksesJabatanStatus::with(['msStatus', 'hakAksesJabatan'])
@@ -229,7 +224,6 @@ class HakAksesJabatanPerbaharui extends Component
         $item->hak_akses_id = $item->hakAksesJabatan->hak_akses_id ?? null;
         return $item;
       });
-
 
     $this->subActionsByPermission = $statusPivot->groupBy(function ($item) {
       return $item->hakAksesJabatan->hak_akses_id ?? null;
@@ -254,7 +248,6 @@ class HakAksesJabatanPerbaharui extends Component
     $this->masterForm->fill($masterData);
   }
 
-
   public function update()
   {
     $this->masterForm->tgl_dibuat ?? now();
@@ -276,12 +269,15 @@ class HakAksesJabatanPerbaharui extends Component
 
     try {
       \App\Models\HakAksesJabatan::where('ms_jabatan_id', $this->id)->delete();
+      $nomorAkhirHakAksesJabatan = \App\Models\HakAksesJabatan::max('nomor') ?? 0;
       foreach ($this->selectedPermissions ?? [] as $hakAksesId) {
+        $nomorAkhirHakAksesJabatan++;
 
         \App\Models\HakAksesJabatan::create([
           'id' => Str::uuid(),
           'ms_jabatan_id' => $this->id,
           'hak_akses_id' => $hakAksesId,
+          'nomor' => $nomorAkhirHakAksesJabatan + 1,
           'diupdate_oleh' => \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama,
           'tgl_dibuat' => now(),
           'tgl_diupdate' => now(),
@@ -295,16 +291,19 @@ class HakAksesJabatanPerbaharui extends Component
       })->delete();
 
       $aksesJabatan = \App\Models\HakAksesJabatan::where('ms_jabatan_id', $this->id)->get();
+      $nomorAkhirHakAksesJabatanStatus = \App\Models\HakAksesJabatanStatus::max('nomor') ?? 0;
 
       foreach ($aksesJabatan as $item) {
         foreach ($this->selectedStatusPermissions ?? [] as $statusKey) {
           [$explodedHakAksesId, $ms_status_id] = explode('_', $statusKey);
+          $nomorAkhirHakAksesJabatanStatus++;
 
           if ($item->hak_akses_id == $explodedHakAksesId) {
             \App\Models\HakAksesJabatanStatus::create([
               'id' => Str::uuid(),
               'hak_akses_jabatan_id' => $item->id,
               'ms_status_id' => $ms_status_id,
+              'nomor' => $nomorAkhirHakAksesJabatanStatus,
               'tgl_dibuat' => now(),
               'tgl_diupdate' => now(),
               'diupdate_oleh' => \Illuminate\Support\Facades\Auth::guard('pegawai')->user()->msPegawai->nama,
@@ -348,14 +347,4 @@ class HakAksesJabatanPerbaharui extends Component
       $this->error('Data gagal dihapus');
     }
   }
-
-  // HOOK
-  function formatNamaHakAkses($nama)
-  {
-    $parts = explode('-', $nama);
-    $prefix = str_replace('_', ' ', $parts[0] ?? $nama);
-    $action = $parts[1] ?? '';
-    return $action ? "{$prefix} ({$action})" : $prefix;
-  }
-  // END HOOK 
 }

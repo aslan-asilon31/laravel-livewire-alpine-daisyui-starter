@@ -20,12 +20,10 @@ return new class extends Migration
             $table->uuid('hak_akses_id');
             $table->foreign('hak_akses_id', 'fk_hak_akses_id')->references('id')->on('hak_akses')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->integer('nomor');
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
             $table->timestamp('tgl_dibuat');
             $table->timestamp('tgl_diupdate');
-            $table->string('status')->index()->default('aktif');
         });
     }
 

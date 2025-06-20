@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('hak_akses_grup', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->integer('nomor');
+            $table->string('nama')->nullable();
+            $table->integer('nomor')->nullable();
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
-            $table->timestamp('tgl_dibuat');
-            $table->timestamp('tgl_diupdate');
-            $table->string('status')->index()->default('aktif');
+            $table->timestamp('tgl_dibuat')->nullable();
+            $table->timestamp('tgl_diupdate')->nullable();
         });
     }
 

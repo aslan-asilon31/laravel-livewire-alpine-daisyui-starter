@@ -33,7 +33,13 @@ class MsPegawaiSeeder extends Seeder
             'Qori Pratama',
             'Rizki Maulana',
             'Sari Melati',
-            'Teguh Wibowo'
+            'Teguh Wibowo',
+            'Aslan Admin',
+            'Aslan SPV',
+            'Aslan manager',
+            'Aslan head-office',
+            'Aslan customer',
+            'Aslan staff',
         ];
 
         $pegawaiData = [];
@@ -41,21 +47,17 @@ class MsPegawaiSeeder extends Seeder
 
 
         foreach ($namaKaryawan as $index => $nama) {
-            $email = Str::slug($nama) . '@example.com';
 
             $pegawaiData[] = [
                 'id' => Str::uuid(),
                 'ms_jabatan_id' => null,
                 'nama' => $nama,
                 'no_telepon' => '084534435',
-                'email' => $email,
                 'image_url' => '',
-                'nomor' => $index + 1,
                 'dibuat_oleh' => 'admin',
                 'diupdate_oleh' => 'admin',
                 'tgl_dibuat' => Carbon::now(),
                 'tgl_diupdate' => Carbon::now(),
-                'status' => 'aktif',
             ];
         }
 

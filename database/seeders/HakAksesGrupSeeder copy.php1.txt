@@ -92,50 +92,32 @@ class HakAksesGrupSeeder extends Seeder
 
         ];
 
-        $groups = [];
-
-        // First pass: Insert the groups into the hak_akses_grup table
-        foreach ($halamanData as $data) {
-            // Extract the group name (e.g., ms_barang from ms_barang-daftar)
-            $groupName = explode('-', $data['nama'])[0];
-
-            // Skip if the group has already been inserted
-            if (!in_array($groupName, $groups)) {
-                // Insert the group into hak_akses_grup
-                DB::table('hak_akses_grup')->insert([
-                    'id' => Str::uuid(),
-                    'nama' => strtoupper(str_replace('_', ' ', $groupName)), // Format group name (e.g., MS BARANG)
-                    'dibuat_oleh' => 'seeder',
-                    'diupdate_oleh' => 'seeder',
-                    'tgl_dibuat' => $now,
-                    'tgl_diupdate' => $now,
-                ]);
-
-                // Add the group name to the list to avoid re-insertion
-                $groups[] = $groupName;
-            }
-        }
         $nomor = 1;
-        // Second pass: Insert the access rights into hak_akses
         foreach ($halamanData as $data) {
-            // Extract the group name (e.g., ms_barang from ms_barang-daftar)
             $groupName = explode('-', $data['nama'])[0];
 
-            // Find the group ID by the group name
-            $groupId = DB::table('hak_akses_grup')->where('nama', strtoupper(str_replace('_', ' ', $groupName)))->value('id');
+            $formattedGroup = strtoupper(str_replace('_', ' ', $groupName));
 
-            // Insert each access right into hak_akses and associate it with the group ID
+            $groupId = Str::uuid();
+            DB::table('hak_akses_grup')->insert([
+                'id' => $groupId,
+                'nama' => $formattedGroup,
+                'nomor' => $nomor++,
+                'dibuat_oleh' => 'seeder',
+                'diupdate_oleh' => 'seeder',
+                'tgl_dibuat' => $now,
+                'tgl_diupdate' => $now,
+            ]);
+
             DB::table('hak_akses')->insert([
                 'id' => Str::uuid(),
-                'hak_akses_grup_id' => $groupId,  // Link to the group ID
-                'nama' => $data['nama'],  // Keep the original access right name (e.g., ms_file-batal)
+                'hak_akses_grup_id' => $groupId,
+                'nama' => strtoupper(str_replace('_', ' ', $data['nama'])),
                 'dibuat_oleh' => 'seeder',
                 'diupdate_oleh' => 'seeder',
                 'tgl_dibuat' => $now,
                 'tgl_diupdate' => $now,
             ]);
         }
-
-        $this->command->info('✔ hak_akses_grup and hak_akses seeded.');
     }
 }

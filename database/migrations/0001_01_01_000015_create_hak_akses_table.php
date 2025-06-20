@@ -17,13 +17,11 @@ return new class extends Migration
             $table->uuid('hak_akses_grup_id');
             $table->foreign('hak_akses_grup_id', 'fk_hak_akses_grup_id')->references('id')->on('hak_akses_grup')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('nama');
-            $table->integer('nomor');
+            $table->string('nama')->nullable();
             $table->string('dibuat_oleh', 255)->nullable()->index();
             $table->string('diupdate_oleh', 255)->nullable()->index();
             $table->timestamp('tgl_dibuat');
             $table->timestamp('tgl_diupdate');
-            $table->string('status')->index()->default('aktif');
         });
     }
 

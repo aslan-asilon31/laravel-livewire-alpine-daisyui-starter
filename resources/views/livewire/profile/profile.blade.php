@@ -42,15 +42,8 @@
 
           <div class="md:flex mb-6">
             <div class="md:w-1/3">
-              <legend class="uppercase tracking-wide text-sm"></legend>
-            </div>
-            <div class="md:flex-1 mt-2 mb:mt-0 md:px-3">
-              <textarea class="w-full " placeholder="We build fine acmes." rows="6"></textarea>
-            </div>
-          </div>
-          <div class="md:flex mb-6">
-            <div class="md:w-1/3">
-              <legend class="uppercase tracking-wide text-sm">Foto Profil</legend>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" class="w-32"
+                alt="" srcset="">
             </div>
             <div class="md:flex-1 px-3 text-center">
               <div class="button bg-gold hover:bg-gold-dark text-cream mx-auto cusor-pointer relative">
@@ -62,8 +55,7 @@
           <div class="md:flex mb-6 border border-t-1 border-b-0 border-x-0 border-cream-dark">
             <div class="md:flex-1 px-3 text-center md:text-right">
               <input type="hidden" name="sponsor" value="0">
-              <input class="button text-cream-lighter bg-brick hover:bg-brick-dark" type="submit"
-                value="Create Location">
+              <button class="btn btn-primary">Edit</button>
             </div>
           </div>
         </form>

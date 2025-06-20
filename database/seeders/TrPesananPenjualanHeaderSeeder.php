@@ -21,13 +21,11 @@ class TrPesananPenjualanHeaderSeeder extends Seeder
                     'ms_cabang_id' => $cabang->id,
                     'ms_pelanggan_id' => $pelanggan->id,
                     'nama' => 'Pesanan Penjualan ' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
-                    'nomor' => $i + 1,
                     'memo' => 'Pesanan ke-' . ($i + 1) . ' untuk pelanggan ' . $pelanggan->nama,
                     'dibuat_oleh' => 'admin',
                     'diupdate_oleh' => 'admin',
                     'tgl_dibuat' => Carbon::now(),
                     'tgl_diupdate' => Carbon::now(),
-                    'status' => 'aktif',
                 ]);
             }
         }

@@ -16,19 +16,19 @@ class MsPegawaiAkunSeeder extends Seeder
         $allMsPegawais = \App\Models\MsPegawai::all();
 
         foreach ($allMsPegawais as $msPegawai) {
+            $email = Str::slug($msPegawai->nama) . '@gmail.com';
+
             DB::table('ms_pegawai_akun')->insert([
                 [
                     'id' => Str::uuid(),
                     'ms_pegawai_id' => $msPegawai->id,
                     'username' => Str::slug($msPegawai->nama),
-                    'email' => $msPegawai->email,
+                    'email' =>  $email,
                     'password' => Hash::make('password'),
-                    'nomor' => 1,
                     'dibuat_oleh' => 'admin',
                     'diupdate_oleh' => 'admin',
                     'tgl_dibuat' => $now,
                     'tgl_diupdate' => $now,
-                    'status' => 'aktif',
                 ],
             ]);
         }

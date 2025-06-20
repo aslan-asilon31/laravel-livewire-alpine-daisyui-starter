@@ -22,12 +22,10 @@ class TrPesananPenjualanDetailSeeder extends Seeder
                     'ms_barang_id' => $barang->id,
                     'catatan' => 'Detail pesanan untuk barang ' . $barang->nama,
                     'qty' => rand(1, 10),
-                    'nomor' => $i + 1,
                     'dibuat_oleh' => 'admin',
                     'diupdate_oleh' => 'admin',
                     'tgl_dibuat' => Carbon::now(),
                     'tgl_diupdate' => Carbon::now(),
-                    'status' => 'aktif',
                 ]);
             }
         }
