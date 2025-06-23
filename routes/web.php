@@ -17,6 +17,10 @@ Route::middleware('pegawai')->group(function () {
         Route::get('/lihat/{id}/hanya-lihat', \App\Livewire\MsCabang\MsCabangPerbaharui::class)->name('lihat');
     });
 
+    Route::get('/barang', \App\Livewire\MsBarang\MsBarangDaftar::class)->name('master-barang.daftar');
+    Route::get('/barang/buat', \App\Livewire\MsBarang\MsBarangPerbaharui::class)->name('master-barang.buat');
+    Route::get('/barang/edit/{id}', \App\Livewire\MsBarang\MsBarangPerbaharui::class)->name('master-barang.edit');
+
     Route::get('/pemesanan-penjualan', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderDaftar::class)->name('pemesanan-penjualan.daftar');
     Route::get('/pemesanan-penjualan/buat', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderPerbaharui::class)->name('pemesanan-penjualan.buat');
     Route::get('/pemesanan-penjualan/edit/{id}', \App\Livewire\PemesananPenjualan\PemesananPenjualanHeaderPerbaharui::class)->name('pemesanan-penjualan.edit');
@@ -30,6 +34,8 @@ Route::middleware('pegawai')->group(function () {
     Route::get('/pegawai', \App\Livewire\MsPegawai\MsPegawaiDaftar::class)->name('master-pegawai.daftar');
     Route::get('/pegawai/buat', \App\Livewire\MsPegawai\MsPegawaiPerbaharui::class)->name('master-pegawai.buat');
     Route::get('/pegawai/edit/{id}', \App\Livewire\MsPegawai\MsPegawaiPerbaharui::class)->name('master-pegawai.edit');
+
+
 
     Route::get('/profile', \App\Livewire\Profile\Profile::class)->name('profile');
 });

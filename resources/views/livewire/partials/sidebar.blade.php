@@ -22,7 +22,7 @@
 
       <x-menu-item title="Dashboard" icon="o-chart-bar-square" link="/dashboard" :class="request()->is('/dashboard1') ? 'active' : ''" />
       <x-menu-separator title="Master Data" icon="o-sparkles" />
-      <x-menu-item title="Barang" icon="o-cube" link="/barang/" :class="request()->is('\barang') ? 'active' : ''" />
+      <x-menu-item title="Barang" icon="o-cube" link="/barang/" :class="request()->is('barang/') ? 'active' : ''" />
       <x-menu-item title="Cabang" icon="o-building-office" link="/cabang/" :class="request()->is('barang/') ? 'active' : ''" />
       <x-menu-item title="Gudang" icon="o-home-modern" link="/gudang/" :class="request()->is('gudang/') ? 'active' : ''" />
       <x-menu-item title="Pegawai" icon="o-user-circle" link="/pegawai/" :class="request()->is('pegawai/') ? 'active' : ''" />

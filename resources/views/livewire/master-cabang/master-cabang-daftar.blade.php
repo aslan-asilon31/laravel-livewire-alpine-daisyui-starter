@@ -33,6 +33,27 @@
   </x-drawer>
 
 
+
+  <h3>API Products</h3>
+  <ul>
+    @foreach ($apiProducts as $product)
+      <li>
+        <strong>{{ $product['title'] }}</strong>
+        <br>
+        Price: ${{ $product['price'] }}
+        <br>
+        Description: {{ $product['description'] }}
+        <br>
+        <img src="{{ $product['image'] }}" alt="{{ $product['title'] }}" width="100">
+      </li>
+    @endforeach
+  </ul>
+
+  <!-- Pagination -->
+  {{-- {{ $rows->links() }} --}}
+
+  <br>
+
   <div class="my-2">
     <x-input placeholder="Search..." wire:model.live.debounce.300ms="search" icon="o-magnifying-glass" clearable />
   </div>
