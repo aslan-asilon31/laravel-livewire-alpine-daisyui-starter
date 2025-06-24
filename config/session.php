@@ -86,8 +86,7 @@ return [
     |
     */
 
-    'table' => env('SESSION_TABLE', 'pegawai_sessions'),
-    // 'table' => env('SESSION_TABLE', 'sessions'),
+    'table' => env('SESSION_TABLE', 'sessions'),
 
     /*
     |--------------------------------------------------------------------------

@@ -22,17 +22,15 @@
 
       <x-menu-item title="Dashboard" icon="o-chart-bar-square" link="/dashboard" :class="request()->is('/dashboard1') ? 'active' : ''" />
       <x-menu-separator title="Master Data" icon="o-sparkles" />
-      <x-menu-item title="Barang" icon="o-cube" link="/barang/" :class="request()->is('barang/') ? 'active' : ''" />
-      <x-menu-item title="Cabang" icon="o-building-office" link="/cabang/" :class="request()->is('barang/') ? 'active' : ''" />
-      <x-menu-item title="Gudang" icon="o-home-modern" link="/gudang/" :class="request()->is('gudang/') ? 'active' : ''" />
-      <x-menu-item title="Pegawai" icon="o-user-circle" link="/pegawai/" :class="request()->is('pegawai/') ? 'active' : ''" />
-      <x-menu-item title="Pelanggan" icon="o-users" link="/pelanggan/" :class="request()->is('pelanggan/') ? 'active' : ''" />
+      <x-menu-item title="Guest" icon="o-cube" link="/guest/" :class="request()->is('guest/') ? 'active' : ''" />
+      <x-menu-item title="Room" icon="o-user-circle" link="/room/" :class="request()->is('room/') ? 'active' : ''" />
+      <x-menu-item title="Bed" icon="o-user-circle" link="/bed/" :class="request()->is('bed/') ? 'active' : ''" />
 
-      <x-menu-separator title="Service" icon="o-sparkles" />
-      <x-menu-item title="Pemesanan Penjualan" icon="o-cube" link="/pemesanan-penjualan/" :class="request()->is('\pemesanan-penjualan') ? 'active' : ''" />
-
-      <x-menu-separator title="Hak Akses" icon="o-sparkles" />
-      <x-menu-item title="hak akses jabatan" icon="o-cube" link="/hak-akses-jabatan/" :class="request()->is('\hak-akses-jabatan') ? 'active' : ''" />
+      <x-menu-separator title="API" icon="o-sparkles" />
+      <x-menu-item title="Barang" icon="o-user-circle" link="/barang/" :class="request()->is('barang/') ? 'active' : ''" />
+      <x-menu-item title="Recipe" icon="o-user-circle" link="/recipe/" :class="request()->is('recipe/') ? 'active' : ''" />
+      <x-menu-item title="Product" icon="o-user-circle" link="/product/" :class="request()->is('product/') ? 'active' : ''" />
+      <x-menu-item title="Blog" icon="o-user-circle" link="/blog/" :class="request()->is('blog/') ? 'active' : ''" />
 
       <x-menu-separator title="Pengaturan" icon="o-sparkles" />
       <x-menu-sub title="Pengaturan" icon="o-cog-6-tooth">

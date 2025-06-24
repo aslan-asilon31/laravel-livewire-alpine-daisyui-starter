@@ -16,21 +16,24 @@ class DatabaseSeeder extends Seeder
   public function run(): void
   {
     $this->call([
-      MsCabangSeeder::class,
-      MsPegawaiSeeder::class,
-      MsPegawaiAkunSeeder::class,
-      MsJabatanSeeder::class,
-      MsBarangSeeder::class,
-      MsGudangSeeder::class,
-      MsPelangganSeeder::class,
-      MsStatusSeeder::class,
-      HakAksesGrupSeeder::class,
-
-      HakAksesJabatanSeeder::class,
-      HakAksesJabatanStatusSeeder::class,
-      HakAksesPegawaiCabangSeeder::class,
-      TrPesananPenjualanHeaderSeeder::class,
-      TrPesananPenjualanDetailSeeder::class,
+      BedTypesTableSeeder::class,
+      FeaturesTableSeeder::class,
+      RoomsTableSeeder::class,
+      RoomClassesTableSeeder::class,
+      RoomClassBedFeaturesTableSeeder::class,
+      FloorsTableSeeder::class,
+      RoomClassBedTypesTableSeeder::class,
+      PaymentStatusesTableSeeder::class,
+      RolesTableSeeder::class,
+      PermissionsTableSeeder::class,
+      RoleHasPermissionSeeder::class,
+      ModelHasRolesSeeder::class,
+      RoomStatusesTableSeeder::class,
+      BookingsTableSeeder::class,
+      AddonsTableSeeder::class,
+      BookingAddonsTableSeeder::class,
+      BookingRoomsTableSeeder::class,
+      RoomsTableSeeder::class,
 
     ]);
   }

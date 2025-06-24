@@ -1,0 +1,190 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class RolePermissionTableSeeder extends Seeder
+{
+    public function run()
+    {
+        $roles = DB::table('roles')->pluck('id', 'name');
+        $permissions = DB::table('permissions')->pluck('id', 'name');
+
+        // Define permission sets for each role
+        $allPermissions = $permissions->values()->all();
+
+        // Superadmin & developer dapat semua permission
+        foreach (['superadmin', 'developer'] as $roleName) {
+            foreach ($allPermissions as $permissionId) {
+                DB::table('role_permission')->insert([
+                    'role_id' => $roles[$roleName],
+                    'permission_id' => $permissionId,
+                ]);
+            }
+        }
+
+        // Admin dapat semua permission juga
+        foreach ($allPermissions as $permissionId) {
+            DB::table('role_permission')->insert([
+                'role_id' => $roles['admin'],
+                'permission_id' => $permissionId,
+            ]);
+        }
+
+        // Manager punya sebagian permission
+        $managerPermissions = [
+            'products-index',
+            'products-create',
+            'products-store',
+            'products-edit',
+            'products-update',
+            'products-show',
+            'products-delete',
+            'roles-index',
+            'roles-create',
+            'roles-store',
+            'roles-edit',
+            'roles-update',
+            'roles-show',
+            'roles-delete',
+            'permissions-index',
+            'permissions-create',
+            'permissions-store',
+            'permissions-edit',
+            'permissions-update',
+            'permissions-show',
+            'permissions-delete',
+            'bed_type-index',
+            'bed_type-create',
+            'bed_type-store',
+            'bed_type-edit',
+            'bed_type-update',
+            'bed_type-show',
+            'bed_type-delete',
+            'feature-index',
+            'feature-create',
+            'feature-store',
+            'feature-edit',
+            'feature-update',
+            'feature-show',
+            'feature-delete',
+            'room-index',
+            'room-create',
+            'room-store',
+            'room-edit',
+            'room-update',
+            'room-show',
+            'room-delete',
+            'booking-index',
+            'booking-create',
+            'booking-store',
+            'booking-edit',
+            'booking-update',
+            'booking-show',
+            'booking-delete',
+            'addon-index',
+            'addon-create',
+            'addon-store',
+            'addon-edit',
+            'addon-update',
+            'addon-show',
+            'addon-delete',
+        ];
+
+        foreach ($managerPermissions as $permName) {
+            if (isset($permissions[$permName])) {
+                DB::table('role_permission')->insert([
+                    'role_id' => $roles['manager'],
+                    'permission_id' => $permissions[$permName],
+                ]);
+            }
+        }
+
+        // Supervisor hanya bisa lihat products
+        $supervisorPermissions = [
+            'products-index',
+            'products-create',
+            'products-store',
+            'products-edit',
+            'products-update',
+            'products-show',
+            'products-delete',
+            'roles-index',
+            'roles-create',
+            'roles-store',
+            'roles-edit',
+            'roles-update',
+            'roles-show',
+            'roles-delete',
+            'permissions-index',
+            'permissions-create',
+            'permissions-store',
+            'permissions-edit',
+            'permissions-update',
+            'permissions-show',
+            'permissions-delete',
+            'bed_type-index',
+            'bed_type-create',
+            'bed_type-store',
+            'bed_type-edit',
+            'bed_type-update',
+            'bed_type-show',
+            'bed_type-delete',
+            'feature-index',
+            'feature-create',
+            'feature-store',
+            'feature-edit',
+            'feature-update',
+            'feature-show',
+            'feature-delete',
+            'room-index',
+            'room-create',
+            'room-store',
+            'room-edit',
+            'room-update',
+            'room-show',
+            'room-delete',
+            'booking-index',
+            'booking-create',
+            'booking-store',
+            'booking-edit',
+            'booking-update',
+            'booking-show',
+            'booking-delete',
+            'addon-index',
+            'addon-create',
+            'addon-store',
+            'addon-edit',
+            'addon-update',
+            'addon-show',
+            'addon-delete',
+        ];
+
+        foreach ($supervisorPermissions as $permName) {
+            if (isset($permissions[$permName])) {
+                DB::table('role_permission')->insert([
+                    'role_id' => $roles['supervisor'],
+                    'permission_id' => $permissions[$permName],
+                ]);
+            }
+        }
+
+        // Head-office punya akses index dan show semua resources
+        $headOfficePermissions = [];
+        foreach (['products', 'roles', 'permissions'] as $resource) {
+            $headOfficePermissions[] = "{$resource}-index";
+            $headOfficePermissions[] = "{$resource}-show";
+        }
+
+        foreach ($headOfficePermissions as $permName) {
+            if (isset($permissions[$permName])) {
+                DB::table('role_permission')->insert([
+                    'role_id' => $roles['head-office'],
+                    'permission_id' => $permissions[$permName],
+                ]);
+            }
+        }
+    }
+}
