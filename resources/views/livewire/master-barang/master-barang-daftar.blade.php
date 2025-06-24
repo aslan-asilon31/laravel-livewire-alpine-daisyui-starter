@@ -113,12 +113,13 @@
           currentProduct: null,
           showModal: false,
           editProduct: null,
-          newProduct: {
+          productFormInit: {
             title: '',
             price: 0,
             description: '',
             image: 'https://via.placeholder.com/150'
           },
+          newProduct: productFormInit,
 
           async fetchData() {
             try {
@@ -140,41 +141,36 @@
                 image: product.image
               };
             } else {
-              this.resetNewProduct(); // Creating new product
+              this.resetNewProduct();
             }
           },
 
           closeModal() {
             this.showModal = false;
-            this.currentProduct = null; // Clear current product after closing modal
+            this.currentProduct = null;
           },
 
           resetNewProduct() {
-            this.newProduct = {
-              title: '',
-              price: 0,
-              description: '',
-              image: 'https://via.placeholder.com/150'
-            };
+            this.productForm = this.productFormInit;
           },
 
           async createProduct() {
-            if (!this.newProduct.title || !this.newProduct.price || !this.newProduct.description) {
+            if (!this.productForm.title || !this.productForm.price || !this.productForm.description) {
               alert('Please fill in all fields');
               return;
             }
 
-            if (this.newProduct.price <= 0) {
+            if (this.productForm.price <= 0) {
               alert('Price must be a positive number');
               return;
             }
 
             try {
-              const response = await axios.post('https://fakestoreapi.com/products', this.newProduct);
+              const response = await axios.post('https://fakestoreapi.com/products', this.productForm);
 
               if (response.status === 200) {
-                this.products.push(response.data); // Add the created product to the list
-                this.closeModal(); // Close the modal after creation
+                this.products.push(response.data);
+                this.closeModal();
               } else {
                 const errorDescription = response.data.message || "An unknown error occurred";
                 alert(`Failed to create product. Status: ${response.status} - ${errorDescription}`);
