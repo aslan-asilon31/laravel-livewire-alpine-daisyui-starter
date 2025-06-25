@@ -10,11 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "flightsadmin/livewire-crud": "^2.1",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.7",
+        "maatwebsite/excel": "^3.1",
         "power-components/livewire-powergrid": "^6.3",
         "robsontenorio/mary": "^2.2",
         "spatie/laravel-permission": "^6.20"
@@ -25,6 +27,7 @@
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
+        "mrmarchone/laravel-auto-crud": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^11.5.3"
     },

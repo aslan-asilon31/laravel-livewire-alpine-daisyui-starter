@@ -66,8 +66,6 @@
     <div x-show="!posts.length">Loading posts...</div>
   </div>
 
-
-
   <script>
     document.addEventListener('alpine:init', () => {
       Alpine.data('blogApp', () => ({

@@ -1,0 +1,3 @@
+https://github.com/mrmarchone/laravel-auto-crud
+
+https://github.com/flightsadmin/livewire-crud

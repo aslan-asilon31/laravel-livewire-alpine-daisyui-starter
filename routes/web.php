@@ -12,6 +12,10 @@ Route::get('/barang', \App\Livewire\MsBarang\MsBarangDaftar::class)->name('maste
 Route::get('/barang/buat', \App\Livewire\MsBarang\MsBarangPerbaharui::class)->name('master-barang.buat');
 Route::get('/barang/edit/{id}', \App\Livewire\MsBarang\MsBarangPerbaharui::class)->name('master-barang.edit');
 
-Route::middleware('pegawai')->group(function () {
-    Route::get('/dashboard', \App\Livewire\Welcome::class)->name('dashboard');
-});
+Route::get('/dashboard', \App\Livewire\Welcome::class)->name('dashboard');
+
+Route::middleware('user')->group(function () {});
+
+//Route Hooks - Do not delete//
+Route::view('users', 'livewire.users.index');
+// Route::view('users', 'livewire.users.index')->middleware('auth');

@@ -18,7 +18,7 @@
 
 
     <x-form wire:submit="login" class="space-y-4">
-      <x-input wire:model="username" label="username" placeholder="Username" icon-right="o-user" right />
+      <x-input wire:model="email" label="email" placeholder="email" icon-right="o-user" right />
       <x-password wire:model="password" class="block text-sm font-medium text-gray-700" label="password"
         placeholder="password" password-icon="o-lock-closed" password-visible-icon="o-lock-open" right />
 

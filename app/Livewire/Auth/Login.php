@@ -9,11 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends Component
 {
-    public $username;
+    public $email;
     public $password;
 
     protected $rules = [
-        'username' => 'required',
+        'email' => 'required',
         'password' => 'required|min:6',
     ];
 
@@ -22,12 +22,12 @@ class Login extends Component
         $this->validate();
 
         $credentials = [
-            'username' => $this->username,
+            'email' => $this->email,
             'password' => $this->password,
         ];
 
 
-        if (Auth::guard('pegawai')->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             session()->regenerate();
 
             return redirect()->route('dashboard');

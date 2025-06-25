@@ -62,6 +62,21 @@
       </div>
     </div>
   </template>
+
+  <div class="mt-4 flex space-x-2">
+    <button @click="$store.recipeCrud.changePage('prev')" :disabled="$store.recipeCrud.currentPage === 1"
+      class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+      Previous
+    </button>
+
+    <button @click="$store.recipeCrud.changePage('next')"
+      :disabled="$store.recipeCrud.currentPage === $store.recipeCrud.totalPages"
+      class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+      Next
+    </button>
+  </div>
+
+
 </div>
 
 <script>
@@ -71,6 +86,10 @@
       currentRecipe: null,
       showModal: false,
 
+      perPage: 5,
+      currentPage: 1,
+
+      newRecipe: {},
       newRecipeFormInit: {
         name: '',
         servings: 1,
@@ -78,34 +97,47 @@
         image: '',
         instructionsText: ''
       },
-      newRecipe: {},
 
       init() {
         this.resetNew();
         this.fetchRecipes();
       },
 
+      get paginatedRecipes() {
+        const start = (this.currentPage - 1) * this.perPage;
+        return this.recipes.slice(start, start + this.perPage);
+      },
+
+      get totalPages() {
+        return Math.ceil(this.recipes.length / this.perPage);
+      },
+
+      changePage(page) {
+        if (page === 'next' && this.currentPage < this.totalPages) this.currentPage++;
+        else if (page === 'prev' && this.currentPage > 1) this.currentPage--;
+        else if (typeof page === 'number' && page >= 1 && page <= this.totalPages) this.currentPage = page;
+      },
+
       async fetchRecipes() {
         try {
-          const res = await axios.get('https://dummyjson.com/recipes?limit=30');
-          this.recipes = res.data.recipes;
+          const {
+            data
+          } = await axios.get('https://dummyjson.com/recipes?limit=5');
+          this.recipes = data.recipes;
         } catch (e) {
-          console.error(e)
+          console.error(e);
         }
       },
 
-      openModal(r = null) {
+      openModal(recipe = null) {
         this.showModal = true;
-        if (r) {
-          this.currentRecipe = r;
-          this.newRecipe = {
-            ...r,
-            instructionsText: r.instructions.join('\n')
-          };
-        } else {
-          this.currentRecipe = null;
-          this.resetNew();
-        }
+        this.currentRecipe = recipe;
+        this.newRecipe = recipe ? {
+          ...recipe,
+          instructionsText: recipe.instructions.join('\n')
+        } : {
+          ...this.newRecipeFormInit
+        };
       },
 
       closeModal() {
@@ -120,17 +152,15 @@
         };
       },
 
-      async saveRecipe() {
+      saveRecipe() {
         const data = {
           ...this.newRecipe,
-          instructions: this.newRecipe.instructionsText.split('\n').filter(l => l)
+          instructions: this.newRecipe.instructionsText.split('\n').filter(Boolean)
         };
 
         if (this.currentRecipe) {
-          // simulate update
           this.recipes = this.recipes.map(r => r.id === data.id ? data : r);
         } else {
-          // simulate create (assign fake id)
           data.id = Date.now();
           this.recipes.push(data);
         }
@@ -139,9 +169,11 @@
       },
 
       deleteRecipe(id) {
-        if (!confirm('Delete this recipe?')) return;
-        this.recipes = this.recipes.filter(r => r.id !== id);
+        if (confirm('Delete this recipe?')) {
+          this.recipes = this.recipes.filter(r => r.id !== id);
+        }
       }
     });
+
   });
 </script>

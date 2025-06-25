@@ -36,6 +36,7 @@ class MsBarangDaftar extends Component
   public function render()
   {
     return view('livewire.master-barang.master-barang-daftar')
-      ->title($this->title);
+      ->title($this->title)
+      ->layout('components.layouts.app');
   }
 }
