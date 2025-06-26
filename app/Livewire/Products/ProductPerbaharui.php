@@ -66,6 +66,7 @@ class ProductPerbaharui extends Component
       $this->buat();
     }
 
+
     $this->initialize();
   }
 
