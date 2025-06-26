@@ -4,8 +4,12 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
   <div x-data>
+
+
+
+    <br>
     <button @click="$store.productCrud.openModal()" class="bg-green-500 text-white py-2 px-4 rounded mt-4">Add New
-      Product</button>
+      Product1</button>
 
     <template x-if="$store.productCrud.showModal">
       <div class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">

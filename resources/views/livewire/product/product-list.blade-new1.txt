@@ -1,4 +1,4 @@
-<div class="bg-white p-2">
+<div>
 
 
   <!-- Include Alpine.js dan Axios -->
@@ -6,26 +6,38 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 
-  <x-collapse separator>
-    <x-slot:heading>
-      Filter
-    </x-slot:heading>
-    <x-slot:content>
-      <x-form wire:submit.prevent="filter1" class="bg-white">
+  <x-list-menu :title="$title" :url="$url" shadow />
 
-        <input type="text" placeholder="Filter by Title" wire:model="filters.title" class="border p-2 rounded w-full">
-        <input type="text" placeholder="Filter by availabilityStatus" wire:model="filters.availabilityStatus"
-          class="border p-2 rounded w-full">
-        <input type="text" placeholder="Filter by category" wire:model="filters.category"
-          class="border p-2 rounded w-full">
-        <div class="mt-auto flex space-x-2">
-          <x-button label="Filter" class="btn-primary" type="submit" spinner="filter" />
-          <x-button label="Clear" wire:click="clear" spinner />
-        </div>
 
-      </x-form>
-    </x-slot:content>
-  </x-collapse>
+  <x-drawer wire:model="filterDrawer" class="w-11/12 lg:w-1/3" title="Filter" right separator with-close-button>
+
+    <x-form wire:submit.prevent="filter">
+
+      <x-input label="Nama" placeholder="Filter By Nama" wire:model="filterForm.nama" icon="o-magnifying-glass"
+        clearable />
+
+      <x-input label="Email" placeholder="Filter By Email" wire:model="filterForm.email" icon="o-magnifying-glass"
+        clearable />
+      <x-input label="No Telp" placeholder="Filter By No Telp" wire:model="filterForm.no_telp" icon="o-magnifying-glass"
+        clearable />
+      <x-input label="Dibuat Oleh" placeholder="Filter By Dibuat Oleh" wire:model="filterForm.created_by"
+        icon="o-magnifying-glass" clearable />
+      <x-input label="Diupdate Oleh" placeholder="Filter By Diupdate Oleh" wire:model="filterForm.updated_by"
+        icon="o-magnifying-glass" clearable />
+
+      <x-select label="Is Activated" wire:model="filterForm.status" :options="[['id' => 1, 'name' => 'Yes'], ['id' => 0, 'name' => 'No']]" placeholder="- Is Activated -"
+        placeholder-value="" />
+
+      <x-datepicker label="Tanggal Dibuat" wire:model="filterForm.tgl_dibuat" icon="o-calendar" :config="['altFormat' => 'd/m/Y']" />
+      <x-datepicker label="Tanggal Diupdate" wire:model="filterForm.tgl_diupdate" icon="o-calendar" :config="['altFormat' => 'd/m/Y']" />
+
+      <x-slot:actions>
+        <x-button label="Filter" class="btn-primary" type="submit" spinner="filter" />
+        <x-button label="Clear" wire:click="clear" spinner />
+      </x-slot:actions>
+
+    </x-form>
+  </x-drawer>
 
 
   <div class="my-2">
@@ -36,22 +48,125 @@
 
     <x-table :headers="$this->headers" class="table-sm border border-gray-400 dark:border-gray-500" :rows="$this->rows"
       :sort-by="$sortBy" with-pagination show-empty-text>
+
       @scope('cell_action', $row)
         <x-dropdown>
-          <x-menu-item title="edit" icon="o-pencil-square" link="/product/edit/{{ $row['id'] }}" />
-          <x-menu-item title="Lihat" icon="o-eye" link="/product/lihat/{{ $row['id'] }}/read-only" />
+          <x-menu-item title="edit" icon="o-pencil-square" link="/cabang/edit/{{ $row->id }}" />
+          <x-menu-item title="Lihat" icon="o-eye" link="/cabang/lihat/{{ $row->id }}/read-only" />
         </x-dropdown>
       @endscope
+
+      @scope('cell_status', $row)
+        <x-badge :value="$row->status == 'aktif' ? 'Yes' : 'No'"
+          class=" {{ $row->status == 'aktif' ? 'badge-primary badge-soft' : 'badge-error  badge-soft' }}" />
+      @endscope
+
     </x-table>
 
   </div>
 
   <br>
 
+  <div>
+    <button wire:click="storeProducts" class="bg-blue-500 text-white px-4 py-2">Simpan ke Database</button>
+
+    @if (session()->has('message'))
+      <div class="mt-2 text-green-600">
+        {{ session('message') }}
+      </div>
+    @endif
+
+    <ul>
+      @foreach ($productsSend as $product)
+        <li>{{ $product['title'] ?? '' }}</li>
+      @endforeach
+    </ul>
+  </div>
+
+
+  <br>
+
+
+
+
+
+  <br>
+
+  @dump($allProducts2, $count)
+
+  <div>
+
+    <div x-data="{ count: $wire.$entangle('count') }">
+      <h2 x-text="count"></h2>
+
+      <!-- Tombol untuk Increment dan Decrement -->
+      <button @click="count++" class="bg-blue-500 text-white px-4 py-2 rounded">Increment Alpine.js</button>
+      <button @click="count--" class="bg-yellow-500 text-white px-4 py-2 rounded">Decrement Alpine.js</button>
+    </div>
+
+    <!-- Menampilkan nilai count dari Livewire -->
+    <div>
+      <h3>Current count from Livewire: {{ $count }}</h3>
+    </div>
+
+  </div>
+
+
+
+
+  <br>
+
+  <div>
+    <h3>Daftar Produk</h3>
+    <ul>
+      @forelse ($products1 as $product)
+        <li>{{ $product['title'] }} - {{ $product['price'] }}</li>
+      @empty
+        <li>tidak ada products1</li>
+      @endforelse
+    </ul>
+  </div>
+
+
+  <hr>
+
+
+  {{-- <div x-data="{ count: @entangle('count') }"> --}}
+  <div x-data="{ count: 0 }">
+    <button @click="count++">Increment Count</button>
+
+    <p>Current Count: <span x-text="count"></span></p>
+  </div>
+
+
+  <button wire:click="showData" class="bg-purple-500 text-white px-4 py-2 rounded">
+    Show Data
+  </button>
+
+  <div x-data="loadingIndicator" x-show="loading" x-cloak x-on:loading="loading = true" x-on:unloading="loading = false"
+    class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+    <div class="flex mx-auto space-x-4">
+      <!-- Loading spinner icon -->
+      <svg class="w-8 h-8 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6h2l-4 4-4-4h2a8 8 0 010-8z">
+        </path>
+      </svg>
+      <span class="text-lg font-semibold">Loading...</span>
+    </div>
+  </div>
+
+
+
+  {{-- <x-loading /> --}}
+
   <div x-data="productList" x-init="init()" class="p-6">
     <h1 class="text-2xl font-bold mb-4">Product List</h1>
     <button @click="sendToLivewire()">Kirim ke Livewire</button>
 
+
+    <!-- Search -->
     <input type="text" x-model="searchQuery" @input="filterProducts()" placeholder="Search products..."
       class="border p-2 mb-4 w-full rounded" />
 
@@ -62,6 +177,15 @@
     <button @click="exportExcel()" class="mb-4 bg-purple-600 text-white px-4 py-2 rounded">
       Export Excel
     </button>
+    {{-- 
+  <x-button class="" wire:click="exportExcel">Export1</x-button>
+
+
+  <button type="button" wire:click="exportExcel">
+    Export Excel2
+  </button> --}}
+
+
 
 
     <!-- Tabel Produk -->
@@ -119,7 +243,8 @@
     <div x-show="allProducts.length === 0" class="mt-4 text-gray-600">Loading products...</div>
 
     <!-- Modal Edit -->
-    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" x-transition>
+    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      x-transition>
       <div class="bg-white p-6 rounded w-full max-w-md">
         <h2 class="text-xl font-bold mb-4">Edit Product</h2>
 
@@ -141,6 +266,66 @@
   </div>
 
   <!-- Alpine Data Component -->
+
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('loadingIndicator', () => ({
+        loading: false,
+        timer: null,
+        minLoadingTime: 10000,
+
+        init() {
+          Livewire.on('loading', () => {
+            this.startLoading();
+          });
+
+          Livewire.on('unloading', () => {
+            this.stopLoading();
+          });
+
+          Livewire.hook('request', ({
+            respond,
+            succeed,
+            fail
+          }) => {
+            respond(() => {
+              this.stopLoading();
+            });
+
+            succeed(() => {
+              this.stopLoading();
+            });
+
+            fail(({
+              preventDefault
+            }) => {
+              this.stopLoading();
+              preventDefault();
+            });
+          });
+        },
+
+        startLoading() {
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+
+          this.timer = setTimeout(() => {
+            this.loading = true;
+          }, 2000); // 2 detik delay
+        },
+
+        stopLoading() {
+          if (this.loading) {
+            setTimeout(() => {
+              this.loading = false;
+            }, this.minLoadingTime);
+          }
+        },
+      }));
+    });
+  </script>
 
   <script>
     document.addEventListener('alpine:init', () => {
@@ -176,13 +361,18 @@
 
             var productsToSend = JSON.parse(JSON.stringify(this.allProducts));
 
+            Livewire.dispatch('send-to-livewire2', JSON.parse(JSON.stringify(this.allProducts)));
 
             window.dispatchEvent(new CustomEvent('send-to-livewire', {
               detail: {
                 products: productsToSend
               }
             }));
-
+            window.dispatchEvent(new CustomEvent('send-to-livewire1', {
+              detail: {
+                products: this.allProducts
+              }
+            }));
 
             console.log('cek data fetch', productsToSend);
             this.filterProducts();
@@ -219,6 +409,7 @@
           link.click();
           document.body.removeChild(link);
         },
+
 
         exportExcel() {
           const now = new Date();
@@ -425,9 +616,5 @@
     </script>
   @endscript
 
-  <script>
-    document.addEventListener('alpine:init', () => {
-      Alpine.plugin(window.AlpineFocus)
-    })
-  </script>
+
 </div>

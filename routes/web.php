@@ -6,6 +6,7 @@ Route::get('/', \App\Livewire\Auth\Login::class)->name('login');
 
 Route::get('/recipe', \App\Livewire\Recipes\RecipeList::class)->name('recipe.list');
 Route::get('/product', \App\Livewire\Products\ProductList::class)->name('product.list');
+Route::get('/product/edit/{id}', \App\Livewire\Products\ProductPerbaharui::class)->name('product.crud');
 Route::get('/blog', \App\Livewire\Blogs\BlogList::class)->name('blog.list');
 
 Route::get('/barang', \App\Livewire\MsBarang\MsBarangDaftar::class)->name('master-barang.daftar');

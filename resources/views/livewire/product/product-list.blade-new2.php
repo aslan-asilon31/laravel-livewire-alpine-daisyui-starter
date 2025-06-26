@@ -1,4 +1,4 @@
-<div class="bg-white p-2">
+<div>
 
 
   <!-- Include Alpine.js dan Axios -->
@@ -6,141 +6,127 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 
-  <x-collapse separator>
-    <x-slot:heading>
-      Filter
-    </x-slot:heading>
-    <x-slot:content>
-      <x-form wire:submit.prevent="filter1" class="bg-white">
-
-        <input type="text" placeholder="Filter by Title" wire:model="filters.title" class="border p-2 rounded w-full">
-        <input type="text" placeholder="Filter by availabilityStatus" wire:model="filters.availabilityStatus"
-          class="border p-2 rounded w-full">
-        <input type="text" placeholder="Filter by category" wire:model="filters.category"
-          class="border p-2 rounded w-full">
-        <div class="mt-auto flex space-x-2">
-          <x-button label="Filter" class="btn-primary" type="submit" spinner="filter" />
-          <x-button label="Clear" wire:click="clear" spinner />
-        </div>
-
-      </x-form>
-    </x-slot:content>
-  </x-collapse>
+  <x-list-menu :title="$title" :url="$url" shadow />
 
 
-  <div class="my-2">
-    <x-input placeholder="Search..." wire:model.live.debounce.300ms="search" icon="o-magnifying-glass" clearable />
-  </div>
+  <x-drawer wire:model="filterDrawer" class="w-11/12 lg:w-1/3" title="Filter" right separator with-close-button>
 
-  <div class="">
+    <x-form wire:submit.prevent="filter">
 
-    <x-table :headers="$this->headers" class="table-sm border border-gray-400 dark:border-gray-500" :rows="$this->rows"
-      :sort-by="$sortBy" with-pagination show-empty-text>
-      @scope('cell_action', $row)
-        <x-dropdown>
-          <x-menu-item title="edit" icon="o-pencil-square" link="/product/edit/{{ $row['id'] }}" />
-          <x-menu-item title="Lihat" icon="o-eye" link="/product/lihat/{{ $row['id'] }}/read-only" />
-        </x-dropdown>
-      @endscope
-    </x-table>
+      <x-input label="id" placeholder="Filter By id" wire:model="filterForm.id" icon="o-magnifying-glass" clearable />
 
-  </div>
+      <x-input label="title" placeholder="Filter By title" wire:model="filterForm.title" icon="o-magnifying-glass"
+        clearable />
 
-  <br>
+      <x-input label="availabilityStatus" placeholder="Filter By availabilityStatus"
+        wire:model="filterForm.availabilityStatus" icon="o-magnifying-glass" clearable />
+
+      <x-input label="category" placeholder="Filter By category" wire:model="filterForm.category"
+        icon="o-magnifying-glass" clearable />
+
+      <x-input label="description" placeholder="Filter By description" wire:model="filterForm.description"
+        icon="o-magnifying-glass" clearable />
+
+      <x-input label="dimensions.depth" placeholder="Filter By dimensions.depth"
+        wire:model="filterForm.dimensions.depth" icon="o-magnifying-glass" clearable />
+
+      <x-input label="dimensions.height" placeholder="Filter By dimensions.height"
+        wire:model="filterForm.dimensions.height" icon="o-magnifying-glass" clearable />
+
+
+      <x-input label="dimensions.width" placeholder="Filter By dimensions.width"
+        wire:model="filterForm.dimensions.width" icon="o-magnifying-glass" clearable />
+
+      <x-slot:actions>
+        <x-button label="Filter" class="btn-primary" type="submit" spinner="filter" />
+        <x-button label="Clear" wire:click="clear" spinner />
+      </x-slot:actions>
+
+    </x-form>
+  </x-drawer>
 
   <div x-data="productList" x-init="init()" class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Product List</h1>
-    <button @click="sendToLivewire()">Kirim ke Livewire</button>
 
-    <input type="text" x-model="searchQuery" @input="filterProducts()" placeholder="Search products..."
-      class="border p-2 mb-4 w-full rounded" />
-
-    <button @click="exportCSV()" class="mb-4 bg-purple-500 text-white px-4 py-2 rounded">
-      Export CSV
-    </button>
-
-    <button @click="exportExcel()" class="mb-4 bg-purple-600 text-white px-4 py-2 rounded">
-      Export Excel
-    </button>
-
-
-    <!-- Tabel Produk -->
-    <table class="min-w-full bg-white border mt-2" x-show="paginatedProducts.length">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 border">#</th>
-          <th class="px-4 py-2 border">Thumbnail</th>
-          <th class="px-4 py-2 border cursor-pointer" @click="sortBy('title')">Title</th>
-          <th @click="sortBy('price')" class="cursor-pointer">
-            Price
-            <span x-show="sortKey === 'price'">
-              {{-- <template x-if="sortAsc">↑</template> --}}
-              {{-- <template x-if="!sortAsc">↓</template> --}}
-            </span>
-          </th>
-
-          <th class="px-4 py-2 border cursor-pointer" @click="sortBy('stock')">Stock</th>
-          <th class="px-4 py-2 border">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template x-for="(product, index) in paginatedProducts" :key="product.id">
-          <tr>
-            <td class="border px-4 py-2" x-text="(currentPage - 1) * perPage + index + 1"></td>
-            <td class="border px-4 py-2">
-              <img :src="product.thumbnail || 'https://via.placeholder.com/50'"
-                class="w-12 h-12 object-cover rounded" />
-            </td>
-            <td class="border px-4 py-2" x-text="product.title"></td>
-            <td class="border px-4 py-2" x-text="'$' + product.price"></td>
-            <td class="border px-4 py-2" x-text="product.stock"></td>
-            <td class="border px-4 py-2">
-              <button @click="openEdit(product)" class="text-purple-500">Edit</button>
-              <button @click="deleteProduct(product.id)" class="text-red-500 ml-2">Delete</button>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
-
-    <!-- Pagination Controls -->
-    <div class="mt-4 flex justify-between items-center">
-      <div>
-        Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
-      </div>
-      <div class="space-x-2">
-        <button @click="prevPage()" :disabled="currentPage === 1" class="px-4 py-1 bg-gray-300 rounded">Prev</button>
-        <button @click="nextPage()" :disabled="currentPage === totalPages"
-          class="px-4 py-1 bg-gray-300 rounded">Next</button>
-      </div>
+    <div class="my-2">
+      <x-input placeholder="Search..." wire:model.live.debounce.300ms="search" icon="o-magnifying-glass" clearable />
     </div>
 
-    <!-- Loading -->
-    <div x-show="allProducts.length === 0" class="mt-4 text-gray-600">Loading products...</div>
+    <div class="">
 
-    <!-- Modal Edit -->
-    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" x-transition>
-      <div class="bg-white p-6 rounded w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4">Edit Product</h2>
+      <x-table :headers="$this->headers" class="table-sm border border-gray-400 dark:border-gray-500" :rows="$this->rows"
+        :sort-by="$sortBy" with-pagination show-empty-text>
 
-        <label class="block mb-2">Title</label>
-        <input type="text" class="w-full border p-2 rounded mb-4" x-model="form.title">
 
-        <label class="block mb-2">Price</label>
-        <input type="number" class="w-full border p-2 rounded mb-4" x-model="form.price">
 
-        <label class="block mb-2">Stock</label>
-        <input type="number" class="w-full border p-2 rounded mb-4" x-model="form.stock">
+      </x-table>
 
-        <div class="flex justify-end gap-2">
-          <button @click="saveEdit()" class="bg-purple-500 text-white px-4 py-2 rounded">Save</button>
-          <button @click="closeModal()" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
-        </div>
-      </div>
     </div>
+
+
+
   </div>
 
   <!-- Alpine Data Component -->
+
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('loadingIndicator', () => ({
+        loading: false,
+        timer: null,
+        minLoadingTime: 10000,
+
+        init() {
+          Livewire.on('loading', () => {
+            this.startLoading();
+          });
+
+          Livewire.on('unloading', () => {
+            this.stopLoading();
+          });
+
+          Livewire.hook('request', ({
+            respond,
+            succeed,
+            fail
+          }) => {
+            respond(() => {
+              this.stopLoading();
+            });
+
+            succeed(() => {
+              this.stopLoading();
+            });
+
+            fail(({
+              preventDefault
+            }) => {
+              this.stopLoading();
+              preventDefault();
+            });
+          });
+        },
+
+        startLoading() {
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+
+          this.timer = setTimeout(() => {
+            this.loading = true;
+          }, 2000); // 2 detik delay
+        },
+
+        stopLoading() {
+          if (this.loading) {
+            setTimeout(() => {
+              this.loading = false;
+            }, this.minLoadingTime);
+          }
+        },
+      }));
+    });
+  </script>
 
   <script>
     document.addEventListener('alpine:init', () => {
@@ -183,7 +169,6 @@
               }
             }));
 
-
             console.log('cek data fetch', productsToSend);
             this.filterProducts();
           } catch (err) {
@@ -219,6 +204,7 @@
           link.click();
           document.body.removeChild(link);
         },
+
 
         exportExcel() {
           const now = new Date();
@@ -262,7 +248,7 @@
             const priceCell = worksheet[priceRef];
             if (priceCell && !isNaN(priceCell.v)) {
               priceCell.t = 'n';
-              priceCell.z = '"$"#,##0.00'; // currency format
+              priceCell.z = '"$"#,##0.00';
             }
 
             // === Format stock (kolom 7) ===
@@ -425,9 +411,5 @@
     </script>
   @endscript
 
-  <script>
-    document.addEventListener('alpine:init', () => {
-      Alpine.plugin(window.AlpineFocus)
-    })
-  </script>
+
 </div>

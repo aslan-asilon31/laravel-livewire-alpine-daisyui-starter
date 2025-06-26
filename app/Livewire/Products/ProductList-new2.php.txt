@@ -24,6 +24,7 @@ class ProductList extends Component
   public string $url = "/product";
   public string $content = '';
   public array $data = [];
+  public $count = 5;
 
   #[\Livewire\Attributes\Locked]
   public $id;
@@ -35,21 +36,17 @@ class ProductList extends Component
   public ?string $search = '';
 
   public array $products = [];
+  public $products1 = [];
+  public $allProducts2 = [];
   public array $productsSend = [];
 
-  public bool $filterDrawer = false;
+
+  public bool $filterDrawer;
 
   public array $sortBy = ['column' => 'title', 'direction' => 'desc'];
 
-
   #[Url(except: '')]
-  public $filters = [
-    'images' => '',
-    'title' => '',
-    'availabilityStatus' => '',
-    'category' => '',
-  ];
-
+  public array $filters = [];
   public array $filterForm = [
     'title' => '',
     'availabilityStatus' => '',
@@ -64,27 +61,21 @@ class ProductList extends Component
 
   public function mount() {}
 
-  public function openDrawer()
-  {
-    $this->filterDrawer = true;
-  }
-
 
   #[Computed]
   public function headers(): array
   {
-
     return [
       ['key' => 'action', 'label' => 'Action', 'sortable' => false, 'class' => 'whitespace-nowrap border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
       ['key' => 'id', 'label' => 'ID', 'sortBy' => 'id', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'title', 'label' => 'title', 'sortBy' => 'title', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'availabilityStatus', 'label' => 'availabilityStatus', 'sortBy' => 'availabilityStatus', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-left'],
       ['key' => 'category', 'label' => 'category',  'sortBy' => 'category', 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-center'],
+      ['key' => 'description', 'label' => 'Description', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'dimensions.depth', 'label' => 'dimensions.depth', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'dimensions.height', 'label' => 'dimensions.height', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'dimensions.width', 'label' => 'dimensions.width', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
       ['key' => 'discountPercentage', 'label' => 'discountPercentage', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
-      ['key' => 'description', 'label' => 'Description', 'sortable' => false, 'class' => 'whitespace-nowrap  border-1 border-l-1 border-gray-300 dark:border-gray-600 text-right'],
     ];
   }
 
@@ -93,48 +84,85 @@ class ProductList extends Component
   {
     $collection = collect($this->productsSend);
 
-    $filtered = $collection->filter(function ($item) {
-      $match = true;
+    $filtered = $collection
+      ->when(
+        $this->search,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower($item['title'] ?? ''), strtolower($this->search))
+        )
+      )
+      ->when(
+        $this->filters['title'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower($item['title'] ?? ''), strtolower($this->filters['title']))
+        )
+      )
+      ->when(
+        $this->filters['availabilityStatus'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower($item['availabilityStatus'] ?? ''), strtolower($this->filters['availabilityStatus']))
+        )
+      )
+      ->when(
+        $this->filters['category'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower($item['category'] ?? ''), strtolower($this->filters['category']))
+        )
+      )
+      ->when(
+        $this->filters['description'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower($item['description'] ?? ''), strtolower($this->filters['description']))
+        )
+      )
+      ->when(
+        $this->filters['dimensions.depth'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower(data_get($item, 'dimensions.depth', '')), strtolower($this->filters['dimensions.depth']))
+        )
+      )
+      ->when(
+        $this->filters['dimensions.height'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower(data_get($item, 'dimensions.height', '')), strtolower($this->filters['dimensions.height']))
+        )
+      )
+      ->when(
+        $this->filters['dimensions.width'] ?? false,
+        fn($col) =>
+        $col->filter(
+          fn($item) =>
+          str_contains(strtolower(data_get($item, 'dimensions.width', '')), strtolower($this->filters['dimensions.width']))
+        )
+      );
 
-
-      if ($this->search) {
-        $match = $match && str_contains(strtolower($item['title'] ?? ''), strtolower($this->search));
-      }
-
-      if (!empty($this->filters['id'])) {
-        $match = $match && str_contains(strtolower($item['id'] ?? ''), strtolower($this->filters['id']));
-      }
-
-      if (!empty($this->filters['title'])) {
-        $match = $match && str_contains(strtolower($item['title'] ?? ''), strtolower($this->filters['title']));
-      }
-
-
-      if (!empty($this->filters['description'])) {
-        $match = $match && str_contains(strtolower($item['description'] ?? ''), strtolower($this->filters['description']));
-      }
-
-      if (!empty($this->filters['category'])) {
-        $match = $match && str_contains(strtolower($item['category'] ?? ''), strtolower($this->filters['category']));
-      }
-
-      return $match;
-    });
-
-    $perPage = 10;
+    // Paginasi manual
+    $perPage = 20;
     $page = request()->get('page', 1);
     $items = $filtered->slice(($page - 1) * $perPage, $perPage)->values();
-    $paginator = new LengthAwarePaginator(
+
+    return new LengthAwarePaginator(
       $items,
       $filtered->count(),
       $perPage,
       $page,
       ['path' => request()->url(), 'query' => request()->query()]
     );
-
-    return $paginator;
   }
-
 
   public function filter()
   {
@@ -166,34 +194,8 @@ class ProductList extends Component
 
     $this->filters = collect($validatedFilters)->reject(fn($value) => $value === '')->toArray();
     $this->success('Filter Result');
-  }
-
-  public function filter1()
-  {
-    $this->validate([
-      'filters.images' => 'nullable',
-      'filters.title' => 'nullable|string',
-      'filters.availabilityStatus' => 'nullable|string',
-      'filters.category' => 'nullable|string',
-    ]);
-
-    $collection = collect($this->productsSend);
-
-    if ($this->filters['title']) {
-      $collection = $collection->filter(fn($product) => str_contains(strtolower($product['title']), strtolower($this->filters['title'])));
-    }
-    if ($this->filters['availabilityStatus']) {
-      $collection = $collection->filter(fn($product) => str_contains(strtolower($product['availabilityStatus']), strtolower($this->filters['availabilityStatus'])));
-    }
-    if ($this->filters['category']) {
-      $collection = $collection->filter(fn($product) => str_contains(strtolower($product['category']), strtolower($this->filters['category'])));
-    }
-
-    $this->productsSend = $collection->values()->all();
-
     $this->filterDrawer = false;
   }
-
 
   public function clear(): void
   {
@@ -219,7 +221,7 @@ class ProductList extends Component
         [
           'title' => $product['title'] ?? '',
           'description' => $product['description'] ?? '',
-          'price' => $product['price'] ?? 0,
+          'category' => $product['category'] ?? 0,
         ]
       );
     }
@@ -230,12 +232,31 @@ class ProductList extends Component
 
   public function increment()
   {
+    dd('atop1');
     $this->count++;
   }
 
   public function decrement()
   {
     $this->count--;
+  }
+
+  public function count()
+  {
+    dd('stop count');
+  }
+
+  // #[On('send-to-livewire')]
+  // public function receiveProductsFromAlpine($products)
+  // {
+  public function receiveProductsFromAlpine()
+  {
+    // if (empty($products)) {
+    //   // Log atau debug lebih lanjut untuk mencari penyebabnya
+    //   \Log::debug('Produk kosong atau tidak sesuai');
+
+
+
   }
 
 
@@ -252,6 +273,26 @@ class ProductList extends Component
   public function tesTampil()
   {
     return 12;
+  }
+
+
+  // public function exportExcel()
+  // {
+  //   $filename = 'products_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+  //   return Excel::download(new ProductsExport($this->products), $filename);
+  // }
+
+  public function receiveProducts($data)
+  {
+    $this->products1 = $data;
+  }
+
+
+  public function showData()
+  {
+    dd('hello');
+    // dd($this->products);
   }
 
 
